@@ -1,53 +1,17 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
 
-import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import './components/views/login';
 
-export default class DailyTravel extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
-    );
-  }
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+{/*
 
-AppRegistry.registerComponent('DailyTravel', () => DailyTravel);
+import * as firebase from 'firebase';
+  const firebaseConfig = {
+  apiKey: "AIzaSyCdf_99OpPdugQPtnK6wh08P9QDlamdnG8",
+ authDomain: "daily-travel-6ff5f.firebaseapp.com",
+ databaseURL: "https://daily-travel-6ff5f.firebaseio.com",
+ projectId: "daily-travel-6ff5f",
+ storageBucket: "daily-travel-6ff5f.appspot.com",
+ messagingSenderId: "651940849732"
+};
+// Initialize the firebase app here and pass it to other components as needed. Only initialize on startup.
+const firebaseApp = firebase.initializeApp(firebaseConfig);*/}
