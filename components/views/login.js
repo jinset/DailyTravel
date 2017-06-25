@@ -1,20 +1,18 @@
 'use strict';
 import {
   AppRegistry,
-  Text,
   TextInput,
   View,
   TouchableHighlight,
   ToolbarAndroid,
   ActivityIndicator,
-  Button,
   Alert
 } from 'react-native';
-
 import styles from '../style/baseStyles.js';
 import * as firebase from 'firebase';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
+import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, Switch  } from 'native-base';
   const firebaseConfig = {
   apiKey: "AIzaSyCdf_99OpPdugQPtnK6wh08P9QDlamdnG8",
  authDomain: "daily-travel-6ff5f.firebaseapp.com",
@@ -37,10 +35,17 @@ class LoginView extends Component {
     return (
       <View>
         <Text>Aqui para ingresar </Text>
-        <Button
-        onPress={() => navigate('Chat', { user: 'Lucy' })}
-        title="Registrarme"
-        />
+        <Button block light
+        onPress={() => navigate('Chat', { user: 'Lucy' })}>
+           <Text>Registrarme</Text>
+
+         </Button>
+
+        <Text>Aqui agregar diario </Text>
+        <Button block light
+        onPress={() => navigate('diario', { user: 'Lucy' })}>
+        <Text>Agregar diario</Text>
+        </Button>
 
       </View>
     );
@@ -75,11 +80,58 @@ class NewAccount extends Component {
     return (
       <View>
        <Text>sadsad </Text>
-       <Button
-        onPress={() => this.add()}
-        title="Agregar"
-       />
+       <Button block light
+        onPress={() => this.add()}>
+       <Text>Agregar </Text>
+       </Button>
      </View>
+    );
+  }
+}
+class NewDiary extends Component {
+  add(){
+    firebaseApp.auth().createUserWithEmailAndPassword('maasasssd@gads.com' , '1sadsdsasadadsdsad').then(function(firebaseUser){
+      firebaseApp.database().ref().child('users/' + firebaseUser.uid).update({
+        lastName: 'name'
+      });
+      Alert.alert("Diario agregada con exito ");
+    })
+  }
+  // Nav options can be defined as a function of the screen's props:
+  static navigationOptions = {
+    title: 'Registrar una diario',
+  };
+  render() {
+    return (
+
+        <Container>
+          <Content>
+            <Form>
+              <Item stackedLabel>
+                <Label>Name</Label>
+                <Input />
+              </Item>
+              <Item stackedLabel last>
+                <Label>Description</Label>
+                <Input />
+              </Item>
+              <Item stackedLabel last>
+                <Label>Culture</Label>
+                <Input />
+              </Item>
+
+                <Right>
+                <Label>Privacy</Label>
+                  <Switch value={false} />
+                </Right>
+
+              <Button block>
+                <Text>Save</Text>
+              </Button>
+            </Form>
+
+          </Content>
+        </Container>
     );
   }
 }
@@ -87,6 +139,7 @@ class NewAccount extends Component {
 const DailyTravel = StackNavigator({
   Home: { screen: LoginView },
   Chat: { screen: NewAccount },
+  diario: { screen: NewDiary },
 });
 
 AppRegistry.registerComponent('DailyTravel', () => DailyTravel);
