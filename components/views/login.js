@@ -12,7 +12,8 @@ import styles from '../style/baseStyles.js';
 import * as firebase from 'firebase';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, Switch  } from 'native-base';
+import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, Switch, Icon  } from 'native-base';
+import strings from '../common/local_strings.js'
   const firebaseConfig = {
   apiKey: "AIzaSyCdf_99OpPdugQPtnK6wh08P9QDlamdnG8",
  authDomain: "daily-travel-6ff5f.firebaseapp.com",
@@ -22,7 +23,6 @@ import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, 
  messagingSenderId: "651940849732"
 };
 const firebaseApp = firebase.initializeApp(firebaseConfig);
-
 
 class LoginView extends Component {
 
@@ -42,9 +42,11 @@ class LoginView extends Component {
          </Button>
 
         <Text>Aqui agregar diario </Text>
+
+         <Icon active name='bookmarks' />
         <Button block light
         onPress={() => navigate('diario', { user: 'Lucy' })}>
-        <Text>Agregar diario</Text>
+        <Text>{strings.dairy}</Text>
         </Button>
 
       </View>
@@ -90,16 +92,27 @@ class NewAccount extends Component {
 }
 class NewDiary extends Component {
   add(){
-    firebaseApp.auth().createUserWithEmailAndPassword('maasasssd@gads.com' , '1sadsdsasadadsdsad').then(function(firebaseUser){
-      firebaseApp.database().ref().child('users/' + firebaseUser.uid).update({
-        lastName: 'name'
-      });
-      Alert.alert("Diario agregada con exito ");
-    })
-  }
+     firebaseApp.database().ref().child('dairies/').set({
+     name_: {
+       description:'description_',
+       culture: 'culture_',
+       privacy:'privacy_',
+
+     }
+   });
+/*  add(name_,description_,culture_,privacy_){
+    firebaseApp.database().ref().child('dairies/').set({
+    name_: {
+      description:description_,
+      culture: culture_,
+      privacy:privacy_
+
+    }
+  });*/
+}
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
-    title: 'Registrar una diario',
+    title:strings.dairy,
   };
   render() {
     return (
@@ -108,30 +121,32 @@ class NewDiary extends Component {
           <Content>
             <Form>
               <Item stackedLabel>
-                <Label>Name</Label>
+              <Text>{strings.name }</Text>
                 <Input />
+              </Item>
+              <Item stackedLabel >
+              <Text>{strings.description }</Text>
+                <Input  ref="description" />
               </Item>
               <Item stackedLabel last>
-                <Label>Description</Label>
+              <Text>{strings.culture }</Text>
                 <Input />
               </Item>
-              <Item stackedLabel last>
-                <Label>Culture</Label>
-                <Input />
-              </Item>
-
                 <Right>
-                <Label>Privacy</Label>
-                  <Switch value={false} />
+
+                <Text>{strings.privacy }</Text>
+                  <Switch value={true} />
                 </Right>
 
-              <Button block>
-                <Text>Save</Text>
+              <Button block
+               onPress={() => this.add()}>
+               <Text>{strings.save }</Text>
               </Button>
-            </Form>
 
+            </Form>
           </Content>
         </Container>
+
     );
   }
 }
