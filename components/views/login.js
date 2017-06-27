@@ -26,14 +26,13 @@ import { StackNavigator } from 'react-navigation';
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 
-class LoginView extends Component {
+export default class Login extends Component {
 
   static navigationOptions = {
     header: null,
     title: 'Welcome',
   };
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <View>
         <Text>Aqui para ingresar </Text>
@@ -41,52 +40,14 @@ class LoginView extends Component {
         onPress={() => navigate('Chat', { user: 'Lucy' })}
         title="Registrarme"
         />
-
       </View>
     );
   }
 }
 
-
-class NewAccount extends Component {
-  add(){
-    firebaseApp.auth().createUserWithEmailAndPassword('maasasssd@gads.com' , '1sadsdsasadadsdsad').catch(function(error){
-      var errorCode = error.code;
-       var errorMessage = error.message;
-       if (errorCode == 'auth/weak-password') {
-    alert('The password is too weak.');
-  } else {
-    alert(errorMessage);
-  }
-    }).then(function(firebaseUser){
-      firebaseApp.database().ref().child('users/' + firebaseUser.uid).update({
-        lastName: 'name'
-      });
-      Alert.alert("Cuenta agregada con exito ");
-    })
-  }
-
-
-  // Nav options can be defined as a function of the screen's props:
-  static navigationOptions = {
-    title: 'Registrar una cuenta',
-  };
-  render() {
-    return (
-      <View>
-       <Text>sadsad </Text>
-       <Button
-        onPress={() => this.add()}
-        title="Agregar"
-       />
-     </View>
-    );
-  }
-}
-
-const DailyTravel = StackNavigator({
+{/*const Login = StackNavigator({
   Home: { screen: LoginView },
   Chat: { screen: NewAccount },
-});
+});*/}
 
-AppRegistry.registerComponent('DailyTravel', () => DailyTravel);
+module.export = Login;
