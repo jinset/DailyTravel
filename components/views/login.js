@@ -101,7 +101,7 @@ class NewDiary extends Component {
     }
   }
   add(){
-     firebaseApp.database().ref().child('dairies/').set({
+     firebaseApp.database().ref().child('dairies/').push().set({
      dahhiry: {
        name:this.state.name,
        description:this.state.description,
