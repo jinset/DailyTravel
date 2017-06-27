@@ -91,12 +91,22 @@ class NewAccount extends Component {
   }
 }
 class NewDiary extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      name: '',
+      description: '',
+        culture: '',
+        privacy: ''
+    }
+  }
   add(){
      firebaseApp.database().ref().child('dairies/').set({
-     name_: {
-       description:'description_',
-       culture: 'culture_',
-       privacy:'privacy_',
+     dahhiry: {
+       name:this.state.name,
+       description:this.state.description,
+       culture: this.state.culture,
+       privacy:this.state.privacy,
 
      }
    });
@@ -122,20 +132,26 @@ class NewDiary extends Component {
             <Form>
               <Item stackedLabel>
               <Text>{strings.name }</Text>
-                <Input />
+                <Input onChangeText={(text) => this.setState({name:text})}
+                returnKeyLabel = {"next"} />
               </Item>
               <Item stackedLabel >
               <Text>{strings.description }</Text>
-                <Input  ref="description" />
+                <Input onChangeText={(text) => this.setState({description:text})}
+                returnKeyLabel = {"next"}/>
               </Item>
               <Item stackedLabel last>
               <Text>{strings.culture }</Text>
-                <Input />
+                <Input
+                onChangeText={(text) => this.setState({culture:text})}
+                returnKeyLabel = {"next"} />
               </Item>
                 <Right>
 
                 <Text>{strings.privacy }</Text>
-                  <Switch value={true} />
+                  <Switch value={true}
+                  onChangeText={(text) => this.setState({privacy:text})}
+                  returnKeyLabel = {"next"} />
                 </Right>
 
               <Button block
@@ -151,6 +167,39 @@ class NewDiary extends Component {
   }
 }
 
+class AwesomeProject extends Component {
+
+  constructor(props){
+    super(props)
+
+    this.state = {
+      username: '',
+      password: '',
+    }
+  }
+
+  onPasswordChange(password) {
+     alert("respuesta"+password )
+  }
+
+  render() {
+    return (
+      <View style={styles.content}>
+
+    <Input
+      style={styles.textInputStyle}
+      placeholder="Enter Password"
+      returnKeyLabel = {"next"}
+      onChangeText={this.onPasswordChange} />
+        <Button style={styles.buttonStyle}>
+
+        <Text>adnñj</Text>
+        </Button>
+
+        </View>
+    );
+  }
+}
 const DailyTravel = StackNavigator({
   Home: { screen: LoginView },
   Chat: { screen: NewAccount },
