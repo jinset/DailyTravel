@@ -8,12 +8,9 @@
   },
   "dependencies": {
     "firebase": "^4.1.2",
-    "native-base": "^2.1.5",
     "react": "16.0.0-alpha.12",
     "react-native": "0.45.1",
-    "react-native-country-picker-modal": "^0.3.0-rc1",
     "react-native-deprecated-custom-components": "^0.1.0",
-    "react-native-loading-spinner-overlay": "^0.5.0",
     "react-navigation": "^1.0.0-beta.11"
   },
   "devDependencies": {

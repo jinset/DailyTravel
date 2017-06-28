@@ -1,10 +1,7 @@
-'use strict';
-import {
-  AppRegistry
-} from 'react-native';
-import Login from './components/views/signup/signup';
 
-AppRegistry.registerComponent('DailyTravel', () => Login);
+import './components/views/login';
+
+
 {/*
 
 import * as firebase from 'firebase';
