@@ -1,6 +1,11 @@
 
-import './components/views/login';
+import React, { Component } from 'react';
+import {
+  AppRegistry,
+} from 'react-native';
+import SignUp from './components/views/signup';
 
+AppRegistry.registerComponent('DailyTravel', () => SignUp);
 
 {/*
 

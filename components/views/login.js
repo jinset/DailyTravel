@@ -2,92 +2,72 @@
 import {
   AppRegistry,
   Text,
-  TextInput,
-  View,
-  TouchableHighlight,
-  ToolbarAndroid,
-  ActivityIndicator,
-  Button,
-  Alert
+  Alert,
 } from 'react-native';
 
-import styles from '../style/baseStyles.js';
-import Countries from '../common/countries.json';
-import * as firebase from 'firebase';
+import { Container, Content,Form, Item, Input, Label, Button} from 'native-base';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-  const firebaseConfig = {
-  apiKey: "AIzaSyCdf_99OpPdugQPtnK6wh08P9QDlamdnG8",
- authDomain: "daily-travel-6ff5f.firebaseapp.com",
- databaseURL: "https://daily-travel-6ff5f.firebaseio.com",
- projectId: "daily-travel-6ff5f",
- storageBucket: "daily-travel-6ff5f.appspot.com",
- messagingSenderId: "651940849732"
-};
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+import {getAuth} from '../common/firebaseDB';
 
-
-class LoginView extends Component {
+export default class Login extends Component {
 
   static navigationOptions = {
     header: null,
     title: 'Welcome',
   };
-  render() {
-    const { navigate } = this.props.navigation;
-    return (
-      <View>
-        <Text>Aqui para ingresar </Text>
-        <Button
-        onPress={() => navigate('Chat', { user: 'Lucy' })}
-        title="Registrarme"
-        />
 
-      </View>
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+      password: ''
+    }
+  }
+
+  login(){
+    getAuth().signInWithEmailAndPassword(this.state.email,
+      this.state.password).then(function(firebaseUser) {
+      Alert.alert("hace login usario ID" + firebaseUser.uid);
+    }).catch(function(error) {
+      Alert.alert(error);
+    });
+  }
+  render() {
+
+    return (
+      <Container>
+             <Content>
+             <Form>
+              <Item floatingLabel>
+                  <Label>Email Address</Label>
+                  <Input
+                   onChangeText = {(text) => this.setState({email: text})}
+                   value = {this.state.email}/>
+              </Item>
+
+              <Item floatingLabel>
+                  <Label>Password</Label>
+                  <Input
+                  onChangeText = {(text) => this.setState({password: text})}
+                  value = {this.state.password}
+                  secureTextEntry = {true}/>
+              </Item>
+
+
+             </Form>
+               <Button block info onPress = {this.login.bind(this)} style={{marginTop:15}}>
+                  <Text style={{color:'white'}}>Login</Text>
+               </Button>
+
+             </Content>
+           </Container>
+
     );
   }
 }
 
 
-class NewAccount extends Component {
-  add(){
-    firebaseApp.auth().createUserWithEmailAndPassword('maasasssd@gads.com' , '1sadsdsasadadsdsad').catch(function(error){
-      var errorCode = error.code;
-       var errorMessage = error.message;
-       if (errorCode == 'auth/weak-password') {
-    alert('The password is too weak.');
-  } else {
-    alert(errorMessage);
-  }
-    }).then(function(firebaseUser){
-      firebaseApp.database().ref().child('users/' + firebaseUser.uid).update({
-        lastName: 'name'
-      });
-      Alert.alert("Cuenta agregada con exito ");
-    })
-  }
 
 
-  // Nav options can be defined as a function of the screen's props:
-  static navigationOptions = {
-    title: 'Registrar una cuenta',
-  };
-  render() {
-    return (
-      <View>
-       <Text>sadsad </Text>
-       <Button
-        onPress={() => this.add()}
-        title="Agregar"
-       />
-     </View>
-    );
-  }
-}
-
-const DailyTravel = StackNavigator({
-  Home: { screen: LoginView },
-  Chat: { screen: NewAccount },
-});
-
-AppRegistry.registerComponent('DailyTravel', () => DailyTravel);
+module.export = Login;
