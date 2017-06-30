@@ -15,15 +15,7 @@ import styles from '../style/baseStyles.js';
 import * as firebase from 'firebase';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-  const firebaseConfig = {
-  apiKey: "AIzaSyCdf_99OpPdugQPtnK6wh08P9QDlamdnG8",
- authDomain: "daily-travel-6ff5f.firebaseapp.com",
- databaseURL: "https://daily-travel-6ff5f.firebaseio.com",
- projectId: "daily-travel-6ff5f",
- storageBucket: "daily-travel-6ff5f.appspot.com",
- messagingSenderId: "651940849732"
-};
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+import CameraComponent from './CameraComponent'
 
 
 class LoginView extends Component {
@@ -41,7 +33,7 @@ class LoginView extends Component {
         onPress={() => navigate('Chat', { user: 'Lucy' })}
         title="Registrarme"
         />
-
+      <CameraComponent></CameraComponent>
       </View>
     );
   }
