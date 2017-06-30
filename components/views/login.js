@@ -13,7 +13,12 @@ import * as firebase from 'firebase';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, Switch, Icon  } from 'native-base';
-import strings from '../common/local_strings.js'
+import strings from '../common/local_strings.js';
+import NewDiary from './dairy.js';
+import DailyList from './dailyList.js';
+import AddNewDaily from './dailyList.js';
+
+
   const firebaseConfig = {
   apiKey: "AIzaSyCdf_99OpPdugQPtnK6wh08P9QDlamdnG8",
  authDomain: "daily-travel-6ff5f.firebaseapp.com",
@@ -41,14 +46,15 @@ class LoginView extends Component {
 
          </Button>
 
-        <Text>Aqui agregar diario </Text>
-
-         <Icon active name='bookmarks' />
         <Button block light
-        onPress={() => navigate('diario', { user: 'Lucy' })}>
+        onPress={() => navigate('NewDiary', { user: 'Lucy' })}>
         <Text>{strings.dairy}</Text>
         </Button>
 
+       <Button block light
+       onPress={() => navigate('DailyList', { user: 'Lucy' })}>
+       <Text>{strings.daily}</Text>
+       </Button>
       </View>
     );
   }
@@ -90,120 +96,13 @@ class NewAccount extends Component {
     );
   }
 }
-class NewDiary extends Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      name: '',
-      description: '',
-        culture: '',
-        privacy: ''
-    }
-  }
-  add(){
-     firebaseApp.database().ref().child('dairies/').push().set({
-     dahhiry: {
-       name:this.state.name,
-       description:this.state.description,
-       culture: this.state.culture,
-       privacy:this.state.privacy,
 
-     }
-   });
-/*  add(name_,description_,culture_,privacy_){
-    firebaseApp.database().ref().child('dairies/').set({
-    name_: {
-      description:description_,
-      culture: culture_,
-      privacy:privacy_
-
-    }
-  });*/
-}
-  // Nav options can be defined as a function of the screen's props:
-  static navigationOptions = {
-    title:strings.dairy,
-  };
-  render() {
-    return (
-
-        <Container>
-          <Content>
-            <Form>
-              <Item stackedLabel>
-              <Text>{strings.name }</Text>
-                <Input onChangeText={(text) => this.setState({name:text})}
-                returnKeyLabel = {"next"} />
-              </Item>
-              <Item stackedLabel >
-              <Text>{strings.description }</Text>
-                <Input onChangeText={(text) => this.setState({description:text})}
-                returnKeyLabel = {"next"}/>
-              </Item>
-              <Item stackedLabel last>
-              <Text>{strings.culture }</Text>
-                <Input
-                onChangeText={(text) => this.setState({culture:text})}
-                returnKeyLabel = {"next"} />
-              </Item>
-                <Right>
-
-                <Text>{strings.privacy }</Text>
-                  <Switch value={true}
-                  onChangeText={(text) => this.setState({privacy:text})}
-                  returnKeyLabel = {"next"} />
-                </Right>
-
-              <Button block
-               onPress={() => this.add()}>
-               <Text>{strings.save }</Text>
-              </Button>
-
-            </Form>
-          </Content>
-        </Container>
-
-    );
-  }
-}
-
-class AwesomeProject extends Component {
-
-  constructor(props){
-    super(props)
-
-    this.state = {
-      username: '',
-      password: '',
-    }
-  }
-
-  onPasswordChange(password) {
-     alert("respuesta"+password )
-  }
-
-  render() {
-    return (
-      <View style={styles.content}>
-
-    <Input
-      style={styles.textInputStyle}
-      placeholder="Enter Password"
-      returnKeyLabel = {"next"}
-      onChangeText={this.onPasswordChange} />
-        <Button style={styles.buttonStyle}>
-
-        <Text>adnñj</Text>
-        </Button>
-
-        </View>
-    );
-  }
-}
 const DailyTravel = StackNavigator({
   Home: { screen: LoginView },
   Chat: { screen: NewAccount },
-  diario: { screen: NewDiary },
+    NewDiary: { screen: NewDiary },
+     DailyList: {screen: DailyList},
+    AddDaily: { screen: AddNewDaily },
 });
 
 AppRegistry.registerComponent('DailyTravel', () => DailyTravel);

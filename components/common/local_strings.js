@@ -2,6 +2,7 @@ import LocalizedStrings from 'react-native-localization';
 
 let strings = new LocalizedStrings({
  en:{
+   home:"Home",
    dairy:"Dairy",
    daily:"Daily",
    travel:"Travel",
@@ -37,6 +38,7 @@ let strings = new LocalizedStrings({
    accept:"accept"
  },
  es:{
+   home:"Inicio",
    dairy:"Diario",
    daily:"Vivencia diaria",
    travel:"Viaje",
