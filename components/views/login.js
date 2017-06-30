@@ -9,7 +9,7 @@ import { Container, Content,Form, Item, Input, Label, Button} from 'native-base'
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import {getAuth} from '../common/database';
-
+import CameraComponent from './CameraComponent'
 export default class Login extends Component {
 
   static navigationOptions = {
@@ -53,13 +53,11 @@ export default class Login extends Component {
                   value = {this.state.password}
                   secureTextEntry = {true}/>
               </Item>
-
-
              </Form>
                <Button block info onPress = {this.login.bind(this)} style={{marginTop:15}}>
                   <Text style={{color:'white'}}>Login</Text>
                </Button>
-
+<CameraComponent />
              </Content>
            </Container>
 

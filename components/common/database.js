@@ -28,3 +28,8 @@ export const getDatabase = () => {
     initFirebase()
     return Firebase.database()
 }
+
+export const getStorage = () => {
+    initFirebase()
+    return Firebase.storage()
+}
