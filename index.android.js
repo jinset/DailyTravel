@@ -1,17 +1,48 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ * @flow
+ */
 
-import './components/views/login';
+import React, { Component } from 'react';
+import {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
+import CreateDaily from './component/views/createDaily';
+import EditDaily from './component/views/editDaily';
+import ListDaily from './component/views/listDaily';
 
-{/*
+export default class Vivencia extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <CreateDaily/>
+      </View>
+    );
+  }
+}
 
-import * as firebase from 'firebase';
-  const firebaseConfig = {
-  apiKey: "AIzaSyCdf_99OpPdugQPtnK6wh08P9QDlamdnG8",
- authDomain: "daily-travel-6ff5f.firebaseapp.com",
- databaseURL: "https://daily-travel-6ff5f.firebaseio.com",
- projectId: "daily-travel-6ff5f",
- storageBucket: "daily-travel-6ff5f.appspot.com",
- messagingSenderId: "651940849732"
-};
-// Initialize the firebase app here and pass it to other components as needed. Only initialize on startup.
-const firebaseApp = firebase.initializeApp(firebaseConfig);*/}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+});
+
+AppRegistry.registerComponent('Vivencia', () => Vivencia);
