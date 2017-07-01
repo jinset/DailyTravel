@@ -53,9 +53,7 @@ export default class CameraComponent extends Component {
    }
 
    addImage(response){
-     getDatabase().ref().child('daily/').push({
-          photo: response.uri
-    });
+     let storageRef = getDatabase().storage.ref('daily/').put(response.uri);
    }
 
   render(){

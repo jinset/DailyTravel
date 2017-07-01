@@ -57,7 +57,7 @@ export default class Login extends Component {
                <Button block info onPress = {this.login.bind(this)} style={{marginTop:15}}>
                   <Text style={{color:'white'}}>Login</Text>
                </Button>
-<CameraComponent />
+               <CameraComponent />
              </Content>
            </Container>
 
