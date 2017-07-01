@@ -19,7 +19,17 @@ const initFirebase = () => {
     }
 }
 
+export const getAuth = () => {
+    initFirebase()
+    return Firebase.auth()
+}
+
 export const getDatabase = () => {
     initFirebase()
     return Firebase.database()
+}
+
+export const getStorage = () => {
+    initFirebase()
+    return Firebase.storage()
 }
