@@ -47,7 +47,7 @@ export default class Signup extends Component {
         alert(errorMessage);
       }
     }).then(function(firebaseUser) {
-      getDatabase().ref().child('users/' + firebaseUser.uid).update({
+      getDatabase().ref().child('users/' + firebaseUser.uid).push().set({
         Status: 'act',
         Name: that.name,
         LastName: that.lastName,
