@@ -17,6 +17,7 @@
     "react-native-image-picker": "^0.26.3",
     "react-native-localization": "^0.1.30",
     "react-native-modal-dropdown": "^0.4.4",
+    "react-native-popup-dialog": "^0.9.29",
     "react-native-vector-icons": "^4.1.1",
     "react-navigation": "^1.0.0-beta.11"
   },
