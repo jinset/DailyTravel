@@ -1,108 +1,71 @@
 'use strict';
 import {
   AppRegistry,
-  TextInput,
-  View,
-  TouchableHighlight,
-  ToolbarAndroid,
-  ActivityIndicator,
-  Alert
+  Text,
+  Alert,
 } from 'react-native';
-import styles from '../style/baseStyles.js';
-import * as firebase from 'firebase';
+
+import { Container, Content,Form, Item, Input, Label, Button} from 'native-base';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, Switch, Icon  } from 'native-base';
-import strings from '../common/local_strings.js';
-import NewDiary from './dairy.js';
-import DailyList from './dailyList.js';
-import AddNewDaily from './dailyList.js';
-
-
-  const firebaseConfig = {
-  apiKey: "AIzaSyCdf_99OpPdugQPtnK6wh08P9QDlamdnG8",
- authDomain: "daily-travel-6ff5f.firebaseapp.com",
- databaseURL: "https://daily-travel-6ff5f.firebaseio.com",
- projectId: "daily-travel-6ff5f",
- storageBucket: "daily-travel-6ff5f.appspot.com",
- messagingSenderId: "651940849732"
-};
-const firebaseApp = firebase.initializeApp(firebaseConfig);
-
-class LoginView extends Component {
+import {getAuth} from '../common/database';
+import CameraComponent from './CameraComponent'
+export default class Login extends Component {
 
   static navigationOptions = {
     header: null,
     title: 'Welcome',
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+      password: ''
+    }
+  }
+
+  login(){
+    getAuth().signInWithEmailAndPassword(this.state.email,
+      this.state.password).then(function(firebaseUser) {
+      Alert.alert("hace login usario ID" + firebaseUser.uid);
+    }).catch(function(error) {
+      Alert.alert(error);
+    });
+  }
   render() {
-    const { navigate } = this.props.navigation;
+
     return (
-      <View>
-        <Text>Aqui para ingresar </Text>
-        <Button block light
-        onPress={() => navigate('Chat', { user: 'Lucy' })}>
-           <Text>Registrarme</Text>
+      <Container>
+             <Content>
+             <Form>
+              <Item floatingLabel>
+                  <Label>Email Address</Label>
+                  <Input
+                   onChangeText = {(text) => this.setState({email: text})}
+                   value = {this.state.email}/>
+              </Item>
 
-         </Button>
+              <Item floatingLabel>
+                  <Label>Password</Label>
+                  <Input
+                  onChangeText = {(text) => this.setState({password: text})}
+                  value = {this.state.password}
+                  secureTextEntry = {true}/>
+              </Item>
+             </Form>
+               <Button block info onPress = {this.login.bind(this)} style={{marginTop:15}}>
+                  <Text style={{color:'white'}}>Login</Text>
+               </Button>
+<CameraComponent />
+             </Content>
+           </Container>
 
-        <Button block light
-        onPress={() => navigate('NewDiary', { user: 'Lucy' })}>
-        <Text>{strings.dairy}</Text>
-        </Button>
-
-       <Button block light
-       onPress={() => navigate('DailyList', { user: 'Lucy' })}>
-       <Text>{strings.daily}</Text>
-       </Button>
-      </View>
     );
   }
 }
 
 
-class NewAccount extends Component {
-  add(){
-    firebaseApp.auth().createUserWithEmailAndPassword('maasasssd@gads.com' , '1sadsdsasadadsdsad').catch(function(error){
-      var errorCode = error.code;
-       var errorMessage = error.message;
-       if (errorCode == 'auth/weak-password') {
-    alert('The password is too weak.');
-  } else {
-    alert(errorMessage);
-  }
-    }).then(function(firebaseUser){
-      firebaseApp.database().ref().child('users/' + firebaseUser.uid).update({
-        lastName: 'name'
-      });
-      Alert.alert("Cuenta agregada con exito ");
-    })
-  }
 
 
-  // Nav options can be defined as a function of the screen's props:
-  static navigationOptions = {
-    title: 'Registrar una cuenta',
-  };
-  render() {
-    return (
-      <View>
-       <Text>sadsad </Text>
-       <Button block light
-        onPress={() => this.add()}>
-       <Text>Agregar </Text>
-       </Button>
-     </View>
-    );
-  }
-}
-
-const DailyTravel = StackNavigator({
-  Home: { screen: LoginView },
-  Chat: { screen: NewAccount },
-    NewDiary: { screen: NewDiary },
-     DailyList: {screen: DailyList},
-    AddDaily: { screen: AddNewDaily },
-});
-
-AppRegistry.registerComponent('DailyTravel', () => DailyTravel);
+module.export = Login;

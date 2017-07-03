@@ -11,7 +11,6 @@ import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import { Container, Content, Footer, FooterTab, Button, Icon, Text, Badge } from 'native-base';
 import strings from '../common/local_strings.js'
-import NewDiary1 from '../views/dairy.js';
 
  export default class FooterNav extends Component {
   render() {

@@ -41,7 +41,7 @@ import { StackNavigator } from 'react-navigation';
       title: 'Welcome',
     };
   render() {
-    const { navigate } = this.props.navigation;
+  //  const { navigate } = this.props.navigation;
   return (
     <View>
       <Text>Aqui para ingresar </Text>

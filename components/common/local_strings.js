@@ -13,7 +13,7 @@ let strings = new LocalizedStrings({
    privacy:"Privacy",
    name:"Name",
    description:"Description",
-   culure:"Culure",
+   culture:"Culture",
    guest:"Guest",
    place:"Place",
    date:"Date",
