@@ -25,10 +25,12 @@ var BUTTONS = [
 ];
 var DESTRUCTIVE_INDEX = 3;
 var CANCEL_INDEX = 4;
+var newRef =''; 
  export default class NewDiary extends Component {
   constructor(props){
     super(props)
     this.state = {
+      idOwner:'',
       name: '',      
       status: true,
       privacy: false,
@@ -41,17 +43,24 @@ var CANCEL_INDEX = 4;
   privacyChange(){
     this.setState( {privacy: !this.state.privacy})
   }
-       // status:this.state.status,
        // date:this.state.date,
   add(){
      getDatabase().ref().child('dairies/').push().set({
-     diary: {
+       idOwner:'dgokUCo1dAT8FICbf5m4QaEYxtJ2',
        name:this.state.name,
        description:this.state.description,
        culture: this.state.culture,
        privacy:this.state.privacy,
        status:this.state.status,
-     }
+   }).catch(function(error) {
+       alert(error);
+  });
+    var myRef = getDatabase().ref().push();
+       var key =myRef.key;    
+       getDatabase().ref().child('userDiary/').push({
+       idUser:'4IjaDG6AyTSv2E5KBkChr5DKfMt2',
+       idDiary: key,
+       status:this.state.status,
    }).catch(function(error) {
        alert(error);
   });
