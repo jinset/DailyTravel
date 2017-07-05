@@ -14,7 +14,9 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import { Icon } from 'react-native-elements';
-import { getDatabase } from '../common/database'
+import { getDatabase } from '../common/database';
+import Helper from '../common/helper';
+import RNFetchBlob from 'react-native-fetch-blob';
 
 export default class CameraComponent extends Component {
   constructor(props) {
@@ -47,7 +49,7 @@ export default class CameraComponent extends Component {
            imageHeight: response.height,
            imageWidth: response.width
          })
-         this.addImage(response)
+         //this.addImage(response)
        }
      })
    }
