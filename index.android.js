@@ -9,6 +9,6 @@ import {
   AppRegistry,
 } from 'react-native';
 
-import Login from './components/views/login';
+import ListDaily from './components/views/listDaily';
 
-AppRegistry.registerComponent('DailyTravel', () => Login);
+AppRegistry.registerComponent('DailyTravel', () => ListDaily);

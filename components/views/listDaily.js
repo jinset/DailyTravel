@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import  React, {Component} from 'react';
 import {
   AppRegistry,
   StyleSheet,
@@ -11,36 +11,64 @@ import {
   Button,
 } from 'react-native';
 
-
+import { ListItem } from 'react-native-elements'
+import { getDatabase } from '../common/database';
 
 export default class ListDaily extends Component{
 
-  constructor(props){
+  constructor(props) {
     super(props);
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
+    this.dataRef = getDatabase().ref('/daily');
+
     this.state = {
-      name: null,
-      dataSource: ds.cloneWithRows([null]),
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      })
     };
   }
 
-  onPressAddDaily(){
-    alert(this.state.name);
-    firebaseApp.database().ref().child('daily/').push({
-      name: this.state.name,
-      experience: this.state.experience,
-      tips: this.state.tips,
+  getDailyList(dataRef) {
+    dataRef.on('value', (snap) => {
+      var dailies = [];
+      snap.forEach((child) => {
+        dailies.push({
+          _key: child.key,
+          name: child.val().name,
+          date: child.val().date,
+          experience: child.val().experience,
+          tips: child.val().tips
+          });
+      });
+      alert(JSON.stringify(dailies));
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(dailies)
+      });
     });
+  }
+
+  componentDidMount() {
+    this.getDailyList(this.dataRef);
+  }
+
+  _renderItem(item) {
+    return (
+      <ListItem
+        key= {item._key}
+        title={item.date + "          " + item.name}
+      />
+    );
   }
 
   render() {
     return(
 
-
     <ListView
       dataSource={this.state.dataSource}
-      renderRow={(rowData) => <Text>{rowData}</Text>}
-    />
+      renderRow={this._renderItem.bind(this)}
+      enableEmptySections={true}
+      style={styles.listview}>
+    </ListView>
 
     );
   }
