@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, Switch, Icon, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge ,Fab } from 'native-base';
+import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, Switch, Icon, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge,Fab  } from 'native-base';
 import strings from '../common/local_strings.js';
 import { getDatabase } from '../common/database';
 import FooterNav from  '../common/footerNav.js';
@@ -17,8 +17,10 @@ import Daily1 from  './createDaily.js';
 import Login from  './login.js';
 
  export default class DairyView extends Component {
-  static navigationOptions = {
-    title: 'Diario',
+
+   static navigationOptions = {
+    header: null,
+    title: strings.dairy,
   };
   constructor(props) {
     super(props);
@@ -28,10 +30,10 @@ import Login from  './login.js';
   }
 
   render() {
-        const { navigate } = this.props.navigation;
+        //const { navigate } = this.props.navigation;
     return (
 
-      <Container>
+         <Container>
         <Content>
           <View style={{ flex: 1 }}>
             <Fab
@@ -42,16 +44,9 @@ import Login from  './login.js';
               position="topRight"
               onPress={() => navigate('Daily')}>
               <Icon name="calendar" />
-            </Fab>  <Fab
-              active={this.state.active}
-              direction="down"
-              containerStyle={{ }}
-              style={{ backgroundColor: 'red' }}
-              position="topLeft"
-              onPress={() => navigate('Daily1')}>
-              <Icon name="calendar" />
-            </Fab>
+            </Fab>  
           </View>
+
 
           <Card>
             <CardItem>
@@ -63,16 +58,11 @@ import Login from  './login.js';
                 </Body>
               </Left>
             </CardItem>
-          </Card>
+            </Card>
+
         </Content>
         <FooterNav></FooterNav>
       </Container>
     );
   }
 }
-
-const DailyTravel2 = StackNavigator({
-  Daily1: { screen: Daily1 },
-});
-
-module.export = DailyTravel2;

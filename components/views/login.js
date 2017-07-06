@@ -13,6 +13,10 @@ import CameraComponent from './CameraComponent'
 import strings from '../common/local_strings.js'
 import Signup from './signup';
 import Diary from './diary';
+import NewDiary from './NewDiary';
+import Daily from './dailyList';
+import CreateDaily from './createDaily';
+import DiaryList from './diaryList';
 
 
 export default class Login extends Component {
@@ -81,6 +85,9 @@ const DailyTravel = StackNavigator({
   Login: { screen: Login },
   Signup: { screen: Signup },
   Diary: { screen: Diary },
+  NewDiary: { screen: NewDiary },
+  Daily: { screen: Daily },
+  DiaryList: { screen: DiaryList },
 
 });
 

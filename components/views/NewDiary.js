@@ -45,7 +45,7 @@ var newRef ='';
   }
        // date:this.state.date,
   add(){
-     getDatabase().ref().child('dairies/').push().set({
+     getDatabase().ref().child('diary/').push().set({
        idOwner:'dgokUCo1dAT8FICbf5m4QaEYxtJ2',
        name:this.state.name,
        description:this.state.description,
@@ -67,7 +67,7 @@ var newRef ='';
 }
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
-    title:strings.dairy,
+    title: 'Registrar Diario',
   };
   render() {
     return (
@@ -101,26 +101,12 @@ var newRef ='';
                   <Text>{strings.guest }</Text>
                 </Button> 
 
-                <Button rounded light 
-                onPress={() => {this.popupDialog.show(); }}>
-                  <Icon name='calendar' />
-                  <Text>{strings.daily }</Text>
-                </Button>
             </Form>
         </Content>
             <Button full
              onPress={() => this.add()}>
              <Text>{strings.save }</Text>
             </Button>   
-
-         <PopupDialog dialogTitle={<DialogTitle title={strings.daily } />}
-            ref={(popupDialog) => { this.popupDialog = popupDialog; }}
-            dialogAnimation = { new SlideAnimation({ slideFrom: 'bottom' }) }
-          >
-            <Container>
-             <CreateDaily></CreateDaily>
-            </Container>
-        </PopupDialog>
       </Container>
 
 

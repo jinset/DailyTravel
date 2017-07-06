@@ -22,32 +22,19 @@ import CameraComponent from '../views/CameraComponent';
            <FooterTab>
             <Button vertical>
               <Icon name="home" />
-              <Text>{strings.home}</Text>
             </Button>
             <Button vertical>
                 <Icon name="book" />
-                <Text>{strings.dairy}</Text>
             </Button>
-             <CameraComponent vertical />
+            <Button   vertical>
+              <Icon  name="map" />
+            </Button>
+            <Button vertical>
+              <Icon name="person" />
+            </Button>
           </FooterTab>
         </Footer>
       </Container>
     );
   }
 }
-
-            //   <Button badge vertical>
-            //     <Badge><Text>2</Text></Badge>
-            //     <Icon name="paper" />
-            //     <Text>Día</Text>
-            //   </Button>
-            // <Button active badge vertical>
-            //   <Badge ><Text>51</Text></Badge>
-            //   <Icon active name="map" />
-            //   <Text>{strings.map}</Text>
-            // </Button>
-            //   <CameraComponent vertical />
-            // <Button vertical>
-            //   <Icon name="person" />
-            //   <Text>{strings.profile}</Text>
-            // </Button>
