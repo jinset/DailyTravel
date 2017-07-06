@@ -4,11 +4,4 @@
  * @flow
  */
 
-import React, { Component } from 'react';
-import {
-  AppRegistry,
-} from 'react-native';
-
-import ListDaily from './components/views/listDaily';
-
-AppRegistry.registerComponent('DailyTravel', () => ListDaily);
+import Login from './components/views/login';

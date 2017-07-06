@@ -26,7 +26,7 @@ let strings = new LocalizedStrings({
    notifications:"Notifications",
    singin:"Singin",
    singup:"Singup",
-   loging:"Loging",
+   loging:"Login",
    report:"Report",
    cancel:"Cancel",
    follow:"Follow",
@@ -35,7 +35,8 @@ let strings = new LocalizedStrings({
    username:"Username",
    password:"Password",
    termsConditions:"Terms and Conditions",
-   accept:"accept"
+   accept:"accept",
+   email:"Email Address"
  },
  es:{
    home:"Inicio",
@@ -71,6 +72,7 @@ let strings = new LocalizedStrings({
    password:"Contraseña",
    termsConditions:"Terminos y condiciones",
    accept:"Aceptar",
+   email:"Correo Electrónico"
  }
 });
 

@@ -10,6 +10,11 @@ import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import {getAuth} from '../common/database';
 import CameraComponent from './CameraComponent'
+import strings from '../common/local_strings.js'
+import Signup from './signup';
+import Diary from './diary';
+
+
 export default class Login extends Component {
 
   static navigationOptions = {
@@ -25,29 +30,31 @@ export default class Login extends Component {
     }
   }
 
-  login(){
+  login() {
+    const { navigate } = this.props.navigation;
     getAuth().signInWithEmailAndPassword(this.state.email,
       this.state.password).then(function(firebaseUser) {
-      Alert.alert("hace login usario ID" + firebaseUser.uid);
+      navigate('Diary');
     }).catch(function(error) {
-      Alert.alert(error);
+      alert(error);
     });
   }
   render() {
+    const { navigate } = this.props.navigation;
 
     return (
-      <Container>
+      <Container style={{flex: 1,marginTop:90}}>
              <Content>
              <Form>
               <Item floatingLabel>
-                  <Label>Email Address</Label>
+                  <Label>{strings.email}</Label>
                   <Input
                    onChangeText = {(text) => this.setState({email: text})}
                    value = {this.state.email}/>
               </Item>
 
               <Item floatingLabel>
-                  <Label>Password</Label>
+                  <Label>{strings.password}</Label>
                   <Input
                   onChangeText = {(text) => this.setState({password: text})}
                   value = {this.state.password}
@@ -55,9 +62,13 @@ export default class Login extends Component {
               </Item>
              </Form>
                <Button block info onPress = {this.login.bind(this)} style={{marginTop:15}}>
-                  <Text style={{color:'white'}}>Login</Text>
+                  <Text style={{color:'white'}}>{strings.loging}</Text>
                </Button>
-              <CameraComponent />
+                <Button transparent light onPress={() => navigate('Signup')}  style={{marginTop:15, flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center'}}>
+                  <Text style={{textAlign: 'center'}}>{strings.singup}</Text>
+                </Button>
              </Content>
            </Container>
 
@@ -66,6 +77,11 @@ export default class Login extends Component {
 }
 
 
+const DailyTravel = StackNavigator({
+  Login: { screen: Login },
+  Signup: { screen: Signup },
+  Diary: { screen: Diary },
 
+});
 
-module.export = Login;
+AppRegistry.registerComponent('DailyTravel', () => DailyTravel);
