@@ -13,7 +13,8 @@ import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, 
 import strings from '../common/local_strings.js';
 import { getDatabase } from '../common/database';
 import FooterNav from  '../common/footerNav.js';
-import Daily from  './createDaily.js';
+import Daily1 from  './createDaily.js';
+import Login from  './login.js';
 
  export default class DairyView extends Component {
   static navigationOptions = {
@@ -37,9 +38,17 @@ import Daily from  './createDaily.js';
               active={this.state.active}
               direction="down"
               containerStyle={{ }}
-              style={{ backgroundColor: 'red' }}
+              style={{ backgroundColor: 'black' }}
               position="topRight"
-              onPress={() => navigate('Diary')}>
+              onPress={() => navigate('Daily')}>
+              <Icon name="calendar" />
+            </Fab>  <Fab
+              active={this.state.active}
+              direction="down"
+              containerStyle={{ }}
+              style={{ backgroundColor: 'red' }}
+              position="topLeft"
+              onPress={() => navigate('Daily1')}>
               <Icon name="calendar" />
             </Fab>
           </View>
@@ -63,5 +72,7 @@ import Daily from  './createDaily.js';
 }
 
 const DailyTravel2 = StackNavigator({
-  Daily: { screen: Daily },
+  Daily1: { screen: Daily1 },
 });
+
+module.export = DailyTravel2;
