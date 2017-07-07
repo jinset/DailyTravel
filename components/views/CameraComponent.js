@@ -21,12 +21,38 @@ import { getStorage } from '../common/database';
 import { getUser } from '../common/userState';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import * as firebase from 'firebase'
+import firebase from 'firebase';
 
 const Blob = RNFetchBlob.polyfill.Blob
 const fs = RNFetchBlob.fs
-window.XMLHttpRequest - RNFetchBlob.polyfill.XMLHttpRequest
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
 window.Blob = Blob
+
+const uploadImage = (uri, imageName, mime='image/jpeg') => {
+      return new Promise((resolve, reject) => {
+         const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
+         let uploadBlob = null
+         const imageRef = getStorage().ref('images/').child(imageName)
+         fs.readFile(uploadUri, 'base64')
+             .then((data) => {
+                return Blob.build(data, {type: `${mime};BASE64`})
+             })
+             .then((blob) => {
+                uploadBlob = blob
+                return imageRef.put(blob, {contentType: mime})
+             })
+             .then(() => {
+               uploadBlob.close()
+               return imageRef.getDownloadURL()
+             })
+             .then((url) => {
+               resolve(url)
+             })
+             .catch((error) => {
+               reject(error)
+             })
+      })
+   }
 
 export default class CameraComponent extends Component {
   constructor(props) {
@@ -39,40 +65,7 @@ export default class CameraComponent extends Component {
       }
    }
 
-   uploadImage = (uri, imageName, mime='image/jpg') => {
-      return new Promise((resolve, reject) => {
-         alert("uri: " + uri)
-         const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
-         alert("uploadUri: " + uri)
-         let uploadBlob = null
-         const imageRef = getStorage().ref('photos').child(imageName)
-         fs.readFile(uploadUri, 'base64')
-             .then((data) => {
-               alert(" 2 ")
-                return Blob.build(data, {type: `${mime};BASE64`})
-             })
-             .then((blob) => {
-                alert(" 3 ")
-                uploadBlob = blob
-                return imageRef.put(blob, {contentType: mime})
-             })
-             .then(() => {
-               alert(" 4 ")
-               uploadBlob.close()
-               return imageRef.getDownloadURL()
-             })
-             .then((url) => {
-               alert(" 5 ")
-               resolve(url)
-             })
-             .catch((error) => {
-               alert(" 6 ")
-               reject(error)
-             })
-      })
-   }
-
-  /*async componentWillMount () {
+  async componentWillMount () {
      try{
        //let user = await firebase.auth().getUser();
        this.setState({
@@ -81,14 +74,14 @@ export default class CameraComponent extends Component {
      } catch(error){
        console.log(error)
      }
-   }*/
+   }
 
    openImagePicker(){
      var options = {
        title: 'Select Avatar',
        storageOptions: {
          skipBackup: true,
-         path: 'photos'
+         path: 'images'
        }
      }
      ImagePicker.showImagePicker(options, (response) => {
@@ -106,23 +99,20 @@ export default class CameraComponent extends Component {
            uid: getUser()
          })
        }
+       if(this.state.uid){
+           try{
+              this.state.imagePath ?
+                  uploadImage(this.state.imagePath, `${this.state.uid}.jpeg`)
+                      .then((responseData) => {
+                        Helper.setImageUrl(this.state.uid, responseData)
+                      })
+                      .done()
+                  : null
+           } catch(error){
+             console.log(error)
+           }
+       }
      })
-   }
-
-   addImage(){
-     if(this.state.uid){
-         try{
-            this.state.imagePath ?
-                this.uploadImage(this.state.imagePath, `${this.state.uid}.jpg`)
-                    .then((responseData) => {
-                      Helper.setImageUrl(this.state.uid, responseData)
-                    })
-                    .done()
-                : null
-         } catch(error){
-           console.log(error)
-         }
-     }
    }
 
   render(){
@@ -135,10 +125,6 @@ export default class CameraComponent extends Component {
                   color='#517fa4'
                   onPress={this.openImagePicker.bind(this)}
               />
-            <Button
-              title="save"
-              onPress={this.addImage.bind(this)}>
-            </Button>
         </View>
   )}
 
