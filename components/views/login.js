@@ -9,6 +9,7 @@ import { Container, Content,Form, Item, Input, Label, Button} from 'native-base'
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import {getAuth} from '../common/database';
+import {setUser} from '../common/userState';
 import CameraComponent from './CameraComponent'
 export default class Login extends Component {
 
@@ -26,9 +27,10 @@ export default class Login extends Component {
   }
 
   login(){
-    getAuth().signInWithEmailAndPassword(this.state.email,
+     getAuth().signInWithEmailAndPassword(this.state.email,
       this.state.password).then(function(firebaseUser) {
-      Alert.alert("hace login usario ID" + firebaseUser.uid);
+      //Alert.alert("hace login usario ID" + firebaseUser.uid);
+      setUser(firebaseUser.uid)
     }).catch(function(error) {
       Alert.alert(error);
     });

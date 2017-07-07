@@ -1,10 +1,11 @@
-import * as firebase from 'firebase'
+import { getDatabase } from '../common/database';
 
 class Helper {
 
-  static setImageUrl(url){
-    let userNamePath = "/dairy/daily/photo/url"
-    return firebase.database().ref(userNamePath).set(url)
+  static setImageUrl(userId, url){
+    alert(" SetImageUrl")
+    let userNamePath = "/users/"+userId+"/url"
+    return getDatabase().ref(userNamePath).set(url)
   }
 
 }
