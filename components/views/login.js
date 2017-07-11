@@ -77,8 +77,8 @@ export default class Login extends Component {
                   <Text style={{color:'white'}}>{strings.loging}</Text>
                </Button>
                 <Button transparent light onPress={() => navigate('Signup')}  style={{marginTop:15, flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center'}}>
+                  justifyContent: 'center',
+                  alignItems: 'center'}}>
                   <Text style={{textAlign: 'center'}}>{strings.singup}</Text>
                 </Button>
              </Content>
