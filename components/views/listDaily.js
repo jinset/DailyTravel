@@ -40,7 +40,6 @@ export default class ListDaily extends Component{
           tips: child.val().tips
           });
       });
-      alert(JSON.stringify(dailies));
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(dailies)
       });
