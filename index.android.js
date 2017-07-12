@@ -3,12 +3,14 @@
  * https://github.com/facebook/react-native
  * @flow
  */
+import { AppRegistry } from 'react-native';
+import App from './views/index';
+import Login from './views/login';
 
-import React, { Component } from 'react';
-import {
-  AppRegistry,
-} from 'react-native';
+// if (usuarioConectado){
+//   <App/>
+// }else {
+//   <Login/>
+// }
 
-import ListDaily from './components/views/listDaily';
-
-AppRegistry.registerComponent('DailyTravel', () => ListDaily);
+AppRegistry.registerComponent('DailyTravel', () => DailyTravel);

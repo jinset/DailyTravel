@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import { Container, Content, Button, Text, Input } from 'native-base';
-import { getDatabase } from '../common/database';
+import { getDatabase } from '../../common/database';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
 
@@ -27,6 +27,10 @@ export default class CreateDaily extends Component{
       dataSource: ds.cloneWithRows([null]),
     };
   }
+
+  static navigationOptions = {
+   title: "Daily",
+ };
 
   onPressAddDaily(){
     getDatabase().ref().child('daily/').push({
@@ -49,10 +53,10 @@ export default class CreateDaily extends Component{
 
           <DatePicker
             style={{width: 150}}
-               date={Moment(this.state.date)}
+               date={Moment(this.state.date, 'MM/DD/YYYY')}
                mode="date"
                placeholder="select date"
-               format="MM/DD/YY"
+               format="MM/DD/YYYY"
                //minDate="2016-05-01"
                //maxDate="2016-05-01"
                confirmBtnText="Confirm"

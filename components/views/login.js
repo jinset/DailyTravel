@@ -7,12 +7,8 @@ import {
 
 import { Container, Content,Form, Item, Input, Label, Button,Toast, Icon, Spinner} from 'native-base';
 import React, {Component} from 'react';
-import { StackNavigator } from 'react-navigation';
 import {getAuth} from '../common/database';
-import CameraComponent from './CameraComponent'
-import strings from '../common/local_strings.js'
-import Signup from './signup';
-import Home from './home';
+import strings from '../common/local_strings.js';
 
 
 export default class Login extends Component {
@@ -37,7 +33,8 @@ export default class Login extends Component {
     //this.setState({ showSpinner: true });
     getAuth().signInWithEmailAndPassword(this.state.email,
       this.state.password).then(function(firebaseUser) {
-      navigate('Home');
+        navigate('dailyTravelTabs');
+
     }).catch(function(error) {
       //this.setState({ showSpinner: false });
 
@@ -61,14 +58,14 @@ export default class Login extends Component {
               <Item floatingLabel>
                   <Label>{strings.email}</Label>
                   <Input
-                   onChangeText = {(text) => this.setState({email: text})}
+                   onChangeText = {(text) => this.setState({email: 'z@z.com'})}
                    value = {this.state.email}/>
               </Item>
 
               <Item floatingLabel>
                   <Label>{strings.password}</Label>
                   <Input
-                  onChangeText = {(text) => this.setState({password: text})}
+                  onChangeText = {(text) => this.setState({password: '12345!'})}
                   value = {this.state.password}
                   secureTextEntry = {true}/>
               </Item>
@@ -76,7 +73,7 @@ export default class Login extends Component {
                <Button block info onPress = {this.login.bind(this)} style={{marginTop:15}}>
                   <Text style={{color:'white'}}>{strings.loging}</Text>
                </Button>
-                <Button transparent light onPress={() => navigate('Signup')}  style={{marginTop:15, flexDirection: 'column',
+                <Button transparent light onPress={() => navigate('signup')}  style={{marginTop:15, flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center'}}>
                   <Text style={{textAlign: 'center'}}>{strings.singup}</Text>
@@ -87,13 +84,3 @@ export default class Login extends Component {
     );
   }
 }
-
-
-const DailyTravel = StackNavigator({
-  Login: { screen: Login },
-  Signup: { screen: Signup },
-  Home: { screen: Home },
-
-});
-
-AppRegistry.registerComponent('DailyTravel', () => DailyTravel);

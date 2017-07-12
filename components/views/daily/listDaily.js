@@ -3,16 +3,14 @@ import {
   AppRegistry,
   StyleSheet,
   View,
-  Text,
-  TextInput,
   ListView,
   Image,
   Dimensions,
-  Button,
 } from 'react-native';
 
-import { ListItem } from 'react-native-elements'
-import { getDatabase } from '../common/database';
+import { Container, Content, Button, Text, Input } from 'native-base';
+import { ListItem } from 'react-native-elements';
+import { getDatabase } from '../../common/database';
 
 export default class ListDaily extends Component{
 
@@ -58,17 +56,26 @@ export default class ListDaily extends Component{
       />
     );
   }
+  addDaily=()=>{
+    alert('hola');
+  }
 
   render() {
     return(
+      <Container>
+        <Content>
+          <Button rounded onPress={this.addDaily.bind(this)}>
+            <Text>Add new daily</Text>
+          </Button>
 
-    <ListView
-      dataSource={this.state.dataSource}
-      renderRow={this._renderItem.bind(this)}
-      enableEmptySections={true}
-      style={styles.listview}>
-    </ListView>
-
+          <ListView
+            dataSource={this.state.dataSource}
+            renderRow={this._renderItem.bind(this)}
+            enableEmptySections={true}
+            style={styles.listview}>
+          </ListView>
+      </Content>
+    </Container>
     );
   }
 }
@@ -87,7 +94,5 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
   }
 });
-
-AppRegistry.registerComponent('ListDaily', () => ListDaily);
 
 module.export='ListDaily';

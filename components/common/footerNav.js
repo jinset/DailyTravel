@@ -10,9 +10,19 @@ import {
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import { Container, Content, Footer, FooterTab, Button, Icon, Text, Badge } from 'native-base';
-import strings from '../common/local_strings.js'
+import strings from './local_strings.js'
 
  export default class FooterNav extends Component {
+
+   static navigationOptions = {
+     header: null,
+   };
+
+   diary=()=>{
+     const { navigate } = this.props.navigation;
+     navigate('createDiary');
+   }
+
   render() {
     return (
       <View>
@@ -22,7 +32,7 @@ import strings from '../common/local_strings.js'
               <Badge><Text>2</Text></Badge>
               <Icon  name="home" />
             </Button>
-             <Button badge vertical>
+             <Button badge vertical onPress = {this.diary.bind(this)}>
                 <Badge><Text>2</Text></Badge>
                 <Icon name="book" />
                 <Text>{strings.dairy}</Text>

@@ -10,10 +10,10 @@ import {
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import { Container, Content, Form, Item, Input, Label, Button ,Text,Body,CheckBox ,ActionSheet, Right, Switch, Icon, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
-import strings from '../common/local_strings.js';
-import FooterNav from  '../common/footerNav.js';
-import { getDatabase } from '../common/database';
-import  CreateDaily  from './createDaily.js';
+import strings from '../../common/local_strings.js';
+import FooterNav from  '../../common/footerNav.js';
+import { getDatabase } from '../../common/database';
+import  CreateDaily  from '../daily/createDaily.js';
 import PopupDialog, { SlideAnimation } from 'react-native-popup-dialog';
 import { DialogTitle } from 'react-native-popup-dialog';
 var BUTTONS = [
@@ -29,7 +29,7 @@ var CANCEL_INDEX = 4;
   constructor(props){
     super(props)
     this.state = {
-      name: '',      
+      name: '',
       status: true,
       privacy: false,
       date:'',
@@ -68,7 +68,7 @@ var CANCEL_INDEX = 4;
             <Form>
               <Right>
                 <Label>{strings.privacy }</Label>
-                <Switch 
+                <Switch
                 value={ this.state.privacy }
                 onValueChange={this.privacyChange.bind( this ) }/>
               </Right>
@@ -90,9 +90,9 @@ var CANCEL_INDEX = 4;
                <Button rounded light>
                   <Icon name='people' />
                   <Text>{strings.guest }</Text>
-                </Button> 
+                </Button>
 
-                <Button rounded light 
+                <Button rounded light
                 onPress={() => {this.popupDialog.show(); }}>
                   <Icon name='calendar' />
                   <Text>{strings.daily }</Text>
@@ -102,7 +102,7 @@ var CANCEL_INDEX = 4;
             <Button full
              onPress={() => this.add()}>
              <Text>{strings.save }</Text>
-            </Button>   
+            </Button>
 
          <PopupDialog dialogTitle={<DialogTitle title={strings.daily } />}
             ref={(popupDialog) => { this.popupDialog = popupDialog; }}
