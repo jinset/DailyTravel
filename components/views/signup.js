@@ -31,7 +31,8 @@ export default class Signup extends Component {
       email: '',
       password: '',
       country: '',
-      birthDay: ''
+      birthDay: '',
+      ulr:'',
     }
   }
 
@@ -47,14 +48,15 @@ export default class Signup extends Component {
         alert(errorMessage);
       }
     }).then(function(firebaseUser) {
-      getDatabase().ref().child('users/' + firebaseUser.uid).push().set({
+      getDatabase().ref().child('users/' + firebaseUser.uid).update({
         Status: 'act',
         Name: that.name,
         LastName: that.lastName,
         Email: that.email,
         Admin: false,
         BirthPlace: that.country,
-        BirthDay: that.birthDay
+        BirthDay: that.birthDay,
+        Url: ''
       });
       Alert.alert("Cuenta agregada con exito ");
     })
@@ -128,4 +130,7 @@ const styles = StyleSheet.create({
     fontSize:15
   },
 });
-module.export = Signup;
+
+AppRegistry.registerComponent('ListDaily', () => ListDaily);
+
+module.export='Signup';

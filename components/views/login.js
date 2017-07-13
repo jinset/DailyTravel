@@ -95,5 +95,3 @@ const DailyTravel = StackNavigator({
   Home: { screen: Home },
 
 });
-
-AppRegistry.registerComponent('DailyTravel', () => DailyTravel);
