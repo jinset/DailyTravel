@@ -13,12 +13,13 @@ import {
   Image,
   Platform,
   Button,
+  TouchableHighlight,
 } from 'react-native';
+import { Container, Content, Form, Item, Input, Label,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
 import Helper from '../common/helper';
 import { Icon } from 'react-native-elements';
 import { getDatabase } from '../common/database';
 import { getStorage } from '../common/database';
-import { getUser } from '../common/userState';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import firebase from 'firebase';
@@ -28,11 +29,12 @@ const fs = RNFetchBlob.fs
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
 window.Blob = Blob
 
-const uploadImage = (uri, imageName, mime='image/jpeg') => {
+const uploadImage = (uri, imageName) => {
+      const mime='image/jpg'
       return new Promise((resolve, reject) => {
          const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
          let uploadBlob = null
-         const imageRef = getStorage().ref('images/').child(imageName)
+         const imageRef = firebase.storage().ref('images/').child(imageName)
          fs.readFile(uploadUri, 'base64')
              .then((data) => {
                 return Blob.build(data, {type: `${mime};BASE64`})
@@ -67,9 +69,14 @@ export default class CameraComponent extends Component {
 
   async componentWillMount () {
      try{
-       //let user = await firebase.auth().getUser();
+       let user = await firebase.auth().currentUser;
+       Helper.getImageUrl(user.uid, (url) => {
+         this.setState({
+           imagePath: url,
+         })
+       })
        this.setState({
-         uid: getUser()
+         uid: user.uid,
        })
      } catch(error){
        console.log(error)
@@ -94,22 +101,19 @@ export default class CameraComponent extends Component {
        }else{
          this.setState({
            imagePath: response.uri,
-           imageHeight: response.height,
-           imageWidth: response.width,
-           uid: getUser()
          })
        }
        if(this.state.uid){
            try{
               this.state.imagePath ?
-                  uploadImage(this.state.imagePath, `${this.state.uid}.jpeg`)
+                  uploadImage(this.state.imagePath, `${this.state.uid}.jpg`)
                       .then((responseData) => {
                         Helper.setImageUrl(this.state.uid, responseData)
                       })
                       .done()
                   : null
            } catch(error){
-             console.log(error)
+             alert(error)
            }
        }
      })
@@ -118,14 +122,14 @@ export default class CameraComponent extends Component {
   render(){
     return (
         <View>
-            {this.state.imagePath ? <Image style={{width: 300, height: 300}} source={{uri: this.state.imagePath}} /> : null}
-            <Icon
-                  reverse
-                  name='camera-enhance'
-                  color='#517fa4'
-                  onPress={this.openImagePicker.bind(this)}
+            <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
+              <Thumbnail
+                large
+                source={{uri: this.state.imagePath}}
               />
-        </View>
+            </TouchableHighlight>
+
+      </View>
   )}
 
 }
