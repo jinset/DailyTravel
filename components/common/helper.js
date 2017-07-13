@@ -44,24 +44,17 @@ class Helper {
   }
 
   static getDairysByUser(userId, callback){
-    let ref = getDatabase().ref("diary")
-    dairyList = (ref.orderByChild("idOwner").equalTo(userId))
-    dairyList.on('value', (snap) => {
-        var dairys = [];
+    let ref = getDatabase().ref("/diary")
+    diaryList = (ref.orderByChild("idOwner").equalTo(userId))
+    diaryList.on('value', (snap) => {
+        var diarys = [];
         snap.forEach((child) => {
-            dairys.push({
+            diarys.push({
               id: child.key,
             });
         });
     })
-      //alert(dairys[0])
-      /*let dairy = ''
-      alert(snapshot.val().idOwner)
-      if(snapshot.val()){
-        dairy = snapshot.val()
-      }*/
-
-      callback('dairys')
+      callback('diarys')
   }
 
 }

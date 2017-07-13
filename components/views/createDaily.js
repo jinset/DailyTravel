@@ -11,6 +11,8 @@ import {
 
 import { Container, Content, Button, Text, Input } from 'native-base';
 import { getDatabase } from '../common/database';
+import DatePicker from 'react-native-datepicker';
+import Moment from 'moment';
 
 export default class CreateDaily extends Component{
 
@@ -21,17 +23,19 @@ export default class CreateDaily extends Component{
       name: null,
       experience: null,
       tips: null,
+      date: new Date().toLocaleDateString(),
       dataSource: ds.cloneWithRows([null]),
     };
   }
 
   onPressAddDaily(){
-    alert(this.state.name);
     getDatabase().ref().child('daily/').push({
       name: this.state.name,
+      date: this.state.date,
       experience: this.state.experience,
       tips: this.state.tips,
     });
+    alert(this.state.name);
   }
 
   render() {
@@ -41,6 +45,30 @@ export default class CreateDaily extends Component{
           <Text>Daily name:</Text>
           <Input
             onChangeText={(text) => this.setState({name:text})}
+          />
+
+          <DatePicker
+            style={{width: 150}}
+               date={Moment(this.state.date)}
+               mode="date"
+               placeholder="select date"
+               format="MM/DD/YY"
+               //minDate="2016-05-01"
+               //maxDate="2016-05-01"
+               confirmBtnText="Confirm"
+               cancelBtnText="Cancel"
+               customStyles={{
+                 dateIcon: {
+                     position: 'absolute',
+                     left: 0,
+                     top: 4,
+                   marginLeft: 0
+                 },
+               dateInput: {
+                   marginLeft: 36
+               }
+             }}
+             onDateChange={(date) => {this.setState({date: date})}}
           />
 
           <Text>My experience:</Text>
@@ -55,13 +83,14 @@ export default class CreateDaily extends Component{
 
           <Button block success
               onPress={this.onPressAddDaily.bind(this)}>
-          <Text>patiyo</Text>
+          <Text>Agregar</Text>
           </Button>
         </Content>
       </Container>
     );
   }
 }
+
 
 
 const styles = StyleSheet.create({
