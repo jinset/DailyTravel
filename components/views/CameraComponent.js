@@ -11,10 +11,50 @@ import {
   Text,
   View,
   Image,
+  Platform,
+  Button,
+  TouchableHighlight,
 } from 'react-native';
-import ImagePicker from 'react-native-image-picker';
+import { Container, Content, Form, Item, Input, Label,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
+import Helper from '../common/helper';
 import { Icon } from 'react-native-elements';
-import { getDatabase } from '../common/database'
+import { getDatabase } from '../common/database';
+import { getStorage } from '../common/database';
+import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'react-native-fetch-blob';
+import firebase from 'firebase';
+
+const Blob = RNFetchBlob.polyfill.Blob
+const fs = RNFetchBlob.fs
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+window.Blob = Blob
+
+const uploadImage = (uri, imageName) => {
+      const mime='image/jpg'
+      return new Promise((resolve, reject) => {
+         const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
+         let uploadBlob = null
+         const imageRef = firebase.storage().ref('images/').child(imageName)
+         fs.readFile(uploadUri, 'base64')
+             .then((data) => {
+                return Blob.build(data, {type: `${mime};BASE64`})
+             })
+             .then((blob) => {
+                uploadBlob = blob
+                return imageRef.put(blob, {contentType: mime})
+             })
+             .then(() => {
+               uploadBlob.close()
+               return imageRef.getDownloadURL()
+             })
+             .then((url) => {
+               resolve(url)
+             })
+             .catch((error) => {
+               reject(error)
+             })
+      })
+   }
 
 export default class CameraComponent extends Component {
   constructor(props) {
@@ -22,8 +62,25 @@ export default class CameraComponent extends Component {
       this.state = {
         imagePath: '',
         imageHeight: '',
-        imageWidth: ''
+        imageWidth: '',
+        uid: '',
       }
+   }
+
+  async componentWillMount () {
+     try{
+       let user = await firebase.auth().currentUser;
+       Helper.getImageUrl(user.uid, (url) => {
+         this.setState({
+           imagePath: url,
+         })
+       })
+       this.setState({
+         uid: user.uid,
+       })
+     } catch(error){
+       console.log(error)
+     }
    }
 
    openImagePicker(){
@@ -44,31 +101,35 @@ export default class CameraComponent extends Component {
        }else{
          this.setState({
            imagePath: response.uri,
-           imageHeight: response.height,
-           imageWidth: response.width
          })
-         this.addImage(response)
+       }
+       if(this.state.uid){
+           try{
+              this.state.imagePath ?
+                  uploadImage(this.state.imagePath, `${this.state.uid}.jpg`)
+                      .then((responseData) => {
+                        Helper.setImageUrl(this.state.uid, responseData)
+                      })
+                      .done()
+                  : null
+           } catch(error){
+             alert(error)
+           }
        }
      })
-   }
-
-   addImage(response){
-     getDatabase().ref().child('daily/').push({
-          photo: response.uri
-    });
    }
 
   render(){
     return (
         <View>
-            {this.state.imagePath ? <Image style={{width: 300, height: 300}} source={{uri: this.state.imagePath}} /> : null}
-            <Icon
-                  reverse
-                  name='camera-enhance'
-                  color='#517fa4'
-                  onPress={this.openImagePicker.bind(this)}
+            <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
+              <Thumbnail
+                large
+                source={{uri: this.state.imagePath}}
               />
-        </View>
+            </TouchableHighlight>
+
+      </View>
   )}
 
 }

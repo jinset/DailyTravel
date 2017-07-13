@@ -47,14 +47,15 @@ export default class Signup extends Component {
         alert(errorMessage);
       }
     }).then(function(firebaseUser) {
-      getDatabase().ref().child('users/' + firebaseUser.uid).push().set({
+      getDatabase().ref().child('users/' + firebaseUser.uid).set({
         Status: 'act',
         Name: that.name,
         LastName: that.lastName,
         Email: that.email,
         Admin: false,
         BirthPlace: that.country,
-        BirthDay: that.birthDay
+        BirthDay: that.birthDay,
+        url: ''
       });
       Alert.alert("Cuenta agregada con exito ");
     })

@@ -9,9 +9,12 @@ import { Container, Content,Form, Item, Input, Label, Button,Toast, Icon, Spinne
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import {getAuth} from '../common/database';
+import {setUser} from '../common/userState';
 import CameraComponent from './CameraComponent'
 import strings from '../common/local_strings.js'
 import Signup from './signup';
+import Diary from './diary';
+import Profile from './profile';
 import Home from './home';
 
 
@@ -25,8 +28,8 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: '',
+      email: 'z@z.com',
+      password: '12345!',
       showToast: false,
       showSpinner: false
     }
@@ -92,8 +95,9 @@ export default class Login extends Component {
 const DailyTravel = StackNavigator({
   Login: { screen: Login },
   Signup: { screen: Signup },
+  Diary: { screen: Diary },
+  Profile: {screen: Profile},
   Home: { screen: Home },
-
 });
 
 AppRegistry.registerComponent('DailyTravel', () => DailyTravel);
