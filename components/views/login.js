@@ -1,22 +1,21 @@
 'use strict';
 import {
   AppRegistry,
-  Text,
   Alert,
+  Text
 } from 'react-native';
 
-import { Container, Content,Form, Item, Input, Label, Button} from 'native-base';
+import { Container, Content,Form, Item, Input, Label, Button,Toast, Icon, Spinner} from 'native-base';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import {getAuth} from '../common/database';
+import {setUser} from '../common/userState';
 import CameraComponent from './CameraComponent'
 import strings from '../common/local_strings.js'
 import Signup from './signup';
 import Diary from './diary';
-import NewDiary from './NewDiary';
-import Daily from './dailyList';
-import CreateDaily from './createDaily';
-import DiaryList from './diaryList';
+import Profile from './profile';
+import Home from './home';
 
 
 export default class Login extends Component {
@@ -29,18 +28,27 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: ''
+      email: 'z@z.com',
+      password: '12345!',
+      showToast: false,
+      showSpinner: false
     }
   }
 
   login() {
     const { navigate } = this.props.navigation;
+    //this.setState({ showSpinner: true });
     getAuth().signInWithEmailAndPassword(this.state.email,
       this.state.password).then(function(firebaseUser) {
-      navigate('Diary');
+      navigate('Home');
     }).catch(function(error) {
-      alert(error);
+      //this.setState({ showSpinner: false });
+
+      Toast.show({
+              text: strings.wrongPassEmail,
+              position: 'bottom',
+              buttonText: 'Okay'
+            })
     });
   }
   render() {
@@ -48,7 +56,10 @@ export default class Login extends Component {
 
     return (
       <Container style={{flex: 1,marginTop:90}}>
-             <Content>
+             <Content padder>
+             { this.state.showSpinner ? <Spinner /> : null }
+
+
              <Form>
               <Item floatingLabel>
                   <Label>{strings.email}</Label>
@@ -69,8 +80,8 @@ export default class Login extends Component {
                   <Text style={{color:'white'}}>{strings.loging}</Text>
                </Button>
                 <Button transparent light onPress={() => navigate('Signup')}  style={{marginTop:15, flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center'}}>
+                  justifyContent: 'center',
+                  alignItems: 'center'}}>
                   <Text style={{textAlign: 'center'}}>{strings.singup}</Text>
                 </Button>
              </Content>
@@ -85,10 +96,8 @@ const DailyTravel = StackNavigator({
   Login: { screen: Login },
   Signup: { screen: Signup },
   Diary: { screen: Diary },
-  NewDiary: { screen: NewDiary },
-  Daily: { screen: Daily },
-  DiaryList: { screen: DiaryList },
-
+  Profile: {screen: Profile},
+  Home: { screen: Home },
 });
 
 AppRegistry.registerComponent('DailyTravel', () => DailyTravel);

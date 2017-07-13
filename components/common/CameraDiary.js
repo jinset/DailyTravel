@@ -16,7 +16,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import { Container, Content, Form, Item, Input, Label,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
-import Helper from '../common/helper';
+import HelperDiary from './helperDiary';
 import { Icon } from 'react-native-elements';
 import { getDatabase } from '../common/database';
 import { getStorage } from '../common/database';
@@ -60,23 +60,21 @@ export default class CameraComponent extends Component {
   constructor(props) {
       super(props);
       this.state = {
-        imagePath: '',
-        imageHeight: '',
-        imageWidth: '',
-        uid: '',
+        key: '',
+        imagePath:'',
       }
    }
 
   async componentWillMount () {
      try{
-       let user = await firebase.auth().currentUser;
-       Helper.getImageUrl(user.uid, (url) => {
+       let key = "-KouQwXlWVRwyeIDdwdj";
+       HelperDiary.getImageUrl(key, (url) => {
          this.setState({
            imagePath: url,
          })
        })
        this.setState({
-         uid: user.uid,
+         key: key,
        })
      } catch(error){
        console.log(error)
@@ -103,12 +101,12 @@ export default class CameraComponent extends Component {
            imagePath: response.uri,
          })
        }
-       if(this.state.uid){
+       if(this.state.key){
            try{
               this.state.imagePath ?
-                  uploadImage(this.state.imagePath, `${this.state.uid}.jpg`)
+                  uploadImage(this.state.imagePath, `${this.state.key}.jpg`)
                       .then((responseData) => {
-                        Helper.setImageUrl(this.state.uid, responseData)
+                        HelperDiary.setImageUrl(this.state.key, responseData)
                       })
                       .done()
                   : null

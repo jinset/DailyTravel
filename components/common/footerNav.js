@@ -10,31 +10,43 @@ import {
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import { Container, Content, Footer, FooterTab, Button, Icon, Text, Badge } from 'native-base';
-import strings from './local_strings.js'
-import CameraComponent from '../views/CameraComponent';
+import strings from '../common/local_strings.js'
 
  export default class FooterNav extends Component {
   render() {
     return (
-      <Container>
-        <Content />
+      <View>
         <Footer>
-           <FooterTab>
-            <Button vertical>
-              <Icon name="home" />
+          <FooterTab>
+            <Button active badge vertical>
+              <Badge><Text>2</Text></Badge>
+              <Icon  name="home" />
             </Button>
-            <Button vertical>
+             <Button badge vertical>
+                <Badge><Text>2</Text></Badge>
                 <Icon name="book" />
-            </Button>
-            <Button   vertical>
+                <Text>{strings.dairy}</Text>
+              </Button>
+              <Button badge vertical>
+                <Badge><Text>2</Text></Badge>
+                <Icon name="paper" />
+                <Text>Día</Text>
+              </Button>
+            <Button  badge vertical>
+              <Badge ><Text>51</Text></Badge>
               <Icon  name="map" />
+              <Text>{strings.map}</Text>
+            </Button>
+            <Button vertical>
+              <Icon name="camera" />
             </Button>
             <Button vertical>
               <Icon name="person" />
+              <Text>{strings.profile}</Text>
             </Button>
           </FooterTab>
         </Footer>
-      </Container>
+      </View>
     );
   }
 }
