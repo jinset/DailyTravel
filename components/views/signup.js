@@ -58,7 +58,7 @@ export default class Signup extends Component {
         BirthDay: that.birthDay,
         Url: ''
       });
-      Alert.alert("Cuenta agregada con exito ");
+      alert("Cuenta agregada con exito ");
     })
   }
   render() {
