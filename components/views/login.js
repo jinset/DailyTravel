@@ -21,8 +21,8 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: '',
+      email: 'z@z.com',
+      password: '12345!',
       showToast: false,
       showSpinner: false
     }
@@ -58,14 +58,14 @@ export default class Login extends Component {
               <Item floatingLabel>
                   <Label>{strings.email}</Label>
                   <Input
-                   onChangeText = {(text) => this.setState({email: 'z@z.com'})}
+                   onChangeText = {(text) => this.setState({email: text})}
                    value = {this.state.email}/>
               </Item>
 
               <Item floatingLabel>
                   <Label>{strings.password}</Label>
                   <Input
-                  onChangeText = {(text) => this.setState({password: '12345!'})}
+                  onChangeText = {(text) => this.setState({password: text})}
                   value = {this.state.password}
                   secureTextEntry = {true}/>
               </Item>
