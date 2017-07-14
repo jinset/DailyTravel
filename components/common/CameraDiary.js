@@ -122,11 +122,17 @@ export default class CameraComponent extends Component {
         <View>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
               <Thumbnail
-                large
+                large  style={{ alignSelf: "center" }}
                 source={{uri: this.state.imagePath}}
               />
             </TouchableHighlight>
-
+           {/* <TouchableHighlight  onPress={this.openImagePicker.bind(this)}>
+               <Card>
+                <CardItem cardBody>
+                  <Image source={{uri: this.state.imagePath}} style={{height: 200, width: null, flex: 1}}/>
+                </CardItem>
+              </Card>
+            </TouchableHighlight>*/}
       </View>
   )}
 

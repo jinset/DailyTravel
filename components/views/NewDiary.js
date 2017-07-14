@@ -40,7 +40,7 @@ var usuario ='';
       date:'',
       description: '',
       culture: '',
-      url:'',
+      url:'http://corpuschristi.neighborhoodscope.com/wp-content/themes/zinox-media/assets/img/noimagedefault.jpg',
 
     }
   }
@@ -62,11 +62,11 @@ var usuario ='';
   add(){
      getDatabase().ref().child('diary/').push().set({
       idOwner:usuario,
-      name:this.state.name,
        name:this.state.name,
        description:this.state.description,
        culture: this.state.culture,
        privacy:this.state.privacy,
+       url:this.state.url,
        status:this.state.status,
    }).catch(function(error) {
        alert(error);
