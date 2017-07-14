@@ -33,13 +33,14 @@ export default class CreateDaily extends Component{
  };
 
   onPressAddDaily(){
+    const { goBack } = this.props.navigation;
     getDatabase().ref().child('daily/').push({
       name: this.state.name,
       date: this.state.date,
       experience: this.state.experience,
       tips: this.state.tips,
     });
-    alert(this.state.name);
+    goBack();
   }
 
   render() {
@@ -53,10 +54,10 @@ export default class CreateDaily extends Component{
 
           <DatePicker
             style={{width: 150}}
-               date={Moment(this.state.date, 'MM/DD/YYYY')}
+               date={Moment(this.state.date, 'MM/DD/YY')}
                mode="date"
                placeholder="select date"
-               format="MM/DD/YYYY"
+               format="MM/DD/YY"
                //minDate="2016-05-01"
                //maxDate="2016-05-01"
                confirmBtnText="Confirm"

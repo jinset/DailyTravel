@@ -12,6 +12,9 @@ import Signup from './signup';
 //Import de vistas Home
 import Home from './home/home';
 
+//Import de vista Profile
+import Profile from './profile/profile';
+
 //Import de vistas daily
 import CreateDaily from './daily/createDaily';
 import EditDaily from './daily/editDaily';
@@ -21,31 +24,33 @@ import ListDaily from './daily/listDaily';
 import DairyView from './diary/diary';
 import NewDiary from './diary/NewDiary';
 
-export const DailyTravelDaily = StackNavigator({
+export const DTDaily = StackNavigator({
   //Daily
-  listDaily: {
-    screen: ListDaily,
-    navigationOptions: {
-      title: "Daily",
-    },
-  },
-
+    listDaily: { screen: ListDaily },
     createDaily: { screen: CreateDaily },
     editDaily: { screen: EditDaily },
 });
 
-export const DailyTravelHome = StackNavigator({
+export const DTHome = StackNavigator({
   //Home
-    home: { screen: Home,
-      navigationOptions: {
-      title: "Home",
-      },
-    },
+    home: { screen: Home },
+});
+
+export const DTProfile = StackNavigator({
+  //Profile
+    profile: { screen: Profile },
+});
+
+export const DTNewDiary = StackNavigator({
+  //Acceso rapidopara crear diario
+    newDiary: { screen: NewDiary }
 });
 
 export const DailyTravelTabs = TabNavigator({
-    homeTab: { screen: DailyTravelHome},
-    dailyTab: {screen: DailyTravelDaily},
+    homeTab: { screen: DTHome },
+    dailyTab: {screen: DTDaily },
+    createDiary: {screen: DTNewDiary },
+    profile: { screen: DTProfile },
 });
 
 

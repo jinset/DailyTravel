@@ -26,6 +26,11 @@ export default class ListDaily extends Component{
     };
   }
 
+  static navigationOptions = {
+    header: null,
+    title: 'Daily'
+ };
+
   getDailyList(dataRef) {
     dataRef.on('value', (snap) => {
       var dailies = [];
@@ -57,7 +62,8 @@ export default class ListDaily extends Component{
     );
   }
   addDaily=()=>{
-    alert('hola');
+    const { navigate } = this.props.navigation;
+    navigate('createDaily');
   }
 
   render() {

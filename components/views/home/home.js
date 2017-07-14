@@ -67,7 +67,7 @@ const cards = [
              </CardItem>
            </Card>
          </Content>
-         <FooterNav></FooterNav>
+         
        </Container>
     );
   }
