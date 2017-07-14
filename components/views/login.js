@@ -7,15 +7,8 @@ import {
 
 import { Container, Content,Form, Item, Input, Label, Button,Toast, Icon, Spinner} from 'native-base';
 import React, {Component} from 'react';
-import { StackNavigator } from 'react-navigation';
 import {getAuth} from '../common/database';
-import {setUser} from '../common/userState';
-import CameraComponent from './CameraComponent'
-import strings from '../common/local_strings.js'
-import Signup from './signup';
-import Diary from './diary';
-import Profile from './profile';
-import Home from './home';
+import strings from '../common/local_strings.js';
 
 
 export default class Login extends Component {
@@ -40,7 +33,8 @@ export default class Login extends Component {
     //this.setState({ showSpinner: true });
     getAuth().signInWithEmailAndPassword(this.state.email,
       this.state.password).then(function(firebaseUser) {
-      navigate('Home');
+        navigate('dailyTravelTabs');
+
     }).catch(function(error) {
       //this.setState({ showSpinner: false });
 
@@ -79,7 +73,7 @@ export default class Login extends Component {
                <Button block info onPress = {this.login.bind(this)} style={{marginTop:15}}>
                   <Text style={{color:'white'}}>{strings.loging}</Text>
                </Button>
-                <Button transparent light onPress={() => navigate('Signup')}  style={{marginTop:15, flexDirection: 'column',
+                <Button transparent light onPress={() => navigate('signup')}  style={{marginTop:15, flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center'}}>
                   <Text style={{textAlign: 'center'}}>{strings.singup}</Text>
@@ -90,14 +84,3 @@ export default class Login extends Component {
     );
   }
 }
-
-
-const DailyTravel = StackNavigator({
-  Login: { screen: Login },
-  Signup: { screen: Signup },
-  Diary: { screen: Diary },
-  Profile: {screen: Profile},
-  Home: { screen: Home },
-});
-
-AppRegistry.registerComponent('DailyTravel', () => DailyTravel);
