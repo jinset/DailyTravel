@@ -40,16 +40,16 @@ export default class Login extends Component {
     //this.setState({ showSpinner: true });
     getAuth().signInWithEmailAndPassword(this.state.email,
       this.state.password).then(function(firebaseUser) {
-      navigate('Home');
-    }).catch(function(error) {
+      navigate('Profile');
+    })/*.catch(function(error) {
       //this.setState({ showSpinner: false });
-
+      alert(error)
       Toast.show({
               text: strings.wrongPassEmail,
               position: 'bottom',
               buttonText: 'Okay'
             })
-    });
+    });*/
   }
   render() {
     const { navigate } = this.props.navigation;

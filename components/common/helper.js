@@ -51,10 +51,13 @@ class Helper {
         snap.forEach((child) => {
             diarys.push({
               id: child.key,
+              name: child.val().name,
+              description: child.val().description,
+              url: child.val().url,
             });
         });
+        callback(diarys)
     })
-      callback('diarys')
   }
 
 }
