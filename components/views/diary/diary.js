@@ -9,12 +9,10 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, Switch, Icon, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge,Fab  } from 'native-base';
-import strings from '../common/local_strings.js';
-import { getDatabase } from '../common/database';
-import FooterNav from  '../common/footerNav.js';
-import Daily1 from  './createDaily.js';
-import Login from  './login.js';
+import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, Switch, Icon, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
+import strings from '../../common/local_strings.js';
+import { getDatabase } from '../../common/database';
+import FooterNav from  '../../common/footerNav.js';
 
  export default class DairyView extends Component {
 

@@ -1,4 +1,4 @@
-import { getDatabase } from '../common/database';
+import { getDatabase } from '../../common/database';
 import * as firebase from 'firebase'
 
 class HelperDiary {
@@ -15,7 +15,7 @@ class HelperDiary {
         if(snap.val()){
           url = snap.val()
         }else{
-          url = "http://corpuschristi.neighborhoodscope.com/wp-content/themes/zinox-media/assets/img/noimagedefault.jpg"
+          url = "https://firebasestorage.googleapis.com/v0/b/daily-travel-6ff5f.appspot.com/o/images%2Fdiary%2FdefultDiary.png?alt=media&token=238cc03e-2a95-426a-8d32-7adf0e52bd6f"
         }
         callback(url)
       })
