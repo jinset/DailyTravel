@@ -34,10 +34,9 @@ export default class Login extends Component {
     getAuth().signInWithEmailAndPassword(this.state.email,
       this.state.password).then(function(firebaseUser) {
         navigate('dailyTravelTabs');
-
     }).catch(function(error) {
       //this.setState({ showSpinner: false });
-
+      alert(error)
       Toast.show({
               text: strings.wrongPassEmail,
               position: 'bottom',

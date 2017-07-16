@@ -7,7 +7,6 @@
 import { AppRegistry } from 'react-native';
 import App from './components/views/index';
 import Login from './components/views/login';
-import {getAuth} from './components/common/database'
 
 //class DailyTravel extends Component{
 //   componentDidMount() {
