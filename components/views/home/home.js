@@ -5,16 +5,14 @@ import {
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
 import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body,Drawer} from 'native-base';
-import strings from '../common/local_strings.js';
-import { getDatabase } from '../common/database';
-import FooterNav from  '../common/footerNav.js';
-
+import strings from '../../common/local_strings.js';
+import { getDatabase } from '../../common/database';
 
 const cards = [
   {
     text: 'Card One',
     name: 'One',
-    image: require('../common/img.jpg'),
+    image: require('../../common/img.jpg'),
   },
 ];
 
@@ -22,20 +20,15 @@ const cards = [
    constructor(props) {
      super(props);
      this.state = {
-       image: require('../common/img.jpg'),
+       image: require('../../common/img.jpg'),
      }
    }
    static navigationOptions = {
+    header: null,
     title: "Home",
   };
 
   render() {
-    closeDrawer = () => {
-   this.drawer._root.close()
- };
- openDrawer = () => {
-   this.drawer._root.open()
- };
     return (
       <Container>
          <Content>
@@ -67,7 +60,7 @@ const cards = [
              </CardItem>
            </Card>
          </Content>
-         <FooterNav></FooterNav>
+
        </Container>
     );
   }

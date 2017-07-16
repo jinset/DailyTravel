@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import { Container, Content, Button, Text, Input } from 'native-base';
-import { getDatabase } from '../common/database';
+import { getDatabase } from '../../common/database';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
 
@@ -28,14 +28,19 @@ export default class CreateDaily extends Component{
     };
   }
 
+  static navigationOptions = {
+   title: "Daily",
+ };
+
   onPressAddDaily(){
+    const { goBack } = this.props.navigation;
     getDatabase().ref().child('daily/').push({
       name: this.state.name,
       date: this.state.date,
       experience: this.state.experience,
       tips: this.state.tips,
     });
-    alert(this.state.name);
+    goBack();
   }
 
   render() {
@@ -49,7 +54,7 @@ export default class CreateDaily extends Component{
 
           <DatePicker
             style={{width: 150}}
-               date={Moment(this.state.date)}
+               date={Moment(this.state.date, 'MM/DD/YY')}
                mode="date"
                placeholder="select date"
                format="MM/DD/YY"

@@ -1,4 +1,4 @@
-import * as Firebase from 'firebase'
+import * as firebase from 'firebase'
 
 let HAS_INITIALIZED = false
 
@@ -13,23 +13,23 @@ const initFirebase = () => {
           messagingSenderId: "651940849732"
         }
 
-        Firebase.database.enableLogging(true)
-        Firebase.initializeApp(config)
+        firebase.database.enableLogging(true)
+        firebase.initializeApp(config)
         HAS_INITIALIZED = true
     }
 }
 
 export const getAuth = () => {
     initFirebase()
-    return Firebase.auth()
+    return firebase.auth()
 }
 
 export const getDatabase = () => {
     initFirebase()
-    return Firebase.database()
+    return firebase.database()
 }
 
 export const getStorage = () => {
     initFirebase()
-    return Firebase.storage()
+    return firebase.storage()
 }
