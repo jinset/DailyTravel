@@ -5,61 +5,92 @@ import {
   TouchableHighlight,
   ToolbarAndroid,
   ActivityIndicator,
-  Alert
+  Alert,Image 
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Item, Input, Label, Button,Text,Body, Right, Switch, Icon, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
+import { Container, Content, Form, Item, Input,Fab, Label,Title , Button,Text,Body, Right, Switch, Icon, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
-
- export default class DairyView extends Component {
+import * as firebase from 'firebase'
+let url = ''
+ export default class DiaryView extends Component {
 
    static navigationOptions = {
     header: null,
-    title: strings.dairy,
+    title: strings.diary,
   };
   constructor(props) {
     super(props);
+    this.dataRef = getDatabase().ref('/diary/-KoyXbSVw7tEyVVnfo5P');
     this.state = {
-      active: 'false'
+      active: 'false',
+      idOwner:'',
+      name: '', 
+      description: '',
+      culture: '',
+      url:'nuevo',
     };
+      let ref = "/diary/-KoyXbSVw7tEyVVnfo5P"
+      firebase.database().ref(ref).on('value', (snap) => {
+        if(snap.val()){
+          this.setState({
+        url: snap.val().url,
+        idOwner:snap.val().idOwner,
+        name: snap.val().name, 
+        description: snap.val().description,
+        culture: snap.val().culture,
+      });
+        }else{
+          Toast.show({
+              text: strings.wrongPassEmail,
+              position: 'bottom',
+              buttonText: 'Okay'
+            })
+           const { navigate } = this.props.navigation;
+           navigate('profile');
+        }
+      })
   }
-
   render() {
         //const { navigate } = this.props.navigation;
+  
     return (
 
          <Container>
         <Content>
-          <View style={{ flex: 1 }}>
-            <Fab
-              active={this.state.active}
-              direction="down"
-              containerStyle={{ }}
-              style={{ backgroundColor: 'black' }}
-              position="topRight"
-              onPress={() => navigate('Daily')}>
-              <Icon name="calendar" />
-            </Fab>  
-          </View>
+          <Card style={{flex: 0}}>
+            <CardItem>
+              <Body>
+                <Image source={{uri: this.state.url}} style={{height: 100, width: 290, flex: 1}}/>
+                </Body>
+            </CardItem>
 
-
-          <Card>
             <CardItem>
               <Left>
-                <Thumbnail source={{uri: 'http://concepto.de/wp-content/uploads/2015/03/Paisaje.jpg'}} />
-                <Body>
-                  <Text>NativeBase</Text>
-                  <Text note>GeekyAnts</Text>
-                </Body>
+                  <Text>{this.state.name}</Text>
               </Left>
+              <Right>
+                <Button transparent textStyle={{color: '#87838B'}}>
+                 
+                  <Text>Editar</Text>
+                </Button>
+              </Right>
             </CardItem>
-            </Card>
-
+            <CardItem>
+              <Body>
+                <Text>{this.state.description}</Text>
+              </Body>
+            </CardItem>
+            <CardItem>
+              <Body>
+              <Text large >{strings.culture}</Text >
+                <Text>{this.state.culture}</Text>
+              </Body>
+            </CardItem>
+          </Card>
         </Content>
-        <FooterNav></FooterNav>
       </Container>
     );
   }

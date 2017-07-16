@@ -23,7 +23,8 @@
     "react-native-popup-dialog": "^0.9.29",
     "react-native-tab-view": "^0.0.67",
     "react-native-vector-icons": "^4.1.1",
-    "react-navigation": "git+https://github.com/react-community/react-navigation.git"
+    "react-navigation": "git+https://github.com/react-community/react-navigation.git",
+    "react-window-size": "^1.1.0"
   },
   "devDependencies": {
     "babel-jest": "20.0.3",
