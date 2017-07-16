@@ -1,9 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -16,10 +10,10 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import { Container, Content, Form, Item, Input, Label,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
-import Helper from '../common/helper';
+import Helper from '../profile/helper';
 import { Icon } from 'react-native-elements';
-import { getDatabase } from '../common/database';
-import { getStorage } from '../common/database';
+import { getDatabase } from '../../common/database';
+import { getStorage } from '../../common/database';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import firebase from 'firebase';
@@ -34,7 +28,7 @@ const uploadImage = (uri, imageName) => {
       return new Promise((resolve, reject) => {
          const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
          let uploadBlob = null
-         const imageRef = firebase.storage().ref('images/').child(imageName)
+         const imageRef = firebase.storage().ref('images/profile/').child(imageName)
          fs.readFile(uploadUri, 'base64')
              .then((data) => {
                 return Blob.build(data, {type: `${mime};BASE64`})
@@ -70,13 +64,13 @@ export default class CameraComponent extends Component {
   async componentWillMount () {
      try{
        let user = await firebase.auth().currentUser;
-       Helper.getImageUrl(user.uid, (url) => {
+       Helper.getImageUrl("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (url) => {
          this.setState({
            imagePath: url,
          })
        })
        this.setState({
-         uid: user.uid,
+         uid: "0OzwjYU9g4MRuxwQYlH1UQcKcyC3",
        })
      } catch(error){
        console.log(error)
@@ -88,7 +82,7 @@ export default class CameraComponent extends Component {
        title: 'Select Avatar',
        storageOptions: {
          skipBackup: true,
-         path: 'images'
+         path: 'images/profile'
        }
      }
      ImagePicker.showImagePicker(options, (response) => {
@@ -102,21 +96,25 @@ export default class CameraComponent extends Component {
          this.setState({
            imagePath: response.uri,
          })
-       }
-       if(this.state.uid){
-           try{
-              this.state.imagePath ?
-                  uploadImage(this.state.imagePath, `${this.state.uid}.jpg`)
-                      .then((responseData) => {
-                        Helper.setImageUrl(this.state.uid, responseData)
-                      })
-                      .done()
-                  : null
-           } catch(error){
-             alert(error)
-           }
+         this.createImage()
        }
      })
+   }
+
+   createImage(){
+     if(this.state.uid){
+         try{
+            this.state.imagePath ?
+                uploadImage(this.state.imagePath, `${this.state.uid}.jpg`)
+                    .then((responseData) => {
+                      Helper.setImageUrl(this.state.uid, responseData)
+                    })
+                    .done()
+                : null
+         } catch(error){
+           alert(error)
+         }
+     }
    }
 
   render(){

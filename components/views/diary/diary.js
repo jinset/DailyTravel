@@ -17,32 +17,37 @@ import * as firebase from 'firebase'
 let url = ''
  export default class DiaryView extends Component {
 
-   static navigationOptions = {
+static navigationOptions = ({ navigation }) => ({
     header: null,
     title: strings.diary,
-  };
+  });
   constructor(props) {
     super(props);
-    this.dataRef = getDatabase().ref('/diary/-KoyXbSVw7tEyVVnfo5P');
     this.state = {
       active: 'false',
       idOwner:'',
       name: '', 
       description: '',
       culture: '',
-      url:'nuevo',
+      url:'',
     };
-      let ref = "/diary/-KoyXbSVw7tEyVVnfo5P"
-      firebase.database().ref(ref).on('value', (snap) => {
-        if(snap.val()){
-          this.setState({
-        url: snap.val().url,
-        idOwner:snap.val().idOwner,
-        name: snap.val().name, 
-        description: snap.val().description,
-        culture: snap.val().culture,
-      });
-        }else{
+
+    try{
+      const { params } = this.props.navigation.state;
+        let ref = "/diary/"+ "-KoQBCFvwU8kY8XL3Ioa"
+        firebase.database().ref(ref).on('value', (snap) => {
+          if(snap.val()){
+            this.setState({
+              url: snap.val().url,
+              idOwner:snap.val().idOwner,
+              name: snap.val().name, 
+              description: snap.val().description,
+              culture: snap.val().culture,
+            });
+            alert(this.state.name);
+           }
+        });
+      }catch(error){
           Toast.show({
               text: strings.wrongPassEmail,
               position: 'bottom',
@@ -51,7 +56,6 @@ let url = ''
            const { navigate } = this.props.navigation;
            navigate('profile');
         }
-      })
   }
   render() {
         //const { navigate } = this.props.navigation;
