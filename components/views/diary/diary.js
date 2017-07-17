@@ -1,20 +1,20 @@
-import {
-  AppRegistry, TextInput, View, TouchableHighlight, ToolbarAndroid,
-   ActivityIndicator, Alert,Image, Dimensions } from 'react-native';
+import { Alert,Image, Dimensions } from 'react-native';
 import React, {Component} from 'react';
-import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Item, Input,Fab, Label,Title ,Toast, Button,Text,Body, Right, Switch, Icon, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
+import { Container, Content,  Toast, Button,Text,Body, Right,
+ Card, CardItem, Thumbnail, Left } from 'native-base';
+import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
-import FooterNav from  '../../common/footerNav.js';
-import * as firebase from 'firebase'
+import * as firebase from 'firebase';
+
 var idOwner, name, description, culture, url
 
 export default class DiaryView extends Component {
 
 static navigationOptions = ({ navigation }) => ({
-    header: null,
     title: strings.diary,
+    headerStyle: {backgroundColor: '#70041b',height: 50,alignSelf: 'center' },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   });
   constructor(props) {
     super(props);
@@ -57,28 +57,27 @@ static navigationOptions = ({ navigation }) => ({
           <Card style={{flex: 0}}>
                 <Image source={{uri: url}} 
                 style={{height: 100, width: Dimensions.get('window').width}}/>
-            <CardItem>
-              <Left>
-                  <Text style={{fontWeight: 'bold',fontSize: 18}}>{name}</Text>
-              </Left>
-              <Right>
-                <Button transparent textStyle={{color: '#87838B'}}
-                 onPress={() => navigate('editDiary', {diaryKey:params.diaryKey})}>
-                 
-                  <Text>Editar</Text>
-                </Button>
-              </Right>
-            </CardItem>
-            <CardItem>
-              <Body>
-                <Text>{description}</Text>
-              </Body>
-            </CardItem>
-            <CardItem>
-              <Body>
-                <Text>{culture}</Text>
-              </Body>
-            </CardItem>
+                <CardItem>
+                  <Left>
+                    <Text style={{fontWeight: 'bold',fontSize: 18}}>{name}</Text>
+                  </Left>
+                  <Right>
+                    <Button transparent small
+                            onPress={()=> navigate('editDiary', {diaryKey:params.diaryKey})}>
+                        <Icon active name='mode-edit' />
+                      </Button>
+                  </Right>
+                </CardItem>
+                <CardItem>
+                  <Body>
+                    <Text>{description}</Text>
+                  </Body>
+                </CardItem>
+                <CardItem>
+                  <Body>
+                    <Text>{culture}</Text>
+                  </Body>
+                </CardItem>
           </Card>
         </Content>
       </Container>

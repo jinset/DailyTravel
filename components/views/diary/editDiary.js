@@ -5,22 +5,56 @@ import {
   TouchableHighlight,
   ToolbarAndroid,
   ActivityIndicator,
-  Alert,ListView ,Dimensions
+  Alert,ListView ,Dimensions,Platform
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content,Header,Picker, Form,List,Toast,ListItem,Radio, Item,Title, Input, Label, Button ,Text,Body,CheckBox ,ActionSheet, Right, Switch, Icon, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
+import { Container, Content,Header,Picker, Form,List,Toast,ListItem,Radio, Item,Title, Input, Label, Button ,Text,Body,CheckBox ,ActionSheet, Right, Switch, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
 import strings from '../../common/local_strings.js';
 import FooterNav from  '../../common/footerNav.js';
 import { getDatabase } from '../../common/database';
 import PopupDialog, { SlideAnimation } from 'react-native-popup-dialog';
 import { DialogTitle } from 'react-native-popup-dialog';
 import * as firebase from 'firebase';
-import  CameraDiary  from './CameraDiary';
+import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'react-native-fetch-blob';
+import HelperDiary from './helperDiary';
+import { Icon } from 'react-native-elements';
+const Blob = RNFetchBlob.polyfill.Blob
+const fs = RNFetchBlob.fs
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+window.Blob = Blob
 
-var newRef =''; 
+var key =''; 
 var usuario =''; 
 let ref='';
+
+const uploadImage = (uri, imageName) => {
+      const mime='image/jpg'
+      return new Promise((resolve, reject) => {
+         const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
+         let uploadBlob = null
+         const imageRef = firebase.storage().ref('images/diary').child(imageName)
+         fs.readFile(uploadUri, 'base64')
+             .then((data) => {
+                return Blob.build(data, {type: `${mime};BASE64`})
+             })
+             .then((blob) => {
+                uploadBlob = blob
+                return imageRef.put(blob, {contentType: mime})
+             })
+             .then(() => {
+               uploadBlob.close()
+               return imageRef.getDownloadURL()
+             })
+             .then((url) => {
+               resolve(url)
+             })
+             .catch((error) => {
+               reject(error)
+             })
+      })
+   }
  export default class NewDiary extends Component {
 // Nav options can be defined as a function of the screen's props:
   static navigationOptions = ({ navigation }) => ({
@@ -32,9 +66,8 @@ let ref='';
      try{
       const { params } = this.props.navigation.state;
          ref = "/diary/"+ params.diaryKey
-         alert(params.diaryKey)
+         key=params.diaryKey
         firebase.database().ref(ref).on('value', (snap) => {
-          if(snap.val()){
             this.state = {
               url: snap.val().url,
               idOwner:snap.val().idOwner,
@@ -42,10 +75,11 @@ let ref='';
               description: snap.val().description, 
               privacy: snap.val().privacy,
               culture:  snap.val().culture,
-              status:snap.val().status
+              status:snap.val().status,
+              key: '',
+              imagePath:'',
             }
-            alert('privacidad: '+this.state.privacy)
-           }
+           
         });
       }catch(error){
           Toast.show({
@@ -66,6 +100,54 @@ let ref='';
      } catch(error){
        alert("error: " + error)
      }
+     try{
+       HelperDiary.getImageUrl(key, (url) => {
+         this.setState({
+           imagePath: url,
+         })
+       })
+       this.setState({
+         key: key,
+       })
+     } catch(error){
+       console.log(error)
+     }
+   }
+
+   openImagePicker(){
+     var options = {
+       title: 'Select Avatar',
+       storageOptions: {
+         skipBackup: true,
+         path: 'images/diary'
+       }
+     }
+     ImagePicker.showImagePicker(options, (response) => {
+       if(response.didCancel){
+         console.log('User cancelled image picker')
+       }else if(response.error){
+         console.log('Error'+response.error)
+       }else if(response.customButton){
+         console.log('User tapped custom button'+response.customButton)
+       }else{
+         this.setState({
+           imagePath: response.uri,
+         })
+       }
+       if(this.state.key){
+           try{
+              this.state.imagePath ?
+                  uploadImage(this.state.imagePath, `${this.state.key}.jpg`)
+                      .then((responseData) => {
+                        HelperDiary.setImageUrl(this.state.key, responseData)
+                      })
+                      .done()
+                  : null
+           } catch(error){
+             alert(error)
+           }
+       }
+     })
    }
   //Cambia la privacidad
   privacyChange(){
@@ -73,7 +155,6 @@ let ref='';
   }
    //Agrega el diario 
   add(){
-    alert('este es ref: '+ref);
      getDatabase().ref().child(ref).set({
       idOwner:usuario,
        name:this.state.name,
@@ -84,7 +165,7 @@ let ref='';
        status:this.state.status,
    })
     const { navigate } = this.props.navigation;
-     navigate('DairyView');
+       this.props.navigation.goBack()
 }
 
   render() {
@@ -94,7 +175,12 @@ let ref='';
         <Container>
           <Content>
             <Form>
-            <CameraDiary/>
+            <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
+              <Thumbnail
+                large  style={{ alignSelf: "center" }}
+                source={{uri: this.state.imagePath}}
+              />
+            </TouchableHighlight>
               <Right>
                 <Label>{strings.privacy }</Label>
                 <Switch
@@ -124,7 +210,7 @@ let ref='';
             </Form>
           </Content>
               <Button full
-               onPress={() => this.add()}>
+               onPress={() => this.add()} style= {{backgroundColor: '#70041b'}}>
                <Text>{strings.save }</Text>
               </Button>   
         </Container>
