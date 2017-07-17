@@ -89,6 +89,7 @@ export default class Profile extends Component {
         return (
                 <ScrollView>
                     <CardItem key={i}>
+                    <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:d.id})}>
                         <Body>
                             <Text>{d.name} </Text>
                             <Text>{d.description} </Text>
@@ -99,6 +100,7 @@ export default class Profile extends Component {
                                 />
                             </Left>
                         </Body>
+                        </TouchableHighlight>
                     </CardItem>
                 </ScrollView>
               )

@@ -23,6 +23,7 @@ import ListDaily from './daily/listDaily';
 //Import de vistas Diary
 import DairyView from './diary/diary';
 import NewDiary from './diary/NewDiary';
+import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
@@ -46,11 +47,14 @@ export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
     editProfile: {screen: EditProfile},
+  //Acceso a la vista de diario
+    DairyView: { screen: DairyView },
 });
 
 export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
-    newDiary: { screen: NewDiary }
+    newDiary: { screen: NewDiary },
+    editDiary: { screen: EditDiary },
 });
 
 export const DailyTravelTabs = TabNavigator({
