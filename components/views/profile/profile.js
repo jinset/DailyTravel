@@ -11,10 +11,11 @@ import {
   Image,
   Dimensions,
   StyleSheet,
+  Text,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Segment, Item, Input, Label, Button,Text,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
+import { Container, Content, Form, Segment, Item, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
@@ -36,6 +37,7 @@ export default class Profile extends Component {
          lastName: '',
          email: '',
          nickname: '',
+         imagePath: '',
          diarys: diarys,
        }
     }
@@ -68,6 +70,11 @@ export default class Profile extends Component {
             nickname: nickname,
          })
       })
+      Helper.getImageUrl("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (url) => {
+        this.setState({
+          imagePath: url,
+        })
+      })
        Helper.getDairysByUser("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (d) => {
         this.setState({
             diarys: d,
@@ -87,19 +94,31 @@ export default class Profile extends Component {
 
     let listTable = this.state.diarys.map((d,i) => {
         return (
-                <ScrollView>
-                    <CardItem key={i}>
+                <ScrollView key={i}>
+                    <CardItem>
                         <Body>
-                            <Text>{d.name} </Text>
-                            <Text>{d.description} </Text>
-                            <Left>
-                                <Image
-                                  source={{uri: d.url}}
-                                  style={{height: 300, width: Dimensions.get('window').width}}
-                                />
-                            </Left>
+                          <View style={styles.row}>
+                              <Thumbnail
+                                small
+                                source={{uri: this.state.imagePath}}
+                              />
+                            <View style={styles.center}>
+                                  <Text style={styles.diary}>{"    " +d.name} </Text>
+                              </View>
+                              <Right>
+                                  <Icon active name='more-vert' />
+                              </Right>
+                          </View>
+                          <Left>
+                              <Image
+                                source={{uri: d.url}}
+                                style={{height: 300, width: Dimensions.get('window').width}}
+                              />
+                              <Text style={styles.description}> {d.description} </Text>
+                          </Left>
                         </Body>
                     </CardItem>
+                    <Separator></Separator>
                 </ScrollView>
               )
       });
@@ -113,7 +132,7 @@ export default class Profile extends Component {
                     <View style={styles.column}>
                         <CameraComponent />
                             {this.state.nickname ?
-                              <Text >{this.state.nickname}</Text>
+                              <Text style={styles.nick}>{this.state.nickname}</Text>
                               : null
                             }
                             {/*{this.state.userName && this.state.lastName ?
@@ -121,17 +140,16 @@ export default class Profile extends Component {
                               : null
                             } */}
                     </View>
-                    <Body>
-                    </Body>
+                 </Left>
                     <Button transparent small
-                            onPress={()=>navigate('editProfile', {userName: this.state.userName,
+                            onPress={()=>navigate('editProfile', {nickname: this.state.nickname,
+                                                                  userName: this.state.userName,
                                                                   lastName: this.state.lastName,
                                                                   email: this.state.email,
-                                                                  nickname: this.state.nickname,
                                                                 })}>
                         <Icon active name='mode-edit' />
                     </Button>
-                  </Left>
+
                 </CardItem>
               </Card>
               <Card>
@@ -150,6 +168,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 15,
   },
+  center: {
+      alignItems: 'center',
+      flexDirection: 'row',
+  },
   privateInfo: {
     paddingTop: 15,
   },
@@ -158,5 +180,27 @@ const styles = StyleSheet.create({
   },
   column: {
     flexDirection: 'column',
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  nick: {
+    fontStyle: 'italic',
+    fontSize: 16,
+    color: '#000000',
+  },
+  diary: {
+    fontStyle: 'italic',
+    fontSize: 15,
+    color: '#000000',
+    fontWeight: 'bold',
+  },
+  description: {
+    fontStyle: 'italic',
+    textAlign: 'justify',
+    fontSize: 14,
+    textDecorationStyle: 'solid',
+    color: '#000000',
+    paddingLeft: 5,
   }
 });

@@ -23,12 +23,14 @@ import Helper from './helper';
 import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
+import Accordion from 'react-native-accordion';
 
 export default class EditProfile extends Component {
 
    constructor(props) {
        super(props);
        this.state = {
+         inputNickname: '',
          inputName: '',
          inputLastName: '',
          inputNickname: '',
@@ -40,9 +42,9 @@ export default class EditProfile extends Component {
       const { params } = this.props.navigation.state;
       try{
         this.setState({
+          inputNickname: params.nickname,
           inputName: params.userName,
           inputLastName: params.lastName,
-          inputNickname: '',
           inputEmail: params.email,
         })
       } catch(error){
@@ -53,9 +55,12 @@ export default class EditProfile extends Component {
    save(){
      const {goBack} = this.props.navigation;
      try{
-       Helper.setUserName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputName)
-       Helper.setUserLastName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputLastName)
-       Helper.setUserEmail("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputEmail)
+       if(this.state.inputNickname && this.state.inputEmail){
+         Helper.setUserNickname("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputNickname)
+         Helper.setUserName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputName)
+         Helper.setUserLastName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputLastName)
+         Helper.setUserEmail("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputEmail)
+       }
        goBack()
      } catch(error){
        alert("error: " + error)
@@ -75,7 +80,8 @@ export default class EditProfile extends Component {
                 <Card>
                         <Item >
                             <Icon active name='loyalty' />
-                            <Input placeholder='Nick'
+                            <Input placeholder={params.nickname}
+                                   onChangeText={(text) => this.setState({inputNickname: text})}
                                    maxLength = {20} />
                         </Item>
                         <Item >
@@ -90,10 +96,21 @@ export default class EditProfile extends Component {
                                    onChangeText={(text) => this.setState({inputLastName: text})}
                                    maxLength = {20}/>
                         </Item>
-                        <Item >
-                            <Icon active name='cake' />
-                            <Input placeholder='  Cumpleaños'/>
-                        </Item>
+                        <Accordion
+                          header={
+                            <View style={styles.row}>
+                                    <Icon active name='cake' />
+                                    <Label>Cumpleaños</Label>
+                            </View>
+                          }
+                          content={
+                            <View>
+                                <Icon active name='cake' />
+                                <Input placeholder='  Cumpleaños'/>
+                            </View>
+                          }
+                          easing="easeOutCubic"
+                        />
                 </Card>
                 <Left >
                     <View style={styles.privateInfo}>
@@ -139,5 +156,8 @@ const styles = StyleSheet.create({
   },
   title: {
     alignItems: 'center',
-  }
+  },
+  row: {
+    flexDirection: 'row',
+  },
 });
