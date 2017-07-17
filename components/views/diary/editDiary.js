@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content,Header,Picker, Form,List,ListItem,Radio, Item,Title, Input, Label, Button ,Text,Body,CheckBox ,ActionSheet, Right, Switch, Icon, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
+import { Container, Content,Header,Picker, Form,List,Toast,ListItem,Radio, Item,Title, Input, Label, Button ,Text,Body,CheckBox ,ActionSheet, Right, Switch, Icon, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
 import strings from '../../common/local_strings.js';
 import FooterNav from  '../../common/footerNav.js';
 import { getDatabase } from '../../common/database';
@@ -20,20 +20,42 @@ import  CameraDiary  from './CameraDiary';
 
 var newRef =''; 
 var usuario =''; 
+let ref='';
  export default class NewDiary extends Component {
+// Nav options can be defined as a function of the screen's props:
+  static navigationOptions = ({ navigation }) => ({
+    header: null,
+    title: strings.diary,
+  });
   constructor(props){
     super(props)
-    this.state = {
-      idOwner:'',
-      name: '',      
-      status: true,
-      privacy: false,
-      date:'',
-      description: '',
-      culture: '',
-      url:'https://firebasestorage.googleapis.com/v0/b/daily-travel-6ff5f.appspot.com/o/images%2Fdiary%2FdefultDiary.png?alt=media&token=238cc03e-2a95-426a-8d32-7adf0e52bd6f',
-
-    }
+     try{
+      const { params } = this.props.navigation.state;
+         ref = "/diary/"+ params.diaryKey
+         alert(params.diaryKey)
+        firebase.database().ref(ref).on('value', (snap) => {
+          if(snap.val()){
+            this.state = {
+              url: snap.val().url,
+              idOwner:snap.val().idOwner,
+              name: snap.val().name, 
+              description: snap.val().description, 
+              privacy: snap.val().privacy,
+              culture:  snap.val().culture,
+              status:snap.val().status
+            }
+            alert('privacidad: '+this.state.privacy)
+           }
+        });
+      }catch(error){
+          Toast.show({
+              text: strings.error,
+              position: 'bottom',
+              buttonText: 'Okay'
+            })
+           const { navigate } = this.props.navigation;
+           navigate('profile');
+        }
   }
 
 //Obtiene el usuario loggeado
@@ -51,7 +73,8 @@ var usuario ='';
   }
    //Agrega el diario 
   add(){
-     getDatabase().ref().child('diary/').push()({
+    alert('este es ref: '+ref);
+     getDatabase().ref().child(ref).set({
       idOwner:usuario,
        name:this.state.name,
        description:this.state.description,
@@ -59,27 +82,19 @@ var usuario ='';
        privacy:this.state.privacy,
        url:this.state.url,
        status:this.state.status,
-   }).catch(function(error) {
-        Toast.show({
-              text: strings.wrongPassEmail,
-              position: 'bottom',
-              buttonText: 'Okay'
-            })
-  });
+   })
     const { navigate } = this.props.navigation;
-     navigate('profile');
+     navigate('DairyView');
 }
-  // Nav options can be defined as a function of the screen's props:
-  static navigationOptions = {
-    title: 'Diario',
-    header: null,
-  };
+
   render() {
+    const { navigate } = this.props.navigation;
     return (
 
         <Container>
           <Content>
             <Form>
+            <CameraDiary/>
               <Right>
                 <Label>{strings.privacy }</Label>
                 <Switch
@@ -89,17 +104,17 @@ var usuario ='';
               <Item floatingLabel>
                 <Label>{strings.name }</Label>
                 <Input onChangeText={(text) => this.setState({name:text})}
-                returnKeyLabel = {"next"} />
+                returnKeyLabel = {"next"} value={ this.state.name } />
               </Item>
               <Item floatingLabel>
                 <Label>{strings.description }</Label>
                 <Input onChangeText={(text) => this.setState({description:text})}
-                returnKeyLabel = {"next"}/>
+                returnKeyLabel = {"next"}  value={ this.state.description }/>
               </Item>
               <Item floatingLabel>
                 <Label>{strings.culture }</Label>
                 <Input onChangeText={(text) => this.setState({culture:text})}
-                returnKeyLabel = {"next"} />
+                returnKeyLabel = {"next"}  value={ this.state.culture }/>
               </Item>
                <Button rounded light>
                   <Icon name='people' />
