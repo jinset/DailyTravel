@@ -5,15 +5,17 @@ import {
   TextInput,
   StyleSheet,
   Dimensions,
-  Alert
+  Alert,
+  AsyncStorage
 } from 'react-native';
 
 import Countries from '../common/countries.json';
 import {getAuth, getDatabase} from '../common/database';
+import strings from '../common/local_strings.js';
 
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content,Form, Item, Input, Label, Button} from 'native-base';
+import { Container, Content,Form, Item, Input, Label, Button,Toast} from 'native-base';
 import ModalDropdown from 'react-native-modal-dropdown';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
@@ -41,30 +43,42 @@ export default class Signup extends Component {
 
   add() {
     var that = this.state;
-    getAuth().createUserWithEmailAndPassword(this.state.email,
-      this.state.password).catch(function(error) {
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      if (errorCode == 'auth/weak-password') {
-        alert('The password is too weak.');
-      } else {
-        alert(errorMessage);
+    var checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(this.state.nickname);
+    checkNick.once('value', function(snapshot) {
+      if (snapshot.exists() == false) {
+        getAuth().createUserWithEmailAndPassword(that.email,
+          that.password).catch(function(error) {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          if (errorCode == 'auth/weak-password') {
+            alert('The password is too weak.');
+          } else {
+            alert(errorMessage);
+          }
+        }).then(function(firebaseUser) {
+          getDatabase().ref().child('users/' + firebaseUser.uid).update({
+            status: 'act',
+            name: that.name,
+            lastName: that.lastName,
+            email: that.email,
+            admin: false,
+            birthPlace: that.country,
+            bornDay: that.date,
+            nickname: that.nickname,
+            url: that.url
+          });
+          alert("Cuenta agregada con exito ");
+        })
+      }else{
+        Toast.show({
+                text: strings.nicknameExits,
+                position: 'bottom',
+                buttonText: 'Okay'
+              })
       }
-    }).then(function(firebaseUser) {
-      getDatabase().ref().child('users/' + firebaseUser.uid).update({
-        Status: 'act',
-        Name: that.name,
-        LastName: that.lastName,
-        Email: that.email,
-        Admin: false,
-        BirthPlace: that.country,
-        BirthDay: that.date,
-        Nickname: that.nickname,
-        Url: that.url
-      });
-      alert("Cuenta agregada con exito ");
     })
-  }
+}
+
   render() {
 
     return (
@@ -117,7 +131,7 @@ export default class Signup extends Component {
                        placeholder="select date"
                        format="MM/DD/YY"
                        //minDate="2016-05-01"
-                       //maxDate="2016-05-01"
+                       maxDate={Moment(this.state.date, 'MM/DD/YY')}
                        confirmBtnText="Confirm"
                        cancelBtnText="Cancel"
                        customStyles={{
@@ -132,10 +146,12 @@ export default class Signup extends Component {
                        }
                      }}
                      onDateChange={(date) => {this.setState({date: date})}}
-                  />
+                  >
+                  <Text>Born day</Text>
+                  </DatePicker>
              </Form>
                <Button block info onPress = {this.add.bind(this)} style={{marginTop:15}}>
-                  <Text style={{color:'white'}}>Create New Account</Text>
+                  <Text style={{color:'white'}}>{strings.signup}</Text>
                </Button>
 
              </Content>
