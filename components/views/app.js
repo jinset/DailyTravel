@@ -40,7 +40,7 @@ export const DTDaily = StackNavigator({
 
 export const DTHome = StackNavigator({
   //Home
-    home: { screen: Signup },
+    home: { screen: Home },
 });
 
 export const DTProfile = StackNavigator({
