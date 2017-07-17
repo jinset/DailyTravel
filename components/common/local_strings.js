@@ -25,7 +25,7 @@ let strings = new LocalizedStrings({
    search:"Search",
    notifications:"Notifications",
    singin:"Singin",
-   singup:"Singup",
+   signup:"Signup",
    loging:"Login",
    report:"Report",
    cancel:"Cancel",
@@ -37,7 +37,8 @@ let strings = new LocalizedStrings({
    termsConditions:"Terms and Conditions",
    accept:"accept",
    email:"Email Address",
-   wrongPassEmail: "Wrong password or email"
+   wrongPassEmail: "Wrong password or email",
+   nicknameExits: "Nickname already exists "
  },
  es:{
    home:"Inicio",
@@ -62,7 +63,7 @@ let strings = new LocalizedStrings({
    map:"Mapa",
    search:"Buscar",
    notifications:"Notificaciones",
-   singup:"Registrarse",
+   signup:"Registrarse",
    loging:"Iniciar sesión",
    report:"Reportar",
    cancel:"Cancelar",
@@ -74,7 +75,9 @@ let strings = new LocalizedStrings({
    termsConditions:"Terminos y condiciones",
    accept:"Aceptar",
    email:"Correo Electrónico",
-   wrongPassEmail: "Contraseña o correo electrónico incorrectos"
+   wrongPassEmail: "Contraseña o correo electrónico incorrectos",
+   nicknameExits: "Apodo ya existe "
+
  }
 });
 
