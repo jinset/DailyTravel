@@ -42,7 +42,7 @@ export default class Login extends Component {
               position: 'bottom',
               buttonText: 'Okay'
             })
-    });*/
+    });
   }
   render() {
     const { navigate } = this.props.navigation;

@@ -17,11 +17,13 @@
     "react-native-deprecated-custom-components": "^0.1.0",
     "react-native-elements": "^0.13.0",
     "react-native-fetch-blob": "^0.10.2",
+    "react-native-icons": "^0.7.1",
     "react-native-image-picker": "^0.23.0",
-    "react-native-localization": "^0.1.30",
+    "react-native-loading-spinner-overlay": "^0.5.1",
+    "react-native-localization": "^0.1.31",
     "react-native-modal-dropdown": "^0.4.4",
     "react-native-popup-dialog": "^0.9.29",
-    "react-native-vector-icons": "^4.1.1",
+    "react-native-vector-icons": "^4.2.0",
     "react-navigation": "^1.0.0-beta.11"
   },
   "devDependencies": {
