@@ -29,6 +29,12 @@ let diarys = [{id: null, name: null, description: null, url: null}]
 
 export default class Profile extends Component {
 
+  static navigationOptions = {
+    title: strings.profile,
+    headerStyle: {backgroundColor: '#70041b',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+  }
+
    constructor(props) {
        super(props);
        this.state = {
@@ -38,14 +44,10 @@ export default class Profile extends Component {
          email: '',
          nickname: '',
          imagePath: '',
+         birthday: '',
          diarys: diarys,
        }
     }
-
-   static navigationOptions = {
-    header: null,
-    title: null,
-   };
 
    async componentDidMount(){
      try{
@@ -73,6 +75,11 @@ export default class Profile extends Component {
       Helper.getImageUrl("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (url) => {
         this.setState({
           imagePath: url,
+        })
+      })
+      Helper.getUserBirthDay("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (birthday) => {
+        this.setState({
+          birthday: birthday,
         })
       })
        Helper.getDairysByUser("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (d) => {
@@ -148,6 +155,7 @@ export default class Profile extends Component {
                                                                   userName: this.state.userName,
                                                                   lastName: this.state.lastName,
                                                                   email: this.state.email,
+                                                                  birthday: this.state.birthday,
                                                                 })}>
                         <Icon active name='mode-edit' />
                     </Button>

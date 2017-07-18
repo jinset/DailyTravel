@@ -24,9 +24,9 @@ import { getDatabase } from '../../common/database';
      };
    }
     static navigationOptions = {
-    title: strings.home,
-    header: null
-  }
+        title: strings.home,
+        header: null
+    }
 
   getDiaryList(dataRef) {
     dataRef.on('value', (snap) => {
