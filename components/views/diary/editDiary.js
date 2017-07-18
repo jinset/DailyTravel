@@ -58,8 +58,8 @@ const uploadImage = (uri, imageName) => {
  export default class NewDiary extends Component {
 // Nav options can be defined as a function of the screen's props:
   static navigationOptions = ({ navigation }) => ({
-    header: null,
-    title: strings.diary,
+      headerStyle: {backgroundColor: '#70041b',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   });
   constructor(props){
     super(props)
@@ -202,15 +202,15 @@ const uploadImage = (uri, imageName) => {
                 <Input onChangeText={(text) => this.setState({culture:text})}
                 returnKeyLabel = {"next"}  value={ this.state.culture }/>
               </Item>
-               <Button rounded light>
+               
+               <Button rounded dark transparent style= {{ margin:10}}>
                   <Icon name='people' />
-                  <Text>{strings.guest }</Text>
                 </Button>
                 
             </Form>
           </Content>
-              <Button full
-               onPress={() => this.add()} style= {{backgroundColor: '#70041b'}}>
+              <Button full light style= {{backgroundColor: '#D3D0CB'}}
+               onPress={() => this.add()} >
                <Text>{strings.save }</Text>
               </Button>   
         </Container>

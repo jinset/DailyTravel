@@ -18,7 +18,7 @@ let strings = new LocalizedStrings({
    place:"Place",
    date:"Date",
    photos:"Photos",
-   experences:"Experences",
+   experiences:"Experiences",
    friends:"Friends",
    profile:"Profile",
    map:"Map",
@@ -38,7 +38,8 @@ let strings = new LocalizedStrings({
    accept:"accept",
    email:"Email Address",
    wrongPassEmail: "Wrong password or email",
-   nicknameExits: "Nickname already exists "
+   nicknameExits: "Nickname already exists ",
+   tips:"Tips"
  },
  es:{
    home:"Inicio",
@@ -57,7 +58,7 @@ let strings = new LocalizedStrings({
    place:"Lugar",
    date:"Fecha",
    photos:"Fotos",
-   experences:"Experiencias",
+   experiences:"Experiencias",
    friends:"Amigos",
    profile:"Perfil",
    map:"Mapa",
@@ -76,7 +77,8 @@ let strings = new LocalizedStrings({
    accept:"Aceptar",
    email:"Correo Electrónico",
    wrongPassEmail: "Contraseña o correo electrónico incorrectos",
-   nicknameExits: "Apodo ya existe "
+   nicknameExits: "Apodo ya existe ",
+   tips:"Recomendaciones",
 
  }
 });

@@ -23,10 +23,11 @@ import { getDatabase } from '../../common/database';
        })
      };
    }
-   static navigationOptions = {
-    header: null,
-    title: "Home",
-  };
+    static navigationOptions = {
+    title: strings.home,
+    headerStyle: {backgroundColor: '#70041b',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+  }
 
   getDiaryList(dataRef) {
     dataRef.on('value', (snap) => {

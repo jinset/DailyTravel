@@ -1,20 +1,21 @@
 import { Alert,Image, Dimensions } from 'react-native';
 import React, {Component} from 'react';
 import { Container, Content,  Toast, Button,Text,Body, Right,
- Card, CardItem, Thumbnail, Left } from 'native-base';
+ Card, CardItem, Thumbnail, Left, Tab, Tabs } from 'native-base';
 import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
+import DailyList from '../daily/listDaily.js';
 import * as firebase from 'firebase';
 
 var idOwner, name, description, culture, url
 
 export default class DiaryView extends Component {
-
+ // headerStyle: {backgroundColor: '#70041b',height: 50 },
+   // headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
 static navigationOptions = ({ navigation }) => ({
     title: strings.diary,
-    headerStyle: {backgroundColor: '#70041b',height: 50,alignSelf: 'center' },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+  header:null,
   });
   constructor(props) {
     super(props);
@@ -53,8 +54,10 @@ static navigationOptions = ({ navigation }) => ({
     return (
 
          <Container>
+         <Tabs initialPage={1} >
+          <Tab heading={strings.diary}  tabStyle={style={backgroundColor: '#70041b', color:'white'}} activeTabStyle={style={backgroundColor: '#70041b', color:'white'}}>
         <Content>
-          <Card style={{flex: 0}}>
+          <Card style={{flex: 0}} >
                 <Image source={{uri: url}} 
                 style={{height: 100, width: Dimensions.get('window').width}}/>
                 <CardItem>
@@ -80,6 +83,11 @@ static navigationOptions = ({ navigation }) => ({
                 </CardItem>
           </Card>
         </Content>
+        </Tab>
+          <Tab heading={strings.daily}  tabStyle={style={backgroundColor: '#70041b', color:'white'}} activeTabStyle={style={backgroundColor: '#70041b', color:'white'}}>
+        <DailyList/>
+          </Tab>
+           </Tabs>
       </Container>
     );
   }
