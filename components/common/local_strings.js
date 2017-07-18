@@ -38,8 +38,14 @@ let strings = new LocalizedStrings({
    accept:"accept",
    email:"Email Address",
    wrongPassEmail: "Wrong password or email",
+   changePassword: " Change password",
+   privateInformation: "Private Information",
+   changePerfilPhoto: "Change profile photo",
+   select: "Select",
+   takePhoto: "Take Photo",
+   chooseFromLibrary: "From Library",
    nicknameExits: "Nickname already exists ",
-   tips:"Tips"
+   tips:"Tips",
  },
  es:{
    home:"Inicio",
@@ -77,9 +83,14 @@ let strings = new LocalizedStrings({
    accept:"Aceptar",
    email:"Correo Electrónico",
    wrongPassEmail: "Contraseña o correo electrónico incorrectos",
+   changePassword: "Cambiar contraseña",
+   privateInformation: "Información Privada",
+   changePerfilPhoto: "Cambiar foto de perfil",
+   select: "Seleccionar",
+   takePhoto: "Tomar Foto",
+   chooseFromLibrary: "Desde Librería",
    nicknameExits: "Apodo ya existe ",
    tips:"Recomendaciones",
-
  }
 });
 

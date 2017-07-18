@@ -23,6 +23,9 @@ import Helper from './helper';
 import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
+import Accordion from 'react-native-accordion';
+import DatePicker from 'react-native-datepicker';
+import Moment from 'moment';
 
 export default class EditProfile extends Component {
   static navigationOptions = {
@@ -33,10 +36,12 @@ export default class EditProfile extends Component {
    constructor(props) {
        super(props);
        this.state = {
+         inputNickname: '',
          inputName: '',
          inputLastName: '',
          inputNickname: '',
          inputEmail: '',
+         date: '01-01-2000',
        }
     }
 
@@ -44,9 +49,9 @@ export default class EditProfile extends Component {
       const { params } = this.props.navigation.state;
       try{
         this.setState({
+          inputNickname: params.nickname,
           inputName: params.userName,
           inputLastName: params.lastName,
-          inputNickname: '',
           inputEmail: params.email,
         })
       } catch(error){
@@ -57,9 +62,12 @@ export default class EditProfile extends Component {
    save(){
      const {goBack} = this.props.navigation;
      try{
-       Helper.setUserName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputName)
-       Helper.setUserLastName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputLastName)
-       Helper.setUserEmail("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputEmail)
+       if(this.state.inputNickname && this.state.inputEmail){
+         Helper.setUserNickname("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputNickname)
+         Helper.setUserName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputName)
+         Helper.setUserLastName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputLastName)
+         Helper.setUserEmail("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputEmail)
+       }
        goBack()
      } catch(error){
        alert("error: " + error)
@@ -74,12 +82,13 @@ export default class EditProfile extends Component {
               <Form>
                <View style={styles.centerCamera}>
                     <CameraComponent />
-                    <Text>Cambiar foto de perfil</Text>
+                    <Text>{strings.changePerfilPhoto}</Text>
                </View>
                 <Card>
                         <Item >
                             <Icon active name='loyalty' />
-                            <Input placeholder='Nick'
+                            <Input placeholder={params.nickname}
+                                   onChangeText={(text) => this.setState({inputNickname: text})}
                                    maxLength = {20} />
                         </Item>
                         <Item >
@@ -94,15 +103,32 @@ export default class EditProfile extends Component {
                                    onChangeText={(text) => this.setState({inputLastName: text})}
                                    maxLength = {20}/>
                         </Item>
-                        <Item >
-                            <Icon active name='cake' />
-                            <Input placeholder='  Cumpleaños'/>
-                        </Item>
+                        <Item>
+                              <DatePicker
+                                iconComponent={ <Icon active name='cake' /> }
+                                style={{width: 20}}
+                                date={this.state.date}
+                                mode="date"
+                                hideText={true}
+                                placeholder="select date"
+                                format="DD-MM-YYYY"
+                                minDate="2016-05-01"
+                                maxDate="2016-06-01"
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                customStyles={{
+
+                                  // ... You can check the source to find the other keys.
+                                }}
+                                onDateChange={(date) => {this.setState({date: date})}}
+                              />
+                            <Label>  Cumpleaños</Label>
+                          </Item>
                 </Card>
                 <Left >
                     <View style={styles.privateInfo}>
                     <Text>
-                        Información Privada
+                        {strings.privateInformation}
                     </Text>
                     </View>
                 </Left>
@@ -113,7 +139,7 @@ export default class EditProfile extends Component {
                                    onChangeText={(text) => this.setState({inputEmail: text})}/>
                         </Item>
                         <Item >
-                            <Input placeholder='  Cambiar contraseña'
+                            <Input placeholder={strings.changePassword}
                                    secureTextEntry={true}
                                    maxLength={20} />
                             <Icon active name='keyboard-arrow-down' />
@@ -143,5 +169,8 @@ const styles = StyleSheet.create({
   },
   title: {
     alignItems: 'center',
-  }
+  },
+  row: {
+    flexDirection: 'row',
+  },
 });

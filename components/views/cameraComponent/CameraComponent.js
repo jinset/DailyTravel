@@ -12,6 +12,7 @@ import {
 import { Container, Content, Form, Item, Input, Label,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
 import Helper from '../profile/helper';
 import { Icon } from 'react-native-elements';
+import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import { getStorage } from '../../common/database';
 import ImagePicker from 'react-native-image-picker';
@@ -79,7 +80,11 @@ export default class CameraComponent extends Component {
 
    openImagePicker(){
      var options = {
-       title: 'Select Avatar',
+       title: strings.select,
+       takePhotoButtonTitle: strings.takePhoto,
+       chooseFromLibraryButtonTitle: strings.chooseFromLibrary,
+       cancelButtonTitle: strings.cancel,
+       mediaType: 'photo',
        storageOptions: {
          skipBackup: true,
          path: 'images/profile'
@@ -126,7 +131,6 @@ export default class CameraComponent extends Component {
                 source={{uri: this.state.imagePath}}
               />
             </TouchableHighlight>
-
       </View>
   )}
 
