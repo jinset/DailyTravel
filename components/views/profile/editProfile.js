@@ -36,6 +36,7 @@ export default class EditProfile extends Component {
    constructor(props) {
        super(props);
        this.state = {
+         uid: '',
          inputNickname: '',
          inputName: '',
          inputLastName: '',
@@ -49,6 +50,7 @@ export default class EditProfile extends Component {
       const { params } = this.props.navigation.state;
       try{
         this.setState({
+          uid: params.uid,
           inputNickname: params.nickname,
           inputName: params.userName,
           inputLastName: params.lastName,
@@ -62,14 +64,13 @@ export default class EditProfile extends Component {
 
    save(){
      const {goBack} = this.props.navigation;
+
      try{
-       if(this.state.inputNickname && this.state.inputEmail){
-         Helper.setUserNickname("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputNickname)
-         Helper.setUserName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputName)
-         Helper.setUserLastName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputLastName)
-         Helper.setUserEmail("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputEmail)
-         Helper.setUserBirthDay("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputBirthDay)
-       }
+         Helper.setUserNickname(this.state.uid, this.state.inputNickname)
+         Helper.setUserName(this.state.uid, this.state.inputName)
+         Helper.setUserLastName(this.state.uid, this.state.inputLastName)
+         Helper.setUserEmail(this.state.uid, this.state.inputEmail)
+         Helper.setUserBirthDay(this.state.uid, this.state.inputBirthDay)
        goBack()
      } catch(error){
        alert("error: " + error)

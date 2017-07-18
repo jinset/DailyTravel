@@ -24,7 +24,7 @@ import Moment from 'moment';
 export default class Signup extends Component {
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
-      title: strings.Signup,
+    title: strings.Signup,
     headerStyle: {backgroundColor: '#70041b',height: 50 },
     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   };
