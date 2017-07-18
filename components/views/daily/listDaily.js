@@ -7,8 +7,8 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-
-import { Container, Content, Button, Text, Input } from 'native-base';
+import { Icon } from 'react-native-elements';
+import { Container, Content, Button, Text, Input,Right } from 'native-base';
 import { ListItem } from 'react-native-elements';
 import { getDatabase } from '../../common/database';
 
@@ -71,11 +71,11 @@ export default class ListDaily extends Component{
   render() {
     return(
       <Container>
+            <Button transparent large
+                   onPress={this.addDaily.bind(this)}>
+                <Icon active name='add' />
+              </Button>
         <Content>
-          <Button rounded onPress={this.addDaily.bind(this)}>
-            <Text>Add new daily</Text>
-          </Button>
-
           <ListView
             dataSource={this.state.dataSource}
             renderRow={this._renderItem.bind(this)}

@@ -3,7 +3,6 @@ package com.dailytravel;
 import com.facebook.react.ReactActivity;
 import com.RNFetchBlob.RNFetchBlobPackage;
 
-
 public class MainActivity extends ReactActivity {
 
     /**

@@ -21,8 +21,8 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: 'z@z.com',
-      password: '12345!',
+      email: '',
+      password: '',
       showToast: false,
       showSpinner: false
     }
@@ -38,10 +38,8 @@ export default class Login extends Component {
         alert(firebaseUser.uid);
 
         //SETEAR USER AL STATE Y VOLVER AL INDEX.ANDROID PARA VALIDAR
-
     }).catch(function(error) {
       //this.setState({ showSpinner: false });
-
       Toast.show({
               text: strings.wrongPassEmail,
               position: 'bottom',
@@ -56,7 +54,6 @@ export default class Login extends Component {
       <Container style={{flex: 1,marginTop:90}}>
              <Content padder>
              { this.state.showSpinner ? <Spinner /> : null }
-
 
              <Form>
               <Item floatingLabel>
@@ -80,7 +77,7 @@ export default class Login extends Component {
                 <Button transparent light onPress={() => navigate('signup')}  style={{marginTop:15, flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center'}}>
-                  <Text style={{textAlign: 'center'}}>{strings.singup}</Text>
+                  <Text style={{textAlign: 'center'}}>{strings.signup}</Text>
                 </Button>
              </Content>
            </Container>

@@ -1,3 +1,9 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ * @flow
+ */
+
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -10,11 +16,9 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import { Container, Content, Form, Item, Input, Label,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
-import Helper from '../profile/helper';
+import HelperDiary from './helperDiary';
 import { Icon } from 'react-native-elements';
-import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
-import { getStorage } from '../../common/database';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import firebase from 'firebase';
@@ -29,7 +33,7 @@ const uploadImage = (uri, imageName) => {
       return new Promise((resolve, reject) => {
          const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
          let uploadBlob = null
-         const imageRef = firebase.storage().ref('images/profile/').child(imageName)
+         const imageRef = firebase.storage().ref('images/diary').child(imageName)
          fs.readFile(uploadUri, 'base64')
              .then((data) => {
                 return Blob.build(data, {type: `${mime};BASE64`})
@@ -55,23 +59,21 @@ export default class CameraComponent extends Component {
   constructor(props) {
       super(props);
       this.state = {
-        imagePath: '',
-        imageHeight: '',
-        imageWidth: '',
-        uid: '',
+        key: '',
+        imagePath:'',
       }
    }
 
   async componentWillMount () {
      try{
-       let user = await firebase.auth().currentUser;
-       Helper.getImageUrl("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (url) => {
+       let key = "-KouQwXlWVRwyeIDdwdj";
+       HelperDiary.getImageUrl(key, (url) => {
          this.setState({
            imagePath: url,
          })
        })
        this.setState({
-         uid: "0OzwjYU9g4MRuxwQYlH1UQcKcyC3",
+         key: key,
        })
      } catch(error){
        console.log(error)
@@ -80,14 +82,10 @@ export default class CameraComponent extends Component {
 
    openImagePicker(){
      var options = {
-       title: strings.select,
-       takePhotoButtonTitle: strings.takePhoto,
-       chooseFromLibraryButtonTitle: strings.chooseFromLibrary,
-       cancelButtonTitle: strings.cancel,
-       mediaType: 'photo',
+       title: 'Select Avatar',
        storageOptions: {
          skipBackup: true,
-         path: 'images/profile'
+         path: 'images/diary'
        }
      }
      ImagePicker.showImagePicker(options, (response) => {
@@ -101,25 +99,21 @@ export default class CameraComponent extends Component {
          this.setState({
            imagePath: response.uri,
          })
-         this.createImage()
+       }
+       if(this.state.key){
+           try{
+              this.state.imagePath ?
+                  uploadImage(this.state.imagePath, `${this.state.key}.jpg`)
+                      .then((responseData) => {
+                        HelperDiary.setImageUrl(this.state.key, responseData)
+                      })
+                      .done()
+                  : null
+           } catch(error){
+             alert(error)
+           }
        }
      })
-   }
-
-   createImage(){
-     if(this.state.uid){
-         try{
-            this.state.imagePath ?
-                uploadImage(this.state.imagePath, `${this.state.uid}.jpg`)
-                    .then((responseData) => {
-                      Helper.setImageUrl(this.state.uid, responseData)
-                    })
-                    .done()
-                : null
-         } catch(error){
-           alert(error)
-         }
-     }
    }
 
   render(){
@@ -127,10 +121,17 @@ export default class CameraComponent extends Component {
         <View>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
               <Thumbnail
-                large
+                large  style={{ alignSelf: "center" }}
                 source={{uri: this.state.imagePath}}
               />
             </TouchableHighlight>
+           {/* <TouchableHighlight  onPress={this.openImagePicker.bind(this)}>
+               <Card>
+                <CardItem cardBody>
+                  <Image source={{uri: this.state.imagePath}} style={{height: 200, width: null, flex: 1}}/>
+                </CardItem>
+              </Card>
+            </TouchableHighlight>*/}
       </View>
   )}
 

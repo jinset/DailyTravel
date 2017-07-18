@@ -9,10 +9,11 @@ import {
   Dimensions,
 } from 'react-native';
 
-import { Container, Content, Button, Text, Input } from 'native-base';
+import { Container, Content, Button, Text, Input,Item,Label } from 'native-base';
 import { getDatabase } from '../../common/database';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
+import strings from '../../common/local_strings.js';
 
 export default class CreateDaily extends Component{
 
@@ -29,7 +30,9 @@ export default class CreateDaily extends Component{
   }
 
   static navigationOptions = {
-   title: "Daily",
+    title: strings.daily,
+    headerStyle: {backgroundColor: '#70041b',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
  };
 
   onPressAddDaily(){
@@ -47,13 +50,14 @@ export default class CreateDaily extends Component{
     return(
       <Container>
         <Content>
-          <Text>Daily name:</Text>
+        <Item floatingLabel>
+                <Label>{strings.name }</Label>
           <Input
             onChangeText={(text) => this.setState({name:text})}
           />
-
+          </Item >
           <DatePicker
-            style={{width: 150}}
+            style={{width: 150, margin:10}}
                date={Moment(this.state.date, 'MM/DD/YY')}
                mode="date"
                placeholder="select date"
@@ -76,21 +80,23 @@ export default class CreateDaily extends Component{
              onDateChange={(date) => {this.setState({date: date})}}
           />
 
-          <Text>My experience:</Text>
+        <Item floatingLabel>
+                <Label>{strings.experiences }</Label>
           <Input
             onChangeText={(text) => this.setState({experience:text})}
           />
-
-          <Text>Tips:</Text>
+        </Item>
+        <Item floatingLabel>
+                <Label>{strings.tips }</Label>
           <Input
             onChangeText={(text) => this.setState({tips:text})}
           />
-
-          <Button block success
-              onPress={this.onPressAddDaily.bind(this)}>
-          <Text>Agregar</Text>
-          </Button>
+ </Item >
         </Content>
+          <Button full light style= {{backgroundColor: '#D3D0CB'}}
+              onPress={this.onPressAddDaily.bind(this)}>
+          <Text>{strings.save}</Text>
+          </Button>
       </Container>
     );
   }
