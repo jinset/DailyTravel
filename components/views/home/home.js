@@ -25,8 +25,7 @@ import { getDatabase } from '../../common/database';
    }
     static navigationOptions = {
     title: strings.home,
-    headerStyle: {backgroundColor: '#70041b',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    header: null
   }
 
   getDiaryList(dataRef) {
@@ -63,7 +62,7 @@ import { getDatabase } from '../../common/database';
       </CardItem>
       <CardItem>
         <Body>
-          <Image source={item.url} style={{height: 200, width: 200, flex: 1}}/>
+          <Image source={{uri: item.url}} style={{height: 200, width: 200, flex: 1}}/>
           <Text>
             {item.description}
           </Text>
