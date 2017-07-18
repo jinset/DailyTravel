@@ -24,6 +24,8 @@ import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import Accordion from 'react-native-accordion';
+import DatePicker from 'react-native-datepicker';
+import Moment from 'moment';
 
 export default class EditProfile extends Component {
 
@@ -35,6 +37,7 @@ export default class EditProfile extends Component {
          inputLastName: '',
          inputNickname: '',
          inputEmail: '',
+         date: '01-01-2000',
        }
     }
 
@@ -75,7 +78,7 @@ export default class EditProfile extends Component {
               <Form>
                <View style={styles.centerCamera}>
                     <CameraComponent />
-                    <Text>Cambiar foto de perfil</Text>
+                    <Text>{strings.changePerfilPhoto}</Text>
                </View>
                 <Card>
                         <Item >
@@ -96,26 +99,32 @@ export default class EditProfile extends Component {
                                    onChangeText={(text) => this.setState({inputLastName: text})}
                                    maxLength = {20}/>
                         </Item>
-                        <Accordion
-                          header={
-                            <View style={styles.row}>
-                                    <Icon active name='cake' />
-                                    <Label>Cumpleaños</Label>
-                            </View>
-                          }
-                          content={
-                            <View>
-                                <Icon active name='cake' />
-                                <Input placeholder='  Cumpleaños'/>
-                            </View>
-                          }
-                          easing="easeOutCubic"
-                        />
+                        <Item>
+                              <DatePicker
+                                iconComponent={ <Icon active name='cake' /> }
+                                style={{width: 20}}
+                                date={this.state.date}
+                                mode="date"
+                                hideText={true}
+                                placeholder="select date"
+                                format="DD-MM-YYYY"
+                                minDate="2016-05-01"
+                                maxDate="2016-06-01"
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                customStyles={{
+
+                                  // ... You can check the source to find the other keys.
+                                }}
+                                onDateChange={(date) => {this.setState({date: date})}}
+                              />
+                            <Label>  Cumpleaños</Label>
+                          </Item>
                 </Card>
                 <Left >
                     <View style={styles.privateInfo}>
                     <Text>
-                        Información Privada
+                        {strings.privateInformation}
                     </Text>
                     </View>
                 </Left>
@@ -126,7 +135,7 @@ export default class EditProfile extends Component {
                                    onChangeText={(text) => this.setState({inputEmail: text})}/>
                         </Item>
                         <Item >
-                            <Input placeholder='  Cambiar contraseña'
+                            <Input placeholder={strings.changePassword}
                                    secureTextEntry={true}
                                    maxLength={20} />
                             <Icon active name='keyboard-arrow-down' />
