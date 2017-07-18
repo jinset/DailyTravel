@@ -49,8 +49,15 @@ export const DTNewDiary = StackNavigator({
 export const DailyTravelTabs = TabNavigator({
     homeTab: { screen: DTHome },
     dailyTab: {screen: DTDaily },
-    createDiary: {screen: DTNewDiary },
-    profile: { screen: DTProfile },
+    createDiaryTab: {screen: DTNewDiary },
+    profileTab: { screen: DTProfile },
+});
+
+export const DailyTravelInitiate = StackNavigator({
+    login: { screen: Login },
+    signup: {screen: Signup },
+    dtTabs: {screen: DailyTravelTabs},
+
 });
 
 

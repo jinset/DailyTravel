@@ -54,10 +54,12 @@ export default class ListDaily extends Component{
   }
 
   _renderItem(item) {
+    const { navigate } = this.props.navigation;
     return (
       <ListItem
         key= {item._key}
         title={item.date + "          " + item.name}
+        onPress={() => navigate('editDaily')}
       />
     );
   }

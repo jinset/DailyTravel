@@ -16,10 +16,10 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import { Container, Content, Form, Item, Input, Label,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
-import Helper from '../common/helper';
+import Helper from '../../common/helper';
 import { Icon } from 'react-native-elements';
-import { getDatabase } from '../common/database';
-import { getStorage } from '../common/database';
+import { getDatabase } from '../../common/database';
+import { getStorage } from '../../common/database';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import firebase from 'firebase';

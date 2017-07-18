@@ -2,14 +2,14 @@
 import {
   AppRegistry,
   Alert,
-  Text
+  Text,
+  AsyncStorage,
 } from 'react-native';
 
 import { Container, Content,Form, Item, Input, Label, Button,Toast, Icon, Spinner} from 'native-base';
 import React, {Component} from 'react';
 import {getAuth} from '../common/database';
 import strings from '../common/local_strings.js';
-
 
 export default class Login extends Component {
 
@@ -33,7 +33,11 @@ export default class Login extends Component {
     //this.setState({ showSpinner: true });
     getAuth().signInWithEmailAndPassword(this.state.email,
       this.state.password).then(function(firebaseUser) {
-        navigate('dailyTravelTabs');
+        AsyncStorage.setItem("user", firebaseUser.uid);
+        navigate('dtTabs');
+        alert(firebaseUser.uid);
+
+        //SETEAR USER AL STATE Y VOLVER AL INDEX.ANDROID PARA VALIDAR
 
     }).catch(function(error) {
       //this.setState({ showSpinner: false });
