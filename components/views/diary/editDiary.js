@@ -25,8 +25,8 @@ const fs = RNFetchBlob.fs
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
 window.Blob = Blob
 
-var key =''; 
-var usuario =''; 
+var key ='';
+var usuario ='';
 let ref='';
 
 const uploadImage = (uri, imageName) => {
@@ -71,15 +71,15 @@ const uploadImage = (uri, imageName) => {
             this.state = {
               url: snap.val().url,
               idOwner:snap.val().idOwner,
-              name: snap.val().name, 
-              description: snap.val().description, 
+              name: snap.val().name,
+              description: snap.val().description,
               privacy: snap.val().privacy,
               culture:  snap.val().culture,
               status:snap.val().status,
               key: '',
               imagePath:'',
             }
-           
+
         });
       }catch(error){
           Toast.show({
@@ -153,7 +153,7 @@ const uploadImage = (uri, imageName) => {
   privacyChange(){
     this.setState( {privacy: !this.state.privacy})
   }
-   //Agrega el diario 
+   //Agrega el diario
   add(){
      getDatabase().ref().child(ref).set({
       idOwner:usuario,
@@ -202,17 +202,17 @@ const uploadImage = (uri, imageName) => {
                 <Input onChangeText={(text) => this.setState({culture:text})}
                 returnKeyLabel = {"next"}  value={ this.state.culture }/>
               </Item>
-               
+
                <Button rounded dark transparent style= {{ margin:10}}>
                   <Icon name='people' />
                 </Button>
-                
+
             </Form>
           </Content>
               <Button full light style= {{backgroundColor: '#D3D0CB'}}
                onPress={() => this.add()} >
                <Text>{strings.save }</Text>
-              </Button>   
+              </Button>
         </Container>
     );
   }
@@ -221,7 +221,7 @@ const uploadImage = (uri, imageName) => {
 
 {/*//para los invitados
   //   var myRef = getDatabase().ref().push();
-  //      var key =myRef.key;    
+  //      var key =myRef.key;
   //      getDatabase().ref().child('userDiary/').push({
   //      idUser:'4IjaDG6AyTSv2E5KBkChr5DKfMt2',
   //      idDiary: key,

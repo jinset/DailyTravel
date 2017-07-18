@@ -12,6 +12,7 @@ import {
   Dimensions,
   StyleSheet,
   Text,
+  AsyncStorage,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
@@ -28,7 +29,6 @@ import { Icon } from 'react-native-elements';
 let diarys = [{id: null, name: null, description: null, url: null}]
 
 export default class Profile extends Component {
-
    constructor(props) {
        super(props);
        this.state = {
@@ -38,50 +38,59 @@ export default class Profile extends Component {
          email: '',
          nickname: '',
          imagePath: '',
+         birthday: '',
          diarys: diarys,
        }
     }
 
-   static navigationOptions = {
-    header: null,
-    title: null,
-   };
+    static navigationOptions = {
+      title: strings.profile,
+      headerTitle: "fuck",
+      headerStyle: {backgroundColor: '#70041b',height: 50 },
+      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    }
 
-   async componentDidMount(){
+    async componentWillMount(){
      try{
-       //let user = await firebase.auth().currentUser
-       Helper.getUserName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (name) => {
-         this.setState({
-           userName: name,
-         })
-       })
-       Helper.getUserLastName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (lastname) => {
-         this.setState({
-           lastName: lastname,
-         })
-       })
-       Helper.getUserEmail("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (email) => {
-         this.setState({
-           email: email,
-         })
-       })
-       Helper.getUserNickname("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (nickname) => {
-        this.setState({
-            nickname: nickname,
-         })
-      })
-      Helper.getImageUrl("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (url) => {
-        this.setState({
-          imagePath: url,
-        })
-      })
-       Helper.getDairysByUser("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (d) => {
-        this.setState({
-            diarys: d,
-         })
-       })
-       this.setState({
-          uid: "0OzwjYU9g4MRuxwQYlH1UQcKcyC3",
+       AsyncStorage.getItem("user").then((value) => {
+             this.setState({
+               uid: value
+             })
+             Helper.getUserName(this.state.uid, (name) => {
+               this.setState({
+                 userName: name,
+               })
+             })
+             Helper.getUserNickname(this.state.uid, (nickname) => {
+              this.setState({
+                  nickname: nickname,
+               })
+            })
+            Helper.getUserLastName(this.state.uid, (lastname) => {
+              this.setState({
+                lastName: lastname,
+              })
+            })
+            Helper.getUserEmail(this.state.uid, (email) => {
+              this.setState({
+                email: email,
+              })
+            })
+            Helper.getImageUrl(this.state.uid, (url) => {
+              this.setState({
+                imagePath: url,
+              })
+            })
+            Helper.getUserBirthDay(this.state.uid, (birthday) => {
+              this.setState({
+                birthday: birthday,
+              })
+            })
+            Helper.getDairysByUser(this.state.uid, (d) => {
+             this.setState({
+                 diarys: d,
+              })
+            })
        })
      } catch(error){
        alert("error: " + error)
@@ -144,10 +153,12 @@ export default class Profile extends Component {
                     </View>
                  </Left>
                     <Button transparent small
-                            onPress={()=>navigate('editProfile', {nickname: this.state.nickname,
+                            onPress={()=>navigate('editProfile', {uid: this.state.uid,
+                                                                  nickname: this.state.nickname,
                                                                   userName: this.state.userName,
                                                                   lastName: this.state.lastName,
                                                                   email: this.state.email,
+                                                                  birthday: this.state.birthday,
                                                                 })}>
                         <Icon active name='mode-edit' />
                     </Button>

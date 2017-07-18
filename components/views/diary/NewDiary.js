@@ -18,14 +18,14 @@ import { DialogTitle } from 'react-native-popup-dialog';
 import * as firebase from 'firebase';
 import  CameraDiary  from './CameraDiary';
 
-var newRef =''; 
-var usuario =''; 
+var newRef ='';
+var usuario ='';
  export default class NewDiary extends Component {
   constructor(props){
     super(props)
     this.state = {
       idOwner:'',
-      name: '',      
+      name: '',
       status: true,
       privacy: false,
       date:'',
@@ -49,7 +49,7 @@ var usuario ='';
   privacyChange(){
     this.setState( {privacy: !this.state.privacy})
   }
-   //Agrega el diario 
+   //Agrega el diario
   add(){
      getDatabase().ref().child('diary/').push().set({
       idOwner:usuario,
@@ -105,13 +105,13 @@ var usuario ='';
                <Button rounded dark transparent style= {{ margin:10}}>
                   <Icon name='people' />
                 </Button>
-                
+
             </Form>
           </Content>
               <Button full light style= {{backgroundColor: '#D3D0CB'}}
                onPress={() => this.add()} >
                <Text>{strings.save }</Text>
-              </Button>   
+              </Button>
         </Container>
     );
   }
@@ -120,7 +120,7 @@ var usuario ='';
 
 {/*//para los invitados
   //   var myRef = getDatabase().ref().push();
-  //      var key =myRef.key;    
+  //      var key =myRef.key;
   //      getDatabase().ref().child('userDiary/').push({
   //      idUser:'4IjaDG6AyTSv2E5KBkChr5DKfMt2',
   //      idDiary: key,

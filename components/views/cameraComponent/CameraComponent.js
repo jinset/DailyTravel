@@ -8,6 +8,7 @@ import {
   Platform,
   Button,
   TouchableHighlight,
+  AsyncStorage,
 } from 'react-native';
 import { Container, Content, Form, Item, Input, Label,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
 import Helper from '../profile/helper';
@@ -64,15 +65,16 @@ export default class CameraComponent extends Component {
 
   async componentWillMount () {
      try{
-       let user = await firebase.auth().currentUser;
-       Helper.getImageUrl("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", (url) => {
-         this.setState({
-           imagePath: url,
-         })
-       })
-       this.setState({
-         uid: "0OzwjYU9g4MRuxwQYlH1UQcKcyC3",
-       })
+       AsyncStorage.getItem("user").then((value) => {
+             this.setState({
+               uid: value
+             })
+             Helper.getImageUrl(this.state.uid, (url) => {
+               this.setState({
+                 imagePath: url,
+               })
+             })
+        })
      } catch(error){
        console.log(error)
      }

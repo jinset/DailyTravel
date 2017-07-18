@@ -15,7 +15,7 @@ export default class DiaryView extends Component {
    // headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
 static navigationOptions = ({ navigation }) => ({
     title: strings.diary,
-  header:null,
+    header:null,
   });
   constructor(props) {
     super(props);
@@ -30,7 +30,7 @@ static navigationOptions = ({ navigation }) => ({
           if(snap.val()){
               url= snap.val().url,
               idOwner=snap.val().idOwner,
-              name= snap.val().name, 
+              name= snap.val().name,
               description= snap.val().description
 
            }
@@ -49,7 +49,7 @@ static navigationOptions = ({ navigation }) => ({
         }
   }
   render() {
-        const { navigate } = this.props.navigation; 
+        const { navigate } = this.props.navigation;
         const { params } = this.props.navigation.state;
     return (
 
@@ -58,7 +58,7 @@ static navigationOptions = ({ navigation }) => ({
           <Tab heading={strings.diary}  tabStyle={style={backgroundColor: '#70041b', color:'white'}} activeTabStyle={style={backgroundColor: '#70041b', color:'white'}}>
         <Content>
           <Card style={{flex: 0}} >
-                <Image source={{uri: url}} 
+                <Image source={{uri: url}}
                 style={{height: 100, width: Dimensions.get('window').width}}/>
                 <CardItem>
                   <Left>
