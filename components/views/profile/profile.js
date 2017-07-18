@@ -49,11 +49,6 @@ export default class Profile extends Component {
        }
     }
 
-   static navigationOptions = {
-    header: null,
-    title: null,
-   };
-
    async componentDidMount(){
      try{
        //let user = await firebase.auth().currentUser
