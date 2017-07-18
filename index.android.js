@@ -25,24 +25,16 @@ export default class DailyTravel extends Component{
       this.setState({
         user: value
       });
+      if (this.state.user) {
+        this.setState({
+          run: <App/>
+        });
+      } else {
+        this.setState({
+          run: <Initiate/>
+        });
+      }
     })
-    alert(this.state.user);
-
-    if (this.state.user) {
-      this.setState({
-        run: <App/>
-      });
-    } else {
-      this.setState({
-        run: <Initiate/>
-      });
-    }
-    // getAuth.currentUser.getToken(true).then(function(idToken) {
-    //   this.setState({user: idToken});
-    //   alert(this.state.user);
-    // }).catch(function(error) {
-    //   // Handle error
-    // });
   }
     render(){
       return(

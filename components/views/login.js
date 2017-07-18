@@ -35,7 +35,6 @@ export default class Login extends Component {
       this.state.password).then(function(firebaseUser) {
         AsyncStorage.setItem("user", firebaseUser.uid);
         navigate('dtTabs');
-        alert(firebaseUser.uid);
 
         //SETEAR USER AL STATE Y VOLVER AL INDEX.ANDROID PARA VALIDAR
     }).catch(function(error) {
