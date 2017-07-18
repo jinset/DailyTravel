@@ -59,23 +59,17 @@ export const DTNewDiary = StackNavigator({
 });
 
 export const DailyTravelTabs = TabNavigator({
-  homeTab: { screen: DTHome },
-  dailyTab: {screen: DTDaily },
-  createDiary: {screen: DTNewDiary },
-  profile: { screen: DTProfile },
-  }, 
-  {
-    tabBarOptions: {
-      style: {
-       backgroundColor: '#70041b',
-      },
-      tabStyle: {
-        width: 90,    
-      },
-    },
-    tabBarPosition: 'bottom',
-    showIcon: true,
-    lazyLoad: true,
+    homeTab: { screen: DTHome },
+    dailyTab: {screen: DTDaily },
+    createDiaryTab: {screen: DTNewDiary },
+    profileTab: { screen: DTProfile },
+});
+
+export const DailyTravelInitiate = StackNavigator({
+    login: { screen: Login },
+    signup: {screen: Signup },
+    dtTabs: {screen: DailyTravelTabs},
+
 });
 
 
