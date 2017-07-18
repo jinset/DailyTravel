@@ -30,7 +30,7 @@ import Moment from 'moment';
 export default class EditProfile extends Component {
   static navigationOptions = {
     title: strings.profile,
-    headerStyle: {backgroundColor: '#70041b',height: 50 },
+    headerStyle: {backgroundColor: '#70041b', height: 50 },
     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   }
    constructor(props) {
@@ -41,7 +41,7 @@ export default class EditProfile extends Component {
          inputLastName: '',
          inputNickname: '',
          inputEmail: '',
-         date: '01-01-2000',
+         inputBirthDay: '',
        }
     }
 
@@ -53,6 +53,7 @@ export default class EditProfile extends Component {
           inputName: params.userName,
           inputLastName: params.lastName,
           inputEmail: params.email,
+          inputBirthDay: params.birthday,
         })
       } catch(error){
         alert("error: " + error)
@@ -67,6 +68,7 @@ export default class EditProfile extends Component {
          Helper.setUserName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputName)
          Helper.setUserLastName("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputLastName)
          Helper.setUserEmail("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputEmail)
+         Helper.setUserBirthDay("0OzwjYU9g4MRuxwQYlH1UQcKcyC3", this.state.inputBirthDay)
        }
        goBack()
      } catch(error){
@@ -107,22 +109,21 @@ export default class EditProfile extends Component {
                               <DatePicker
                                 iconComponent={ <Icon active name='cake' /> }
                                 style={{width: 20}}
-                                date={this.state.date}
+                                date={params.birthday}
                                 mode="date"
                                 hideText={true}
                                 placeholder="select date"
-                                format="DD-MM-YYYY"
-                                minDate="2016-05-01"
-                                maxDate="2016-06-01"
+                                format="MM/DD/YYYY"
+                                minDate="01/01/1920"
+                                maxDate="01/01/2010"
                                 confirmBtnText="Confirm"
                                 cancelBtnText="Cancel"
                                 customStyles={{
 
-                                  // ... You can check the source to find the other keys.
                                 }}
-                                onDateChange={(date) => {this.setState({date: date})}}
+                                onDateChange={(date) => {this.setState({inputBirthDay: date})}}
                               />
-                            <Label>  Cumpleaños</Label>
+                            <Label>{"   " + this.state.inputBirthDay}</Label>
                           </Item>
                 </Card>
                 <Left >
