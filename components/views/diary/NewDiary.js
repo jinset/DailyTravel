@@ -51,7 +51,7 @@ var usuario ='';
   }
    //Agrega el diario 
   add(){
-     getDatabase().ref().child('diary/').push()({
+     getDatabase().ref().child('diary/').push().set({
       idOwner:usuario,
        name:this.state.name,
        description:this.state.description,
@@ -71,9 +71,10 @@ var usuario ='';
 }
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
-    title: 'Diario',
-    header: null,
-  };
+    title: strings.diary,
+    headerStyle: {backgroundColor: '#70041b',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+  }
   render() {
     return (
 
@@ -101,15 +102,14 @@ var usuario ='';
                 <Input onChangeText={(text) => this.setState({culture:text})}
                 returnKeyLabel = {"next"} />
               </Item>
-               <Button rounded light>
+               <Button rounded dark transparent style= {{ margin:10}}>
                   <Icon name='people' />
-                  <Text>{strings.guest }</Text>
                 </Button>
                 
             </Form>
           </Content>
-              <Button full
-               onPress={() => this.add()}>
+              <Button full light style= {{backgroundColor: '#D3D0CB'}}
+               onPress={() => this.add()} >
                <Text>{strings.save }</Text>
               </Button>   
         </Container>
@@ -153,76 +153,3 @@ var usuario ='';
   }
 }
 */}
-class DiaryList extends Component{
-
-  constructor(props) {
-    super(props);
-
-    this.dataRef = getDatabase().ref('/users');
-
-    this.state = {
-      dataSource: new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1 !== row2,
-      })
-    };
-  }
-
-  getDailyList(dataRef) {
-    dataRef.on('value', (snap) => {
-      var diaries = [];
-      snap.forEach((child) => {
-        diaries.push({
-          name: child.val().Name,
-          _key: child.key
-          });
-      });
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(diaries)
-      });
-    });
-  }
-
-  componentDidMount() {
-    this.getDailyList(this.dataRef);
-
-  }
-
-  _renderItem(item) {
-    return (
-      <ListItem
-        key= {item._key}
-        title={item.name}
-      />
-    );
-  }
-  render() {
-    return(
-
-        <Container>
-          <Content>
-    <ListView
-      dataSource={this.state.dataSource}
-      renderRow={this._renderItem.bind(this)}
-      enableEmptySections={true}>
-    </ListView>
-
-
-          </Content>
-        </Container>
-    );
-  }
-}
-const styles = StyleSheet.create({
-  littleComponent:{
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  addDailyForm:{
-    flexDirection: 'column',
-  },
-  addButton:{
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: Dimensions.get('window').width,
-  }
-});

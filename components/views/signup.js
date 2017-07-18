@@ -24,7 +24,9 @@ import Moment from 'moment';
 export default class Signup extends Component {
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
-    title: 'Registrar una cuenta',
+      title: strings.Signup,
+    headerStyle: {backgroundColor: '#70041b',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   };
 
   constructor(props) {
@@ -150,11 +152,11 @@ export default class Signup extends Component {
                   <Text>Born day</Text>
                   </DatePicker>
              </Form>
-               <Button block info onPress = {this.add.bind(this)} style={{marginTop:15}}>
-                  <Text style={{color:'white'}}>{strings.signup}</Text>
-               </Button>
 
              </Content>
+               <Button onPress = {this.add.bind(this)} full light style= {{backgroundColor: '#D3D0CB'}}>
+                  <Text style={{color:'white'}}>{strings.signup}</Text>
+               </Button>
            </Container>
 
     );

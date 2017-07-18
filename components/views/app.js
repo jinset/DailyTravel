@@ -49,6 +49,7 @@ export const DTProfile = StackNavigator({
     editProfile: {screen: EditProfile},
   //Acceso a la vista de diario
     DairyView: { screen: DairyView },
+    editDiary: { screen: EditDiary },
 });
 
 export const DTNewDiary = StackNavigator({
@@ -58,10 +59,23 @@ export const DTNewDiary = StackNavigator({
 });
 
 export const DailyTravelTabs = TabNavigator({
-    homeTab: { screen: DTHome },
-    dailyTab: {screen: DTDaily },
-    createDiary: {screen: DTNewDiary },
-    profile: { screen: DTProfile },
+  homeTab: { screen: DTHome },
+  dailyTab: {screen: DTDaily },
+  createDiary: {screen: DTNewDiary },
+  profile: { screen: DTProfile },
+  }, 
+  {
+    tabBarOptions: {
+      style: {
+       backgroundColor: '#70041b',
+      },
+      tabStyle: {
+        width: 90,    
+      },
+    },
+    tabBarPosition: 'bottom',
+    showIcon: true,
+    lazyLoad: true,
 });
 
 

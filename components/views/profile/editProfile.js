@@ -25,7 +25,11 @@ import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 
 export default class EditProfile extends Component {
-
+  static navigationOptions = {
+    title: strings.profile,
+    headerStyle: {backgroundColor: '#70041b',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+  }
    constructor(props) {
        super(props);
        this.state = {
@@ -116,7 +120,7 @@ export default class EditProfile extends Component {
                         </Item>
                 </Card>
                 <Card>
-                    <Button full
+                    <Button full light style= {{backgroundColor: '#D3D0CB'}}
                             onPress={this.save.bind(this)}>
                         <Text>{strings.save}</Text>
                     </Button>

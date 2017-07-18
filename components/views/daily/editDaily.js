@@ -59,7 +59,7 @@ export default class EditDaily extends Component{
         </View>
 
         <View>
-          <Button style={styles.addButton}
+          <Button  full light style= {{backgroundColor: '#D3D0CB'}}
             onPress={this.onPressAddDaily.bind(this)}
             title="Add daily"
             color="#841584"
