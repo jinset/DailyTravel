@@ -23,6 +23,7 @@ import ListDaily from './daily/listDaily';
 //Import de vistas Diary
 import DairyView from './diary/diary';
 import NewDiary from './diary/NewDiary';
+import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
@@ -46,18 +47,35 @@ export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
     editProfile: {screen: EditProfile},
+  //Acceso a la vista de diario
+    DairyView: { screen: DairyView },
+    editDiary: { screen: EditDiary },
 });
 
 export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
-    newDiary: { screen: NewDiary }
+    newDiary: { screen: NewDiary },
+    editDiary: { screen: EditDiary },
 });
 
 export const DailyTravelTabs = TabNavigator({
-    homeTab: { screen: DTHome },
-    dailyTab: {screen: DTDaily },
-    createDiary: {screen: DTNewDiary },
-    profile: { screen: DTProfile },
+  homeTab: { screen: DTHome },
+  dailyTab: {screen: DTDaily },
+  createDiary: {screen: DTNewDiary },
+  profile: { screen: DTProfile },
+  }, 
+  {
+    tabBarOptions: {
+      style: {
+       backgroundColor: '#70041b',
+      },
+      tabStyle: {
+        width: 90,    
+      },
+    },
+    tabBarPosition: 'bottom',
+    showIcon: true,
+    lazyLoad: true,
 });
 
 

@@ -94,8 +94,9 @@ export default class Profile extends Component {
 
     let listTable = this.state.diarys.map((d,i) => {
         return (
-                <ScrollView key={i}>
-                    <CardItem>
+                <ScrollView>
+                    <CardItem key={i}>
+                    <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:d.id})}>
                         <Body>
                           <View style={styles.row}>
                               <Thumbnail
@@ -117,6 +118,7 @@ export default class Profile extends Component {
                               <Text style={styles.description}> {d.description} </Text>
                           </Left>
                         </Body>
+                        </TouchableHighlight>
                     </CardItem>
                     <Separator></Separator>
                 </ScrollView>
@@ -156,7 +158,6 @@ export default class Profile extends Component {
                     {listTable}
                </Card>
           </Content>
-            <FooterNav></FooterNav>
           </Container>
     );
   }

@@ -5,35 +5,91 @@ import {
   TouchableHighlight,
   ToolbarAndroid,
   ActivityIndicator,
-  Alert,ListView ,Dimensions
+  Alert,ListView ,Dimensions,Platform
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content,Header,Picker, Form,List,ListItem,Radio, Item,Title, Input, Label, Button ,Text,Body,CheckBox ,ActionSheet, Right, Switch, Icon, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
+import { Container, Content,Header,Picker, Form,List,Toast,ListItem,Radio, Item,Title, Input, Label, Button ,Text,Body,CheckBox ,ActionSheet, Right, Switch, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
 import strings from '../../common/local_strings.js';
 import FooterNav from  '../../common/footerNav.js';
 import { getDatabase } from '../../common/database';
 import PopupDialog, { SlideAnimation } from 'react-native-popup-dialog';
 import { DialogTitle } from 'react-native-popup-dialog';
 import * as firebase from 'firebase';
-import  CameraDiary  from './CameraDiary';
+import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'react-native-fetch-blob';
+import HelperDiary from './helperDiary';
+import { Icon } from 'react-native-elements';
+const Blob = RNFetchBlob.polyfill.Blob
+const fs = RNFetchBlob.fs
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+window.Blob = Blob
 
-var newRef =''; 
+var key =''; 
 var usuario =''; 
+let ref='';
+
+const uploadImage = (uri, imageName) => {
+      const mime='image/jpg'
+      return new Promise((resolve, reject) => {
+         const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
+         let uploadBlob = null
+         const imageRef = firebase.storage().ref('images/diary').child(imageName)
+         fs.readFile(uploadUri, 'base64')
+             .then((data) => {
+                return Blob.build(data, {type: `${mime};BASE64`})
+             })
+             .then((blob) => {
+                uploadBlob = blob
+                return imageRef.put(blob, {contentType: mime})
+             })
+             .then(() => {
+               uploadBlob.close()
+               return imageRef.getDownloadURL()
+             })
+             .then((url) => {
+               resolve(url)
+             })
+             .catch((error) => {
+               reject(error)
+             })
+      })
+   }
  export default class NewDiary extends Component {
+// Nav options can be defined as a function of the screen's props:
+  static navigationOptions = ({ navigation }) => ({
+      headerStyle: {backgroundColor: '#70041b',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+  });
   constructor(props){
     super(props)
-    this.state = {
-      idOwner:'',
-      name: '',      
-      status: true,
-      privacy: false,
-      date:'',
-      description: '',
-      culture: '',
-      url:'https://firebasestorage.googleapis.com/v0/b/daily-travel-6ff5f.appspot.com/o/images%2Fdiary%2FdefultDiary.png?alt=media&token=238cc03e-2a95-426a-8d32-7adf0e52bd6f',
-
-    }
+     try{
+      const { params } = this.props.navigation.state;
+         ref = "/diary/"+ params.diaryKey
+         key=params.diaryKey
+        firebase.database().ref(ref).on('value', (snap) => {
+            this.state = {
+              url: snap.val().url,
+              idOwner:snap.val().idOwner,
+              name: snap.val().name, 
+              description: snap.val().description, 
+              privacy: snap.val().privacy,
+              culture:  snap.val().culture,
+              status:snap.val().status,
+              key: '',
+              imagePath:'',
+            }
+           
+        });
+      }catch(error){
+          Toast.show({
+              text: strings.error,
+              position: 'bottom',
+              buttonText: 'Okay'
+            })
+           const { navigate } = this.props.navigation;
+           navigate('profile');
+        }
   }
 
 //Obtiene el usuario loggeado
@@ -44,6 +100,54 @@ var usuario ='';
      } catch(error){
        alert("error: " + error)
      }
+     try{
+       HelperDiary.getImageUrl(key, (url) => {
+         this.setState({
+           imagePath: url,
+         })
+       })
+       this.setState({
+         key: key,
+       })
+     } catch(error){
+       console.log(error)
+     }
+   }
+
+   openImagePicker(){
+     var options = {
+       title: 'Select Avatar',
+       storageOptions: {
+         skipBackup: true,
+         path: 'images/diary'
+       }
+     }
+     ImagePicker.showImagePicker(options, (response) => {
+       if(response.didCancel){
+         console.log('User cancelled image picker')
+       }else if(response.error){
+         console.log('Error'+response.error)
+       }else if(response.customButton){
+         console.log('User tapped custom button'+response.customButton)
+       }else{
+         this.setState({
+           imagePath: response.uri,
+         })
+       }
+       if(this.state.key){
+           try{
+              this.state.imagePath ?
+                  uploadImage(this.state.imagePath, `${this.state.key}.jpg`)
+                      .then((responseData) => {
+                        HelperDiary.setImageUrl(this.state.key, responseData)
+                      })
+                      .done()
+                  : null
+           } catch(error){
+             alert(error)
+           }
+       }
+     })
    }
   //Cambia la privacidad
   privacyChange(){
@@ -51,7 +155,7 @@ var usuario ='';
   }
    //Agrega el diario 
   add(){
-     getDatabase().ref().child('diary/').push().set({
+     getDatabase().ref().child(ref).set({
       idOwner:usuario,
        name:this.state.name,
        description:this.state.description,
@@ -59,28 +163,24 @@ var usuario ='';
        privacy:this.state.privacy,
        url:this.state.url,
        status:this.state.status,
-   }).catch(function(error) {
-        Toast.show({
-              text: strings.wrongPassEmail,
-              position: 'bottom',
-              buttonText: 'Okay'
-            })
-  });
+   })
     const { navigate } = this.props.navigation;
-     navigate('profile');
+       this.props.navigation.goBack()
 }
-  // Nav options can be defined as a function of the screen's props:
-  static navigationOptions = {
-    title: strings.diary,
-    headerStyle: {backgroundColor: '#70041b',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
-  }
+
   render() {
+    const { navigate } = this.props.navigation;
     return (
 
         <Container>
           <Content>
             <Form>
+            <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
+              <Thumbnail
+                large  style={{ alignSelf: "center" }}
+                source={{uri: this.state.imagePath}}
+              />
+            </TouchableHighlight>
               <Right>
                 <Label>{strings.privacy }</Label>
                 <Switch
@@ -90,18 +190,19 @@ var usuario ='';
               <Item floatingLabel>
                 <Label>{strings.name }</Label>
                 <Input onChangeText={(text) => this.setState({name:text})}
-                returnKeyLabel = {"next"} />
+                returnKeyLabel = {"next"} value={ this.state.name } />
               </Item>
               <Item floatingLabel>
                 <Label>{strings.description }</Label>
                 <Input onChangeText={(text) => this.setState({description:text})}
-                returnKeyLabel = {"next"}/>
+                returnKeyLabel = {"next"}  value={ this.state.description }/>
               </Item>
               <Item floatingLabel>
                 <Label>{strings.culture }</Label>
                 <Input onChangeText={(text) => this.setState({culture:text})}
-                returnKeyLabel = {"next"} />
+                returnKeyLabel = {"next"}  value={ this.state.culture }/>
               </Item>
+               
                <Button rounded dark transparent style= {{ margin:10}}>
                   <Icon name='people' />
                 </Button>
@@ -153,3 +254,76 @@ var usuario ='';
   }
 }
 */}
+class DiaryList extends Component{
+
+  constructor(props) {
+    super(props);
+
+    this.dataRef = getDatabase().ref('/users');
+
+    this.state = {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      })
+    };
+  }
+
+  getDailyList(dataRef) {
+    dataRef.on('value', (snap) => {
+      var diaries = [];
+      snap.forEach((child) => {
+        diaries.push({
+          name: child.val().Name,
+          _key: child.key
+          });
+      });
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(diaries)
+      });
+    });
+  }
+
+  componentDidMount() {
+    this.getDailyList(this.dataRef);
+
+  }
+
+  _renderItem(item) {
+    return (
+      <ListItem
+        key= {item._key}
+        title={item.name}
+      />
+    );
+  }
+  render() {
+    return(
+
+        <Container>
+          <Content>
+    <ListView
+      dataSource={this.state.dataSource}
+      renderRow={this._renderItem.bind(this)}
+      enableEmptySections={true}>
+    </ListView>
+
+
+          </Content>
+        </Container>
+    );
+  }
+}
+const styles = StyleSheet.create({
+  littleComponent:{
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  addDailyForm:{
+    flexDirection: 'column',
+  },
+  addButton:{
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    width: Dimensions.get('window').width,
+  }
+});
