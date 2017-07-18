@@ -27,10 +27,6 @@ import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
-var email =  'z@z.com'
-var password = '12345!'
-getAuth().signInWithEmailAndPassword(email, password)
-
 export const DTDaily = StackNavigator({
   //Daily
     listDaily: { screen: ListDaily },
