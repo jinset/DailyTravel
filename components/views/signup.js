@@ -69,14 +69,15 @@ export default class Signup extends Component {
             nickname: that.nickname,
             url: that.url
           });
-          alert("Cuenta agregada con exito ");
+            navigate('login');
         })
       }else{
-        Toast.show({
-                text: strings.nicknameExits,
-                position: 'bottom',
-                buttonText: 'Okay'
-              })
+        alert('error')
+        // Toast.show({
+        //         text: strings.nicknameExits,
+        //         position: 'bottom',
+        //         buttonText: 'Okay'
+        //       })
       }
     })
 }
