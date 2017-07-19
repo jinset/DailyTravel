@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Segment, Item, Input, Label, Button, Text,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
+import { Container, Content, Form, Segment, Item, Toast, Input, Label, Button, Text,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
@@ -35,6 +35,7 @@ export default class EditProfile extends Component {
   }
    constructor(props) {
        super(props);
+       console.disableYellowBox = true;
        this.state = {
          uid: '',
          inputNickname: '',
@@ -64,14 +65,28 @@ export default class EditProfile extends Component {
 
    save(){
      const {goBack} = this.props.navigation;
-
+     /////////////////////////////////////
+     //////////// Arreglar //////////////
+     ///////////////////////////////////
+     /*Toast.show({
+             text: strings.nicknameExits,
+             position: 'bottom',
+             buttonText: 'Okay'
+           })*/
      try{
          Helper.setUserNickname(this.state.uid, this.state.inputNickname)
          Helper.setUserName(this.state.uid, this.state.inputName)
          Helper.setUserLastName(this.state.uid, this.state.inputLastName)
          Helper.setUserEmail(this.state.uid, this.state.inputEmail)
          Helper.setUserBirthDay(this.state.uid, this.state.inputBirthDay)
-       goBack()
+         /*let repeat = Helper.getRepeat()
+         alert(repeat)
+         if(repeat == true){
+           alert(strings.nicknameExits)
+         }else{
+
+         }*/
+         goBack()
      } catch(error){
        alert("error: " + error)
      }

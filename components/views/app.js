@@ -27,12 +27,6 @@ import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
-export const DTDaily = StackNavigator({
-  //Daily
-    listDaily: { screen: ListDaily },
-    createDaily: { screen: CreateDaily },
-    editDaily: { screen: EditDaily },
-});
 
 export const DTHome = StackNavigator({
   //Home
@@ -52,11 +46,14 @@ export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
     newDiary: { screen: NewDiary },
     editDiary: { screen: EditDiary },
+      //Daily
+        listDaily: { screen: ListDaily },
+        createDaily: { screen: CreateDaily },
+        editDaily: { screen: EditDaily },
 });
 
 export const DailyTravelTabs = TabNavigator({
         homeTab: { screen: DTHome },
-        dailyTab: {screen: DTDaily },
         createDiaryTab: {screen: DTNewDiary },
         profileTab: { screen: DTProfile },
     },

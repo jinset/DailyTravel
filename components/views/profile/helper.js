@@ -1,6 +1,8 @@
 import { getDatabase } from '../../common/database';
 import * as firebase from 'firebase'
 
+let repeat = true
+
 class Helper {
 
 /////////////////// Image Url ////////////////////////////
@@ -90,16 +92,21 @@ static getUserNickname(userId, callback){
 }
 
 static setUserNickname(userId, nickname){
-
   let userNamePath = "/users/"+userId+"/nickname"
-  let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(nickname);
-  checkNick.once('value', function(snapshot) {
-      if (snapshot.exists() == false) {
-      return getDatabase().ref(userNamePath).set(nickname)
-     }
-  })
+  //let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(nickname);
+  //checkNick.once('value', function(snapshot) {
+      //if (snapshot.exists() == false) {
+        //repeat = false
+        return getDatabase().ref(userNamePath).set(nickname)
+     //}
+  //})
 }
 /////////////////////////////////////////////////////
+
+/*static getRepeat(){
+   return repeat;
+}*/
+
 
 /////////////////////// BirthDay ////////////////////
 static getUserBirthDay(userId, callback){

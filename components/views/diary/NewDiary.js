@@ -5,7 +5,8 @@ import {
   TouchableHighlight,
   ToolbarAndroid,
   ActivityIndicator,
-  Alert,ListView ,Dimensions
+  Alert,ListView ,Dimensions,
+  AsyncStorage,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
@@ -39,8 +40,9 @@ var usuario ='';
 //Obtiene el usuario loggeado
    async componentDidMount(){
      try{
-       let user = await firebase.auth().currentUser
-          usuario= user.uid;
+       AsyncStorage.getItem("user").then((value) => {
+          usuario= value;
+        })
      } catch(error){
        alert("error: " + error)
      }
@@ -102,9 +104,6 @@ var usuario ='';
                 <Input onChangeText={(text) => this.setState({culture:text})}
                 returnKeyLabel = {"next"} />
               </Item>
-               <Button rounded dark transparent style= {{ margin:10}}>
-                  <Icon name='people' />
-                </Button>
 
             </Form>
           </Content>
