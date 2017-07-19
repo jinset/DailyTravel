@@ -35,15 +35,6 @@ export default class DailyTravel extends Component{
         });
       }
     })
-
-
-
-    // getAuth.currentUser.getToken(true).then(function(idToken) {
-    //   this.setState({user: idToken});
-    //   alert(this.state.user);
-    // }).catch(function(error) {
-    //   // Handle error
-    // });
   }
     render(){
       return(

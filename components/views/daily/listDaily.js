@@ -11,6 +11,7 @@ import { Icon } from 'react-native-elements';
 import { Container, Content, Button, Text, Input,Right } from 'native-base';
 import { ListItem } from 'react-native-elements';
 import { getDatabase } from '../../common/database';
+import strings from '../../common/local_strings.js';
 
 export default class ListDaily extends Component{
 
@@ -27,9 +28,11 @@ export default class ListDaily extends Component{
   }
 
   static navigationOptions = {
-    header: null,
-    title: 'Daily'
- };
+    title: strings.daily,
+    headerTitle: 'Daily View',
+    headerStyle: {backgroundColor: '#70041b',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+  }
 
   getDailyList(dataRef) {
     dataRef.on('value', (snap) => {
@@ -71,10 +74,11 @@ export default class ListDaily extends Component{
   render() {
     return(
       <Container>
-            <Button transparent large
-                   onPress={this.addDaily.bind(this)}>
-                <Icon active name='add' />
-              </Button>
+        <Button transparent large
+          onPress={this.addDaily.bind(this)}>
+            <Icon active name='add' />
+        </Button>
+
         <Content>
           <ListView
             dataSource={this.state.dataSource}
