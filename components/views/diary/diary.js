@@ -15,10 +15,12 @@ export default class DiaryView extends Component {
    // headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
 static navigationOptions = ({ navigation }) => ({
     title: strings.diary,
-    header:null,
+    headerStyle: {backgroundColor: '#70041b', height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   });
   constructor(props) {
     super(props);
+    console.disableYellowBox = true;
     this.state = {
       active: 'false',
     };
@@ -54,42 +56,39 @@ static navigationOptions = ({ navigation }) => ({
     return (
 
          <Container>
-         <Tabs initialPage={1} >
-            <Tab heading={strings.diary}  tabStyle={style={backgroundColor: '#70041b', color:'white'}} activeTabStyle={style={backgroundColor: '#70041b', color:'white'}}>
-              <Content>
-                <Card style={{flex: 0}} >
-                      <Image source={{uri: url}}
-                      style={{height: 100, width: Dimensions.get('window').width}}/>
-                      <CardItem>
-                        <Left>
-                          <Text style={{fontWeight: 'bold',fontSize: 18}}>{name}</Text>
-                        </Left>
-                        <Right>
-                          <Button transparent small
-                                  onPress={()=> navigate('editDiary', {diaryKey:params.diaryKey})}>
-                              <Icon active name='mode-edit' />
-                            </Button>
-                        </Right>
-                      </CardItem>
-                      <CardItem>
-                        <Body>
-                          <Text>{description}</Text>
-                        </Body>
-                      </CardItem>
-                      <CardItem>
-                        <Body>
-                          <Text>{culture}</Text>
-                        </Body>
-                      </CardItem>
-                </Card>
-              </Content>
-            </Tab>
-
-          <Tab heading={strings.daily}  tabStyle={style={backgroundColor: '#70041b', color:'white'}} activeTabStyle={style={backgroundColor: '#70041b', color:'white'}}>
-            <DailyList/>
-          </Tab>
-          
-        </Tabs>
+        <Content>
+          <Card style={{flex: 0}} >
+                <Image source={{uri: url}}
+                style={{height: 100, width: Dimensions.get('window').width}}/>
+                <CardItem>
+                  <Left>
+                    <Text style={{fontWeight: 'bold',fontSize: 18}}>{name}</Text>
+                  </Left>
+                  <Right>
+                    <Button transparent small
+                            onPress={()=> navigate('editDiary', {diaryKey:params.diaryKey})}>
+                        <Icon active name='mode-edit' />
+                      </Button>
+                  </Right>
+                </CardItem>
+                <CardItem>
+                  <Body>
+                    <Text>{description}</Text>
+                  </Body>
+                </CardItem>
+                <CardItem>
+                  <Body>
+                    <Text>{culture}</Text>
+                  </Body>
+                </CardItem>
+          </Card>
+          <Right>
+            <Button light full  style= {{backgroundColor: '#D3D0CB'}}
+                    onPress={()=> navigate('listDaily', {diaryKey:params.diaryKey})}>
+                <Text>{strings.daily}</Text>
+              </Button>
+          </Right>
+        </Content>
       </Container>
     );
   }
