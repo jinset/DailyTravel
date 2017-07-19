@@ -90,8 +90,14 @@ static getUserNickname(userId, callback){
 }
 
 static setUserNickname(userId, nickname){
+
   let userNamePath = "/users/"+userId+"/nickname"
-  return getDatabase().ref(userNamePath).set(nickname)
+  let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(nickname);
+  checkNick.once('value', function(snapshot) {
+      if (snapshot.exists() == false) {
+      return getDatabase().ref(userNamePath).set(nickname)
+     }
+  })
 }
 /////////////////////////////////////////////////////
 
