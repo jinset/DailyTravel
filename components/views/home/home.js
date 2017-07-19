@@ -34,18 +34,18 @@ import { getDatabase } from '../../common/database';
       var diaries = [];
       dataRef.on('value', (snap) => {
         snap.forEach((child) => {
-          var user = getDatabase().ref('users/' + child.val().idOwner);
-          user.once('value', function(snapshot) {
-            alert(snapshot.val().name + "  " + child.val().name);
+        //  var user = getDatabase().ref('users/' + child.val().idOwner);
+          //user.once('value', function(snapshot) {
+            //alert(snapshot.val().name + "  " + child.val().name);
             diaries.push({
               _key: child.key,
               name: child.val().name,
               date: child.val().description,
               url: child.val().url,
-              user: snapshot.val().name,
-              userPhoto: snapshot.val().url
+              //user: snapshot.val().name,
+              //userPhoto: snapshot.val().url
             });
-          })
+          //})
         });
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(diaries)
