@@ -40,6 +40,7 @@ export const DTProfile = StackNavigator({
   //Acceso a la vista de diario
     DairyView: { screen: DairyView },
     editDiary: { screen: EditDiary },
+    
 });
 
 export const DTNewDiary = StackNavigator({

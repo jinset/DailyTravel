@@ -13,6 +13,7 @@ import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 
  export default class Home extends Component {
+
    constructor(props) {
      super(props);
      this.dataRef = getDatabase().ref('/diary').orderByChild("privacy").equalTo(false);
@@ -28,22 +29,29 @@ import { getDatabase } from '../../common/database';
         header: null,
     }
 
-  getDiaryList(dataRef) {
-    dataRef.on('value', (snap) => {
+
+    getDiaryList(dataRef) {
       var diaries = [];
-      snap.forEach((child) => {
-          diaries.push({
-            _key: child.key,
-            name: child.val().name,
-            date: child.val().description,
-            url: child.val().url
+      dataRef.on('value', (snap) => {
+        snap.forEach((child) => {
+        //  var user = getDatabase().ref('users/' + child.val().idOwner);
+          //user.once('value', function(snapshot) {
+            //alert(snapshot.val().name + "  " + child.val().name);
+            diaries.push({
+              _key: child.key,
+              name: child.val().name,
+              date: child.val().description,
+              url: child.val().url,
+              //user: snapshot.val().name,
+              //userPhoto: snapshot.val().url
             });
+          //})
+        });
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(diaries)
+        });
       });
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(diaries)
-      });
-    });
-  }
+    }
 
   componentDidMount() {
     this.getDiaryList(this.dataRef);
@@ -61,7 +69,7 @@ import { getDatabase } from '../../common/database';
         </Left>
       </CardItem>
       <CardItem>
-        <Body>
+        <Body style={{alignItems:'center'}}>
           <Image source={{uri: item.url}} style={{height: 200, width: 200, flex: 1}}/>
           <Text>
             {item.description}
