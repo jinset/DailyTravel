@@ -46,7 +46,7 @@ export default class EditProfile extends Component {
        }
     }
 
-    async componentDidMount(){
+    componentDidMount(){
       const { params } = this.props.navigation.state;
       try{
         this.setState({
