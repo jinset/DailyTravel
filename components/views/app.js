@@ -27,16 +27,6 @@ import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
-var email =  'z@z.com'
-var password = '12345!'
-getAuth().signInWithEmailAndPassword(email, password)
-
-export const DTDaily = StackNavigator({
-  //Daily
-    listDaily: { screen: ListDaily },
-    createDaily: { screen: CreateDaily },
-    editDaily: { screen: EditDaily },
-});
 
 export const DTHome = StackNavigator({
   //Home
@@ -50,21 +40,24 @@ export const DTProfile = StackNavigator({
   //Acceso a la vista de diario
     DairyView: { screen: DairyView },
     editDiary: { screen: EditDiary },
-    
+
 });
 
 export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
     newDiary: { screen: NewDiary },
     editDiary: { screen: EditDiary },
+      //Daily
+        listDaily: { screen: ListDaily },
+        createDaily: { screen: CreateDaily },
+        editDaily: { screen: EditDaily },
 });
 
 export const DailyTravelTabs = TabNavigator({
-  homeTab: { screen: DTHome },
-  dailyTab: {screen: DTDaily },
-  createDiary: {screen: DTNewDiary },
-  profile: { screen: DTProfile },
-  },
+        homeTab: { screen: DTHome },
+        createDiaryTab: {screen: DTNewDiary },
+        profileTab: { screen: DTProfile },
+    },
   {
     tabBarOptions: {
       style: {
