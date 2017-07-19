@@ -3,14 +3,15 @@ import {
   AppRegistry,
   StyleSheet,
   View,
-  Text,
-  TextInput,
   ListView,
   Image,
   Dimensions,
-  Button,
-} from 'react-native';
 
+} from 'react-native';
+import { Container, Content, Button, Text, Input,Item,Label } from 'native-base';
+import { getDatabase } from '../../common/database';
+import DatePicker from 'react-native-datepicker';
+import strings from '../../common/local_strings.js';
 
 export default class EditDaily extends Component{
 
@@ -21,8 +22,13 @@ export default class EditDaily extends Component{
       name: null,
       experience: null,
       tips: null,
+      date: null,
       dataSource: ds.cloneWithRows([null]),
     };
+  }
+
+  async componentDidMount(){
+    
   }
 
   onPressAddDaily(){
@@ -36,55 +42,65 @@ export default class EditDaily extends Component{
 
   render() {
     return(
-      <View style={styles.addDailyForm}>
-        <View style={styles.littleComponent}>
-          <Text>Daily name:</Text>
-          <TextInput style={{width:250}}
-            onChangeText={(text) => this.setState({name:text})}
-          />
-        </View>
+      <Container>
+        <Content>
+          <Item floatingLabel>
+            <Label>{strings.name }</Label>
+            <Input
+              onChangeText={(text) => this.setState({name:text})}
+            />
+          </Item >
 
-        <View style={styles.littleComponent}>
-          <Text>My experience:</Text>
-          <TextInput style={{width:250}}
-            onChangeText={(text) => this.setState({experience:text})}
+          <DatePicker
+            style={{width: 150, margin:10}}
+               date={this.state.date}
+               mode="date"
+               placeholder="select date"
+               format="MM/DD/YY"
+               //minDate="2016-05-01"
+               //maxDate="2016-05-01"
+               confirmBtnText="Confirm"
+               cancelBtnText="Cancel"
+               customStyles={{
+                 dateIcon: {
+                     position: 'absolute',
+                     left: 0,
+                     top: 4,
+                   marginLeft: 0
+                 },
+               dateInput: {
+                   marginLeft: 36
+               }
+             }}
+             onDateChange={(date) => {this.setState({date: date})}}
           />
-        </View>
 
-        <View style={styles.littleComponent}>
-          <Text>Tips:</Text>
-          <TextInput style={{width:250}}
-            onChangeText={(text) => this.setState({tips:text})}
-          />
-        </View>
+          <Item floatingLabel>
+            <Label>{strings.experiences }</Label>
+            <Input
+              onChangeText={(text) => this.setState({experience:text})}
+            />
+          </Item>
 
-        <View>
-          <Button  full light style= {{backgroundColor: '#D3D0CB'}}
-            onPress={this.onPressAddDaily.bind(this)}
-            title="Add daily"
-            color="#841584"
-          />
-        </View>
+          <Item floatingLabel>
+            <Label>{strings.tips }</Label>
+            <Input
+              onChangeText={(text) => this.setState({tips:text})}
+            />
+          </Item >
 
-      </View>
+        </Content>
+
+          <Button full light style= {{backgroundColor: '#D3D0CB'}}
+              onPress={this.onPressAddDaily.bind(this)}>
+              <Text>{strings.save}</Text>
+          </Button>
+
+      </Container>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  littleComponent:{
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  addDailyForm:{
-    flexDirection: 'column',
-  },
-  addButton:{
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: Dimensions.get('window').width,
-  }
-});
 
 AppRegistry.registerComponent('EditDaily', () => EditDaily);
 

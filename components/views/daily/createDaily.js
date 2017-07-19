@@ -31,6 +31,7 @@ export default class CreateDaily extends Component{
 
   static navigationOptions = {
     title: strings.daily,
+    headerTitle: 'New Daily',
     headerStyle: {backgroundColor: '#70041b',height: 50 },
     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
  };
@@ -50,12 +51,13 @@ export default class CreateDaily extends Component{
     return(
       <Container>
         <Content>
-        <Item floatingLabel>
-                <Label>{strings.name }</Label>
-          <Input
-            onChangeText={(text) => this.setState({name:text})}
-          />
+          <Item floatingLabel>
+            <Label>{strings.name }</Label>
+            <Input
+              onChangeText={(text) => this.setState({name:text})}
+            />
           </Item >
+
           <DatePicker
             style={{width: 150, margin:10}}
                date={Moment(this.state.date, 'MM/DD/YY')}
@@ -80,44 +82,32 @@ export default class CreateDaily extends Component{
              onDateChange={(date) => {this.setState({date: date})}}
           />
 
-        <Item floatingLabel>
-                <Label>{strings.experiences }</Label>
-          <Input
-            onChangeText={(text) => this.setState({experience:text})}
-          />
-        </Item>
-        <Item floatingLabel>
-                <Label>{strings.tips }</Label>
-          <Input
-            onChangeText={(text) => this.setState({tips:text})}
-          />
- </Item >
+          <Item floatingLabel>
+            <Label>{strings.experiences }</Label>
+            <Input
+              onChangeText={(text) => this.setState({experience:text})}
+            />
+          </Item>
+
+          <Item floatingLabel>
+            <Label>{strings.tips }</Label>
+            <Input
+              onChangeText={(text) => this.setState({tips:text})}
+            />
+          </Item >
+
         </Content>
+
           <Button full light style= {{backgroundColor: '#D3D0CB'}}
               onPress={this.onPressAddDaily.bind(this)}>
-          <Text>{strings.save}</Text>
+              <Text>{strings.save}</Text>
           </Button>
+
       </Container>
     );
   }
 }
 
-
-
-const styles = StyleSheet.create({
-  littleComponent:{
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  addDailyForm:{
-    flexDirection: 'column',
-  },
-  addButton:{
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: Dimensions.get('window').width,
-  }
-});
 
 AppRegistry.registerComponent('CreateDaily', () => CreateDaily);
 
