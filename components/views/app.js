@@ -27,6 +27,10 @@ import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
+var email =  'z@z.com'
+var password = '12345!'
+getAuth().signInWithEmailAndPassword(email, password)
+
 export const DTDaily = StackNavigator({
   //Daily
     listDaily: { screen: ListDaily },
@@ -55,11 +59,11 @@ export const DTNewDiary = StackNavigator({
 });
 
 export const DailyTravelTabs = TabNavigator({
-        homeTab: { screen: DTHome },
-        dailyTab: {screen: DTDaily },
-        createDiaryTab: {screen: DTNewDiary },
-        profileTab: { screen: DTProfile },
-    },
+  homeTab: { screen: DTHome },
+  dailyTab: {screen: DTDaily },
+  createDiary: {screen: DTNewDiary },
+  profile: { screen: DTProfile },
+  },
   {
     tabBarOptions: {
       style: {
@@ -78,7 +82,6 @@ export const DailyTravelInitiate = StackNavigator({
     login: { screen: Login },
     signup: {screen: Signup },
     dtTabs: {screen: DailyTravelTabs},
-
 });
 
 

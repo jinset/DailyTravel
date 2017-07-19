@@ -43,13 +43,6 @@ export default class Profile extends Component {
        }
     }
 
-    static navigationOptions = {
-      title: strings.profile,
-      headerTitle: "fuck",
-      headerStyle: {backgroundColor: '#70041b',height: 50 },
-      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
-    }
-
     async componentWillMount(){
      try{
        AsyncStorage.getItem("user").then((value) => {
@@ -95,6 +88,13 @@ export default class Profile extends Component {
      } catch(error){
        alert("error: " + error)
      }
+   }
+
+   static navigationOptions = {
+     title: strings.profile,
+     headerTitle: 'this.state.userName',
+     headerStyle: {backgroundColor: '#70041b',height: 50 },
+     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
    }
 
   render() {
