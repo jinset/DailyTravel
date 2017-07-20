@@ -17,7 +17,7 @@ import { getDatabase } from '../../common/database';
    constructor(props) {
      super(props);
      this.dataRef = getDatabase().ref('/diary').orderByChild("privacy").equalTo(false);
-    console.disableYellowBox = true;
+     console.disableYellowBox = true;
      this.state = {
        dataSource: new ListView.DataSource({
          rowHasChanged: (row1, row2) => row1 !== row2,
@@ -79,14 +79,10 @@ import { getDatabase } from '../../common/database';
       <CardItem>
         <Left>
           <Button transparent textStyle={{color: '#87838B'}}>
-            <Icon name="logo-github" />
-            <Text>1,926 stars</Text>
           </Button>
         </Left>
         <Right>
           <Button transparent textStyle={{color: '#87838B'}}>
-            <Icon name="logo-github" />
-            <Text>comments</Text>
           </Button>
         </Right>
       </CardItem>

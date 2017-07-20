@@ -15,10 +15,12 @@ import strings from '../common/local_strings.js';
 
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content,Form, Item, Input, Label, Button,Toast} from 'native-base';
+import { Container, Content,Form, Item, Input, Label, Button,Toast, Left, Right, ListItem} from 'native-base';
 import ModalDropdown from 'react-native-modal-dropdown';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
+import { Icon } from 'react-native-elements';
+
 
 
 export default class Signup extends Component {
@@ -31,6 +33,7 @@ export default class Signup extends Component {
 
   constructor(props) {
     super(props);
+    console.disableYellowBox = true;
     this.state = {
       name: '',
       lastName: '',
@@ -45,40 +48,62 @@ export default class Signup extends Component {
 
   add() {
     var that = this.state;
-    var checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(this.state.nickname);
-    checkNick.once('value', function(snapshot) {
-      if (snapshot.exists() == false) {
-        getAuth().createUserWithEmailAndPassword(that.email,
-          that.password).catch(function(error) {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          if (errorCode == 'auth/weak-password') {
-            alert('The password is too weak.');
-          } else {
-            alert(errorMessage);
-          }
-        }).then(function(firebaseUser) {
-          getDatabase().ref().child('users/' + firebaseUser.uid).update({
-            status: 'act',
-            name: that.name,
-            lastName: that.lastName,
-            email: that.email,
-            admin: false,
-            birthPlace: that.country,
-            bornDay: that.date,
-            nickname: that.nickname,
-            url: that.url
-          });
-          alert("Cuenta agregada con exito ");
-        })
-      }else{
-        Toast.show({
-                text: strings.nicknameExits,
-                position: 'bottom',
-                buttonText: 'Okay'
-              })
-      }
-    })
+    if (that.name == '' || that.lastName == '' || that.email == '' || that.password == '' || that.country == '' || that.nickname == '') {
+      Toast.show({
+              text: strings.blankinputs,
+              position: 'bottom',
+              buttonText: 'Okay'
+            })
+    }else{
+      const { goBack } = this.props.navigation;
+      var checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(this.state.nickname);
+      checkNick.once('value', function(snapshot) {
+        if (snapshot.exists() == false) {
+          getAuth().createUserWithEmailAndPassword(that.email,
+            that.password).catch(function(error) {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            if (errorCode == 'auth/weak-password') {
+              Toast.show({
+                      text: strings.passwordWeak,
+                      position: 'bottom',
+                      buttonText: 'Okay'
+                    })
+            } else {
+              Toast.show({
+                      text: strings.emailExits,
+                      position: 'bottom',
+                      buttonText: 'Okay'
+                    })
+            }
+          }).then(function(firebaseUser) {
+            if (firebaseUser == undefined) {
+
+            }else{
+              getDatabase().ref().child('users/' + firebaseUser.uid).update({
+                status: 'act',
+                name: that.name,
+                lastName: that.lastName,
+                email: that.email,
+                admin: false,
+                birthPlace: that.country,
+                bornDay: that.date,
+                nickname: that.nickname,
+                url: that.url
+              });
+              goBack();
+            }
+
+          })
+        }else{
+          Toast.show({
+                  text: strings.nicknameExits,
+                  position: 'bottom',
+                  buttonText: 'Okay'
+                })
+        }
+      })
+    }
 }
 
   render() {
@@ -88,72 +113,81 @@ export default class Signup extends Component {
              <Content>
              <Form>
               <Item floatingLabel>
-                  <Label>Email Address</Label>
+                  <Label>{strings.email}</Label>
                   <Input
+                  autoCorrect = {false}
+                  keyboardType = {'email-address'}
                    onChangeText = {(text) => this.setState({email: text})}
                    value = {this.state.email}/>
               </Item>
               <Item floatingLabel>
-                  <Label>Name</Label>
+                  <Label>{strings.name}</Label>
                   <Input
                   onChangeText = {(text) => this.setState({name: text})}
                   value = {this.state.name}/>
               </Item>
               <Item floatingLabel>
-                  <Label>Last Name</Label>
+                  <Label>{strings.lastName}</Label>
                   <Input
                   onChangeText = {(text) => this.setState({lastName: text})}
                   value = {this.state.lastName}/>
               </Item>
               <Item floatingLabel>
-                  <Label>Password</Label>
+                  <Label>{strings.password}</Label>
                   <Input
                   onChangeText = {(text) => this.setState({password: text})}
                   value = {this.state.password}
                   secureTextEntry = {true}/>
               </Item>
               <Item floatingLabel>
-                  <Label>Nickname</Label>
+                  <Label>{strings.nickname}</Label>
                   <Input
+                  autoCorrect = {false}
                   onChangeText = {(text) => this.setState({nickname: text})}
                   value = {this.state.nickname}/>
               </Item>
-              <ModalDropdown
-                  defaultValue={"Country"}
-                  options={Countries}
-                  textStyle={styles.dropdownModal}
-                  dropdownStyle={styles.dropdown}
-                  dropdownTextStyle={styles.textDropdown}
-                  onSelect={(index,value)=>{this.state.country = value}}
-                  />
+              <ListItem>
+                <Left>
+                  <Text style={{fontSize:17}}>{strings.birthday}</Text>
+                </Left>
+                <Right>
                   <DatePicker
-                    style={{width: 150}}
-                       date={Moment(this.state.date, 'MM/DD/YY')}
-                       mode="date"
-                       placeholder="select date"
-                       format="MM/DD/YY"
-                       //minDate="2016-05-01"
-                       maxDate={Moment(this.state.date, 'MM/DD/YY')}
-                       confirmBtnText="Confirm"
-                       cancelBtnText="Cancel"
-                       customStyles={{
-                         dateIcon: {
-                             position: 'absolute',
-                             left: 0,
-                             top: 4,
-                           marginLeft: 0
-                         },
-                       dateInput: {
-                           marginLeft: 36
-                       }
-                     }}
-                     onDateChange={(date) => {this.setState({date: date})}}
-                  >
-                  <Text>Born day</Text>
-                  </DatePicker>
+                  style={{width: 150}}
+                     date={Moment(this.state.date, 'MM/DD/YY')}
+                     mode="date"
+                     placeholder="select date"
+                     format="MM/DD/YY"
+                     //minDate="2016-05-01"
+                     maxDate={Moment(this.state.date, 'MM/DD/YY')}
+                     confirmBtnText="Confirm"
+                     cancelBtnText="Cancel"
+                     customStyles={{
+                       dateIcon: {
+                           position: 'absolute',
+                           left: 0,
+                           top: 4,
+                         marginLeft: 0
+                       },
+                     dateInput: {
+                         marginLeft: 36
+                     }
+                   }}
+                   onDateChange={(date) => {this.setState({date: date})}}
+                />
+                </Right>
+
+              </ListItem>
+               <ListItem>
+                    <ModalDropdown
+                      defaultValue={strings.country}
+                      options={Countries}
+                      textStyle={styles.dropdownModal}
+                      dropdownStyle={styles.dropdown}
+                      dropdownTextStyle={styles.textDropdown}
+                      onSelect={(index,value)=>{this.state.country = value}}
+                    />
+                    </ListItem>
              </Form>
-
-
                <Button onPress = {this.add.bind(this)} full light style= {{backgroundColor: '#D3D0CB'}}>
                   <Text style={{color:'white'}}>{strings.signup}</Text>
                </Button>
@@ -166,9 +200,7 @@ export default class Signup extends Component {
 const styles = StyleSheet.create({
 
   dropdownModal: {
-    fontSize: 20,
-    paddingLeft: 15,
-    paddingTop: 10,
+    fontSize: 17,
   },
 
   dropdown: {

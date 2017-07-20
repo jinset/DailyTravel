@@ -46,6 +46,15 @@ let strings = new LocalizedStrings({
    chooseFromLibrary: "From Library",
    nicknameExits: "Nickname already exists ",
    tips:"Tips",
+   country: "Country",
+   lastName: "Last name",
+   nickname: "Nickname",
+   blankinputs: "Some inputs are blanks",
+   birthday: "Cumpleaños",
+   passwordWeak : "The password is too weak",
+   emailExits: "Email already exists"
+
+
  },
  es:{
    home:"Inicio",
@@ -91,6 +100,13 @@ let strings = new LocalizedStrings({
    chooseFromLibrary: "Desde Librería",
    nicknameExits: "Apodo ya existe ",
    tips:"Recomendaciones",
+   country: "Pais",
+   lastName: "Apellido",
+   nickname: "Apodo",
+   blankinputs: "Algunas entradas estan vacias",
+   birthday:"Cumpleaños",
+   passwordWeak : "La contraseña es muy corta",
+   emailExits: "Este correcto electrónico ya existe"
  }
 });
 
