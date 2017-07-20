@@ -6,7 +6,7 @@ import {
   AsyncStorage,
 } from 'react-native';
 
-import { Container, Content,Form, Item, Input, Label, Button,Toast, Icon, Spinner} from 'native-base';
+import { Container, Content,Form, Item, Input, Label, Button,Toast, Icon, Spinner, Body} from 'native-base';
 import React, {Component} from 'react';
 import {getAuth} from '../common/database';
 import strings from '../common/local_strings.js';
@@ -35,7 +35,7 @@ export default class Login extends Component {
       this.state.password).then(function(firebaseUser) {
         AsyncStorage.setItem("user", firebaseUser.uid);
         navigate('dtTabs');
-        
+
     }).catch(function(error) {
       //this.setState({ showSpinner: false });
       Toast.show({
@@ -57,6 +57,8 @@ export default class Login extends Component {
               <Item floatingLabel>
                   <Label>{strings.email}</Label>
                   <Input
+                   autoCorrect = {false}
+                   keyboardType = {'email-address'}
                    onChangeText = {(text) => this.setState({email: text})}
                    value = {this.state.email}/>
               </Item>
@@ -72,11 +74,13 @@ export default class Login extends Component {
                <Button block info onPress = {this.login.bind(this)} style={{marginTop:15,backgroundColor: '#70041b'}}>
                   <Text style={{color:'white'}}>{strings.loging}</Text>
                </Button>
+               <Body>
                 <Button transparent light onPress={() => navigate('signup')}  style={{marginTop:15, flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center'}}>
-                  <Text style={{textAlign: 'center'}}>{strings.signup}</Text>
+                  <Text style={{textAlign: 'center', fontSize:18}}>{strings.signup}</Text>
                 </Button>
+               </Body>
              </Content>
            </Container>
 
