@@ -75,7 +75,15 @@ class Helper {
 
   static setUserEmail(userId, email){
     let userNamePath = "/users/"+userId+"/email"
-    return getDatabase().ref(userNamePath).set(email)
+    var user = firebase.auth().currentUser;
+
+    user.updateEmail(email).then(function(){
+       return getDatabase().ref(userNamePath).set(email)
+    }, function(error) {
+       alert(error)
+       return null
+    });
+
   }
 ////////////////////////////////////////////////////////
 
