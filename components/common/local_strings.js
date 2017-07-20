@@ -50,7 +50,10 @@ let strings = new LocalizedStrings({
    lastName: "Last name",
    nickname: "Nickname",
    blankinputs: "Some inputs are blanks",
-   birthday: "Cumpleaños"
+   birthday: "Cumpleaños",
+   passwordWeak : "The password is too weak",
+   emailExits: "Email already exists"
+
 
  },
  es:{
@@ -101,7 +104,9 @@ let strings = new LocalizedStrings({
    lastName: "Apellido",
    nickname: "Apodo",
    blankinputs: "Algunas entradas estan vacias",
-   birthday:"Cumpleaños"
+   birthday:"Cumpleaños",
+   passwordWeak : "La contraseña es muy corta",
+   emailExits: "Este correcto electrónico ya existe"
  }
 });
 

@@ -64,9 +64,17 @@ export default class Signup extends Component {
             var errorCode = error.code;
             var errorMessage = error.message;
             if (errorCode == 'auth/weak-password') {
-              alert('The password is too weak.');
+              Toast.show({
+                      text: strings.passwordWeak,
+                      position: 'bottom',
+                      buttonText: 'Okay'
+                    })
             } else {
-              alert(errorMessage);
+              Toast.show({
+                      text: strings.emailExits,
+                      position: 'bottom',
+                      buttonText: 'Okay'
+                    })
             }
           }).then(function(firebaseUser) {
             getDatabase().ref().child('users/' + firebaseUser.uid).update({
