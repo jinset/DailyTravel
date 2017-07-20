@@ -77,18 +77,23 @@ export default class Signup extends Component {
                     })
             }
           }).then(function(firebaseUser) {
-            getDatabase().ref().child('users/' + firebaseUser.uid).update({
-              status: 'act',
-              name: that.name,
-              lastName: that.lastName,
-              email: that.email,
-              admin: false,
-              birthPlace: that.country,
-              bornDay: that.date,
-              nickname: that.nickname,
-              url: that.url
-            });
-            goBack();
+            if (firebaseUser == undefined) {
+
+            }else{
+              getDatabase().ref().child('users/' + firebaseUser.uid).update({
+                status: 'act',
+                name: that.name,
+                lastName: that.lastName,
+                email: that.email,
+                admin: false,
+                birthPlace: that.country,
+                bornDay: that.date,
+                nickname: that.nickname,
+                url: that.url
+              });
+              goBack();
+            }
+
           })
         }else{
           Toast.show({
