@@ -58,6 +58,7 @@ const uploadImage = (uri, imageName) => {
  export default class NewDiary extends Component {
 // Nav options can be defined as a function of the screen's props:
   static navigationOptions = ({ navigation }) => ({
+      title: strings.diary,
       headerStyle: {backgroundColor: '#70041b',height: 50 },
     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   });
@@ -203,9 +204,6 @@ const uploadImage = (uri, imageName) => {
                 returnKeyLabel = {"next"}  value={ this.state.culture }/>
               </Item>
 
-               <Button rounded dark transparent style= {{ margin:10}}>
-                  <Icon name='people' />
-                </Button>
 
             </Form>
           </Content>
@@ -219,7 +217,12 @@ const uploadImage = (uri, imageName) => {
 }
 
 
-{/*//para los invitados
+{/*
+
+                 <Button rounded dark transparent style= {{ margin:10}}>
+                    <Icon name='people' />
+                  </Button>
+  //para los invitados
   //   var myRef = getDatabase().ref().push();
   //      var key =myRef.key;
   //      getDatabase().ref().child('userDiary/').push({

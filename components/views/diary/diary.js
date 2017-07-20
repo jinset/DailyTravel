@@ -15,10 +15,12 @@ export default class DiaryView extends Component {
    // headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
 static navigationOptions = ({ navigation }) => ({
     title: strings.diary,
-    header:null,
+    headerStyle: {backgroundColor: '#70041b', height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   });
   constructor(props) {
     super(props);
+    console.disableYellowBox = true;
     this.state = {
       active: 'false',
     };
@@ -54,8 +56,6 @@ static navigationOptions = ({ navigation }) => ({
     return (
 
          <Container>
-         <Tabs initialPage={1} >
-          <Tab heading={strings.diary}  tabStyle={style={backgroundColor: '#70041b', color:'white'}} activeTabStyle={style={backgroundColor: '#70041b', color:'white'}}>
         <Content>
           <Card style={{flex: 0}} >
                 <Image source={{uri: url}}
@@ -82,12 +82,13 @@ static navigationOptions = ({ navigation }) => ({
                   </Body>
                 </CardItem>
           </Card>
+          <Right>
+            <Button light full  style= {{backgroundColor: '#D3D0CB'}}
+                    onPress={()=> navigate('listDaily', {diaryKey:params.diaryKey})}>
+                <Text>{strings.daily}</Text>
+              </Button>
+          </Right>
         </Content>
-        </Tab>
-          <Tab heading={strings.daily}  tabStyle={style={backgroundColor: '#70041b', color:'white'}} activeTabStyle={style={backgroundColor: '#70041b', color:'white'}}>
-        <DailyList/>
-          </Tab>
-           </Tabs>
       </Container>
     );
   }

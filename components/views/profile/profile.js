@@ -31,6 +31,7 @@ let diarys = [{id: null, name: null, description: null, url: null}]
 export default class Profile extends Component {
    constructor(props) {
        super(props);
+       console.disableYellowBox = true;
        this.state = {
          uid: '',
          userName: '',
@@ -45,7 +46,7 @@ export default class Profile extends Component {
 
     static navigationOptions = {
       title: strings.profile,
-      headerTitle:"Profile",
+      headerTitle: "Profile",
       headerStyle: {backgroundColor: '#70041b',height: 50 },
       headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
     }
@@ -55,7 +56,7 @@ export default class Profile extends Component {
       AsyncStorage.removeItem("user");
       navigate('login');
     }
-    async componentWillMount(){
+    async componentDidMount(){
      try{
        AsyncStorage.getItem("user").then((value) => {
              this.setState({

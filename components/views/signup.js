@@ -155,10 +155,11 @@ export default class Signup extends Component {
                   </DatePicker>
              </Form>
 
-             </Content>
+
                <Button onPress = {this.add.bind(this)} full light style= {{backgroundColor: '#D3D0CB'}}>
                   <Text style={{color:'white'}}>{strings.signup}</Text>
                </Button>
+              </Content>
            </Container>
 
     );

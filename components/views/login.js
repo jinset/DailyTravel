@@ -35,6 +35,7 @@ export default class Login extends Component {
       this.state.password).then(function(firebaseUser) {
         AsyncStorage.setItem("user", firebaseUser.uid);
         navigate('dtTabs');
+        
     }).catch(function(error) {
       //this.setState({ showSpinner: false });
       Toast.show({
