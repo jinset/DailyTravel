@@ -19,6 +19,8 @@ import { Container, Content,Form, Item, Input, Label, Button,Toast} from 'native
 import ModalDropdown from 'react-native-modal-dropdown';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
+import { Icon } from 'react-native-elements';
+
 
 
 export default class Signup extends Component {

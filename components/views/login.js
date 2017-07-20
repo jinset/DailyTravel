@@ -68,7 +68,7 @@ export default class Login extends Component {
                   secureTextEntry = {true}/>
               </Item>
              </Form>
-               <Button block info onPress = {this.login.bind(this)} style={{marginTop:15}}>
+               <Button block info onPress = {this.login.bind(this)} style={{marginTop:15,backgroundColor: '#70041b'}}>
                   <Text style={{color:'white'}}>{strings.loging}</Text>
                </Button>
                 <Button transparent light onPress={() => navigate('signup')}  style={{marginTop:15, flexDirection: 'column',

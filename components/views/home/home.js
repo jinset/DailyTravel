@@ -79,14 +79,10 @@ import { getDatabase } from '../../common/database';
       <CardItem>
         <Left>
           <Button transparent textStyle={{color: '#87838B'}}>
-            <Icon name="logo-github" />
-            <Text>1,926 stars</Text>
           </Button>
         </Left>
         <Right>
           <Button transparent textStyle={{color: '#87838B'}}>
-            <Icon name="logo-github" />
-            <Text>comments</Text>
           </Button>
         </Right>
       </CardItem>
