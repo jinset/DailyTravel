@@ -36,9 +36,11 @@ export default class CreateDaily extends Component{
     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
  };
 
-  onPressAddDaily(){
+  addDaily(){
     const { goBack } = this.props.navigation;
-    getDatabase().ref().child('daily/').push({
+    const { params } = this.props.navigation.state;
+    let idDiary = params.diaryKey;
+    getDatabase().ref().child('/diary/'+idDiary+"/daily/").push({
       name: this.state.name,
       date: this.state.date,
       experience: this.state.experience,
@@ -99,7 +101,7 @@ export default class CreateDaily extends Component{
         </Content>
 
           <Button full light style= {{backgroundColor: '#D3D0CB'}}
-              onPress={this.onPressAddDaily.bind(this)}>
+              onPress={this.addDaily.bind(this)}>
               <Text>{strings.save}</Text>
           </Button>
 

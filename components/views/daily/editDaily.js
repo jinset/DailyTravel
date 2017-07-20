@@ -28,16 +28,27 @@ export default class EditDaily extends Component{
   }
 
   async componentDidMount(){
-    
+    const { params } = this.props.navigation.state;
+    this.setState({
+      name: params.daily.name,
+      date: params.daily.date,
+      experience: params.daily.experience,
+      tips: params.daily.tips,
+      idDaily: params.daily._key,
+      idDiary: params.idDiary,
+
+    });
   }
 
-  onPressAddDaily(){
-    // alert(this.state.name);
-    // firebaseApp.database().ref().child('daily/').update({
-    //   name: this.state.name,
-    //   experience: this.state.experience,
-    //   tips: this.state.tips,
-    // });
+  updateDaily(){
+    let idDiary = this.state.idDiary;
+    let idDaily = this.state.idDaily;
+    getDatabase().ref().child('/diary/'+idDiary+'/daily/'+idDaily).set({
+      name: this.state.name,
+      date: this.state.date,
+      experience: this.state.experience,
+      tips: this.state.tips,
+    });
   }
 
   render() {
@@ -47,6 +58,7 @@ export default class EditDaily extends Component{
           <Item floatingLabel>
             <Label>{strings.name }</Label>
             <Input
+              value = {this.state.name}
               onChangeText={(text) => this.setState({name:text})}
             />
           </Item >
@@ -78,6 +90,7 @@ export default class EditDaily extends Component{
           <Item floatingLabel>
             <Label>{strings.experiences }</Label>
             <Input
+              value = {this.state.experience}
               onChangeText={(text) => this.setState({experience:text})}
             />
           </Item>
@@ -85,6 +98,7 @@ export default class EditDaily extends Component{
           <Item floatingLabel>
             <Label>{strings.tips }</Label>
             <Input
+              value = {this.state.tips}
               onChangeText={(text) => this.setState({tips:text})}
             />
           </Item >
@@ -92,7 +106,7 @@ export default class EditDaily extends Component{
         </Content>
 
           <Button full light style= {{backgroundColor: '#D3D0CB'}}
-              onPress={this.onPressAddDaily.bind(this)}>
+              onPress={this.updateDaily.bind(this)}>
               <Text>{strings.save}</Text>
           </Button>
 

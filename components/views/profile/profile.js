@@ -137,7 +137,7 @@ export default class Profile extends Component {
                     </CardItem>
                     <Separator></Separator>
                 </ScrollView>
-              )
+            )
       });
 
     return (
