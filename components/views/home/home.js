@@ -17,7 +17,7 @@ import { getDatabase } from '../../common/database';
    constructor(props) {
      super(props);
      this.dataRef = getDatabase().ref('/diary').orderByChild("privacy").equalTo(false);
-    console.disableYellowBox = true;
+     console.disableYellowBox = true;
      this.state = {
        dataSource: new ListView.DataSource({
          rowHasChanged: (row1, row2) => row1 !== row2,

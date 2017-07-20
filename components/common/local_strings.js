@@ -49,7 +49,7 @@ let strings = new LocalizedStrings({
    country: "Country",
    lastName: "Last name",
    nickname: "Nickname",
-   blankinputs: "Some inputs are blank",
+   blankinputs: "Some inputs are blanks",
    birthday: "Cumpleaños"
 
  },
