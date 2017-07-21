@@ -26,6 +26,8 @@ import { Icon } from 'react-native-elements';
 import Accordion from 'react-native-accordion';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 export default class EditProfile extends Component {
   static navigationOptions = {
@@ -65,28 +67,33 @@ export default class EditProfile extends Component {
 
    save(){
      const {goBack} = this.props.navigation;
-     /////////////////////////////////////
-     //////////// Arreglar //////////////
-     ///////////////////////////////////
-     /*Toast.show({
-             text: strings.nicknameExits,
-             position: 'bottom',
-             buttonText: 'Okay'
-           })*/
+     let nick = this.state.inputNickname;
      try{
-         Helper.setUserNickname(this.state.uid, this.state.inputNickname)
+         MessageBarManager.registerMessageBar(this.refs.alert);
+         //Helper.setUserNickname(this.state.uid, this.state.inputNickname)
          Helper.setUserName(this.state.uid, this.state.inputName)
          Helper.setUserLastName(this.state.uid, this.state.inputLastName)
          Helper.setUserEmail(this.state.uid, this.state.inputEmail)
          Helper.setUserBirthDay(this.state.uid, this.state.inputBirthDay)
-         /*let repeat = Helper.getRepeat()
-         alert(repeat)
-         if(repeat == true){
-           alert(strings.nicknameExits)
-         }else{
 
-         }*/
-         goBack()
+         let userNamePath = "/users/"+this.state.uid+"/nickname"
+         let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(nick);
+         checkNick.once('value', function(snapshot) {
+             if (snapshot.exists() == false) {
+               goBack()
+               return getDatabase().ref(userNamePath).set(nick)
+            }else{
+              MessageBarManager.showAlert({
+                 title: 'Nickname',
+                 message: strings.nicknameExits,
+                 alertType: 'info',
+                 position: 'bottom',
+                 duration: 4000,
+                 stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+              });
+              return null
+            }
+         })
      } catch(error){
        alert("error: " + error)
      }
@@ -170,6 +177,7 @@ export default class EditProfile extends Component {
                 </Card>
               </Form>
             </Content>
+            <MessageBarAlert ref="alert" />
           </Container>
     );
   }

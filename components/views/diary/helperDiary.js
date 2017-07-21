@@ -4,8 +4,8 @@ import * as firebase from 'firebase'
 class HelperDiary {
 
   static setImageUrl(diaryId, url){
-    let diaryNamePath = "/diary/"+diaryId+"/url"
-    return getDatabase().ref(diaryNamePath).set(url)
+    let diaryNamePath = "/diary/"+diaryId
+    return getDatabase().ref(diaryNamePath).update(url)
   }
 
   static getImageUrl(diaryId, callback){
