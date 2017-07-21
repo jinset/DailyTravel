@@ -47,7 +47,7 @@ export default class Profile extends Component {
     static navigationOptions = {
       title: strings.profile,
       headerStyle: {backgroundColor: '#70041b',height: 50 },
-      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+      headerTitleStyle : {color:'white', fontWeight: 'ligth', alignSelf: 'center'},
     }
     logout() {
       const { navigate } = this.props.navigation;
@@ -110,9 +110,11 @@ export default class Profile extends Component {
         return (
                 <ScrollView>
                     <CardItem key={i}>
-                    <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                       <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
                         <Body>
+
                           <View style={styles.row}>
+
                               <Thumbnail
                                 small
                                 source={{uri: this.state.imagePath}}
@@ -130,7 +132,8 @@ export default class Profile extends Component {
                                 style={{height: 300, width: Dimensions.get('window').width}}
                               />
                               <Text style={styles.description}> {d.description} </Text>
-                          </Left>
+                         </Left>
+
                         </Body>
                         </TouchableHighlight>
                     </CardItem>
@@ -221,6 +224,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textDecorationStyle: 'solid',
     color: '#000000',
-    paddingLeft: 5,
+    paddingLeft: 20,
   }
 });

@@ -23,6 +23,7 @@
     "react-native-icons": "^0.7.1",
     "react-native-image-picker": "^0.23.0",
     "react-native-localization": "^0.1.31",
+    "react-native-message-bar": "^1.6.0",
     "react-native-modal-dropdown": "^0.4.4",
     "react-native-popup-dialog": "^0.9.29",
     "react-native-tab-view": "^0.0.67",
