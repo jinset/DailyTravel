@@ -19,6 +19,8 @@ import { Container, Content,Form, Item, Input, Label, Button,Toast} from 'native
 import ModalDropdown from 'react-native-modal-dropdown';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 
 export default class Signup extends Component {
@@ -44,6 +46,7 @@ export default class Signup extends Component {
   }
 
   add() {
+    MessageBarManager.registerMessageBar(this.refs.alert);
     var that = this.state;
     var checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(this.state.nickname);
     checkNick.once('value', function(snapshot) {
@@ -72,11 +75,14 @@ export default class Signup extends Component {
           alert("Cuenta agregada con exito ");
         })
       }else{
-        Toast.show({
-                text: strings.nicknameExits,
-                position: 'bottom',
-                buttonText: 'Okay'
-              })
+        MessageBarManager.showAlert({
+           title: 'Nickname',
+           message: strings.nicknameExits,
+           alertType: 'info',
+           position: 'bottom',
+           duration: 4000,
+           stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+        });
       }
     })
 }
@@ -158,6 +164,7 @@ export default class Signup extends Component {
                   <Text style={{color:'white'}}>{strings.signup}</Text>
                </Button>
               </Content>
+              <MessageBarAlert ref="alert" />
            </Container>
 
     );

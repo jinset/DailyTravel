@@ -101,19 +101,27 @@ static getUserNickname(userId, callback){
 
 static setUserNickname(userId, nickname){
   let userNamePath = "/users/"+userId+"/nickname"
-  //let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(nickname);
-  //checkNick.once('value', function(snapshot) {
-      //if (snapshot.exists() == false) {
-        //repeat = false
+  let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(nickname);
+  checkNick.once('value', function(snapshot) {
+      if (snapshot.exists() == false) {
+        repeat = false
+        alert("Entre al if"+ repeat)
         return getDatabase().ref(userNamePath).set(nickname)
-     //}
-  //})
+     }else{
+       repeat = false
+       return null
+     }
+  })
 }
 /////////////////////////////////////////////////////
 
-/*static getRepeat(){
+static setRepeat(r){
+  repeat = r;
+}
+
+static getRepeat(){
    return repeat;
-}*/
+}
 
 
 /////////////////////// BirthDay ////////////////////

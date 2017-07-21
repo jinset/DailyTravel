@@ -9,7 +9,6 @@ import App from './components/views/indexApp';
 import Initiate from './components/views/indexInitiate';
 import {getAuth} from './components/common/database';
 
-
 export default class DailyTravel extends Component{
   constructor(props) {
     super(props)
