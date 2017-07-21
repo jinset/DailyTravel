@@ -18,8 +18,9 @@ export default class ListDaily extends Component{
   constructor(props) {
     super(props);
 
-    this.dataRef = getDatabase().ref('/daily');
-
+    const { params } = this.props.navigation.state;
+    let idDiary = params.diaryKey;
+    this.dataRef = getDatabase().ref("/diary/"+idDiary+"/daily/");
     this.state = {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
@@ -29,7 +30,6 @@ export default class ListDaily extends Component{
 
   static navigationOptions = {
     title: strings.daily,
-    headerTitle: 'Daily View',
     headerStyle: {backgroundColor: '#70041b',height: 50 },
     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   }
@@ -58,17 +58,19 @@ export default class ListDaily extends Component{
 
   _renderItem(item) {
     const { navigate } = this.props.navigation;
+    const { params } = this.props.navigation.state;
     return (
       <ListItem
         key= {item._key}
         title={item.date + "          " + item.name}
-        onPress={() => navigate('editDaily')}
+        onPress={() => navigate('editDaily', {daily: item, idDiary: params.diaryKey})}
       />
     );
   }
   addDaily=()=>{
     const { navigate } = this.props.navigation;
-    navigate('createDaily');
+    const { params } = this.props.navigation.state;
+    navigate('createDaily', {diaryKey:params.diaryKey});
   }
 
   render() {

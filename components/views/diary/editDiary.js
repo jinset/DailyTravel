@@ -60,7 +60,7 @@ const uploadImage = (uri, imageName) => {
   static navigationOptions = ({ navigation }) => ({
       title: strings.diary,
       headerStyle: {backgroundColor: '#70041b',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   });
   constructor(props){
     super(props)

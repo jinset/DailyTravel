@@ -19,9 +19,9 @@ import { Container, Content,Form, Item, Input, Label, Button,Toast, Left, Right,
 import ModalDropdown from 'react-native-modal-dropdown';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 import { Icon } from 'react-native-elements';
-
-
 
 export default class Signup extends Component {
   // Nav options can be defined as a function of the screen's props:
@@ -47,6 +47,7 @@ export default class Signup extends Component {
   }
 
   add() {
+    MessageBarManager.registerMessageBar(this.refs.alert);
     var that = this.state;
     if (that.name == '' || that.lastName == '' || that.email == '' || that.password == '' || that.country == '' || that.nickname == '') {
       Toast.show({
@@ -96,11 +97,14 @@ export default class Signup extends Component {
 
           })
         }else{
-          Toast.show({
-                  text: strings.nicknameExits,
-                  position: 'bottom',
-                  buttonText: 'Okay'
-                })
+              MessageBarManager.showAlert({
+                 title: 'Nickname',
+                 message: strings.nicknameExits,
+                 alertType: 'info',
+                 position: 'bottom',
+                 duration: 4000,
+                 stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+              });
         }
       })
     }
@@ -192,6 +196,7 @@ export default class Signup extends Component {
                   <Text style={{color:'white'}}>{strings.signup}</Text>
                </Button>
               </Content>
+              <MessageBarAlert ref="alert" />
            </Container>
 
     );
