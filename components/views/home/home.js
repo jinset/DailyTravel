@@ -29,31 +29,32 @@ import { getDatabase } from '../../common/database';
         header: null,
     }
 
-
-    getDiaryList(dataRef) {
-      var diaries = [];
-      dataRef.on('value', (snap) => {
-        snap.forEach((child) => {
-        //  var user = getDatabase().ref('users/' + child.val().idOwner);
-          //user.once('value', function(snapshot) {
-            //alert(snapshot.val().name + "  " + child.val().name);
-            diaries.push({
-              _key: child.key,
-              name: child.val().name,
-              date: child.val().description,
-              url: child.val().url,
-              //user: snapshot.val().name,
-              //userPhoto: snapshot.val().url
-            });
-          //})
-        });
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(diaries)
+ async getUser(idOwner) {
+    let user = await getDatabase().ref('users/' + idOwner);
+    user.once('value').then(function(snap) {
+      var val = snapshot.val();
+      return val;
+    })
+  }
+  async getDiaryList(dataRef) {
+    var diaries = [];
+    dataRef.on('value', (snap) => {
+      snap.forEach((child) => {
+        var user = this.getUser(child.val().idOwner).then((data) => {
+          diaries.push({
+            _key: child.key,
+            name: child.val().name,
+            date: child.val().description,
+            url: child.val().url,
+            user: data.name,
+            userPhoto: data.url
+          });
         });
       });
-    }
+    });
+  }
 
-  componentDidMount() {
+  async componentWillMount() {
     this.getDiaryList(this.dataRef);
   }
   _renderItem(item) {
