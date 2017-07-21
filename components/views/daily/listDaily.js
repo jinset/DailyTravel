@@ -21,7 +21,6 @@ export default class ListDaily extends Component{
     const { params } = this.props.navigation.state;
     let idDiary = params.diaryKey;
     this.dataRef = getDatabase().ref("/diary/"+idDiary+"/daily/");
-    alert(this.dataRef);
     this.state = {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
@@ -31,7 +30,6 @@ export default class ListDaily extends Component{
 
   static navigationOptions = {
     title: strings.daily,
-    headerTitle: 'Daily View',
     headerStyle: {backgroundColor: '#70041b',height: 50 },
     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   }
