@@ -38,11 +38,12 @@ export default class Login extends Component {
 
     }).catch(function(error) {
       //this.setState({ showSpinner: false });
-      Toast.show({
-              text: strings.wrongPassEmail,
-              position: 'bottom',
-              buttonText: 'Okay'
-            })
+  
+      // Toast.show({
+      //         text: strings.nicknameExits,
+      //         position: 'bottom',
+      //         buttonText: 'Okay'
+      //       })
     });
   }
   render() {
