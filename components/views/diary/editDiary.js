@@ -5,11 +5,11 @@ import {
   TouchableHighlight,
   ToolbarAndroid,
   ActivityIndicator,
-  Alert,ListView ,Dimensions,Platform
+  Alert,ListView ,Dimensions,Platform,Image
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content,Header,Picker, Form,List,Toast,ListItem,Radio, Item,Title, Input, Label, Button ,Text,Body,CheckBox ,ActionSheet, Right, Switch, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
+import { Container, Content,Header,Picker, Form,List,Toast,ListItem,Radio, Item,Title, Input, Label, Button ,Text,Body,CheckBox ,ActionSheet, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge  } from 'native-base';
 import strings from '../../common/local_strings.js';
 import FooterNav from  '../../common/footerNav.js';
 import { getDatabase } from '../../common/database';
@@ -134,22 +134,26 @@ const uploadImage = (uri, imageName) => {
          this.setState({
            imagePath: response.uri,
          })
+          this.createImage()
+        }
+        })
        }
-       if(this.state.key){
-           try{
-              this.state.imagePath ?
-                  uploadImage(this.state.imagePath, `${this.state.key}.jpg`)
-                      .then((responseData) => {
-                        HelperDiary.setImageUrl(this.state.key, responseData)
-                      })
-                      .done()
-                  : null
-           } catch(error){
-             alert(error)
-           }
+       createImage(){
+         if(this.state.key){
+             try{
+                this.state.imagePath ?
+                    uploadImage(this.state.imagePath, `${this.state.key}.jpg`)
+                        .then((responseData) => {
+                          HelperDiary.setImageUrl(this.state.key, responseData)
+                        })
+                        .done()
+                    : null
+             } catch(error){
+               alert(error)
+             }
+         }
        }
-     })
-   }
+
   //Cambia la privacidad
   privacyChange(){
     this.setState( {privacy: !this.state.privacy})
@@ -165,7 +169,6 @@ const uploadImage = (uri, imageName) => {
        url:this.state.url,
        status:this.state.status,
    })
-    const { navigate } = this.props.navigation;
        this.props.navigation.goBack()
 }
 
@@ -177,10 +180,8 @@ const uploadImage = (uri, imageName) => {
           <Content>
             <Form>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
-              <Thumbnail
-                large  style={{ alignSelf: "center" }}
-                source={{uri: this.state.imagePath}}
-              />
+              <Image source={{uri: this.state.imagePath}}
+                style={{height: 100, width: Dimensions.get('window').width}}/>
             </TouchableHighlight>
               <Right>
                 <Label>{strings.privacy }</Label>
@@ -257,76 +258,3 @@ const uploadImage = (uri, imageName) => {
   }
 }
 */}
-class DiaryList extends Component{
-
-  constructor(props) {
-    super(props);
-
-    this.dataRef = getDatabase().ref('/users');
-
-    this.state = {
-      dataSource: new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1 !== row2,
-      })
-    };
-  }
-
-  getDailyList(dataRef) {
-    dataRef.on('value', (snap) => {
-      var diaries = [];
-      snap.forEach((child) => {
-        diaries.push({
-          name: child.val().Name,
-          _key: child.key
-          });
-      });
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(diaries)
-      });
-    });
-  }
-
-  componentDidMount() {
-    this.getDailyList(this.dataRef);
-
-  }
-
-  _renderItem(item) {
-    return (
-      <ListItem
-        key= {item._key}
-        title={item.name}
-      />
-    );
-  }
-  render() {
-    return(
-
-        <Container>
-          <Content>
-    <ListView
-      dataSource={this.state.dataSource}
-      renderRow={this._renderItem.bind(this)}
-      enableEmptySections={true}>
-    </ListView>
-
-
-          </Content>
-        </Container>
-    );
-  }
-}
-const styles = StyleSheet.create({
-  littleComponent:{
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  addDailyForm:{
-    flexDirection: 'column',
-  },
-  addButton:{
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: Dimensions.get('window').width,
-  }
-});
