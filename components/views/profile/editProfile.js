@@ -11,6 +11,7 @@ import {
   Image,
   Dimensions,
   StyleSheet,
+  AsyncStorage,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
@@ -23,7 +24,6 @@ import Helper from './helper';
 import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
-import Accordion from 'react-native-accordion';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
@@ -46,6 +46,7 @@ export default class EditProfile extends Component {
          inputNickname: '',
          inputEmail: '',
          inputBirthDay: '',
+         goback: true,
        }
     }
 
@@ -61,30 +62,66 @@ export default class EditProfile extends Component {
           inputBirthDay: params.birthday,
         })
       } catch(error){
-        alert("error: " + error)
+        alert("error componentDidMount: " + error.code)
       }
+    }
+
+    logout(){
+      alert("logout")
+      const { navigate } = this.props.navigation;
+      AsyncStorage.removeItem("user");
+      navigate('login');
+    }
+
+    setGoBack(bool){
+      setState(goback: bool)
     }
 
    save(){
      const {goBack} = this.props.navigation;
+     const { params } = this.props.navigation.state;
      let nick = this.state.inputNickname;
+     let email = this.state.inputEmail;
+     var that = this.state;
      try{
          MessageBarManager.registerMessageBar(this.refs.alert);
          //Helper.setUserNickname(this.state.uid, this.state.inputNickname)
          Helper.setUserName(this.state.uid, this.state.inputName)
          Helper.setUserLastName(this.state.uid, this.state.inputLastName)
-         Helper.setUserEmail(this.state.uid, this.state.inputEmail)
+         //Helper.setUserEmail(this.state.uid, this.state.inputEmail)
          Helper.setUserBirthDay(this.state.uid, this.state.inputBirthDay)
 
-         let userNamePath = "/users/"+this.state.uid+"/nickname"
+         ////////////////////////// Set Email /////////////////////////////////////
+             let emailPath = "/users/"+this.state.uid+"/email"
+             var user = firebase.auth().currentUser;
+
+             user.updateEmail(email).then(function(){
+                return getDatabase().ref(emailPath).set(email)
+             }, function(error) {
+                this.setGoBack.bind(this)
+                if(error.code === 'auth/requires-recent-login'){
+                  MessageBarManager.showAlert({
+                      title: "Reinicia sesión para cambiar el correo",
+                      message: "Toca este mensaje si desea cerrar sesión",
+                      alertType: 'info',
+                      position: 'bottom',
+                      duration: 15000,
+                      stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+                  })
+                }
+             });
+          ////////////////////////////////////////////////////////////////////////
+
+         /////////////////// Set Nickname //////////////////////////////////////////////
+         let nicknamePath = "/users/"+this.state.uid+"/nickname"
          let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(nick);
          checkNick.once('value', function(snapshot) {
-             if (snapshot.exists() == false) {
-               goBack()
-               return getDatabase().ref(userNamePath).set(nick)
+             if (snapshot.exists() == false || params.nickname === nick) {
+               return getDatabase().ref(nicknamePath).set(nick)
             }else{
+              this.setGoBack(false)
               MessageBarManager.showAlert({
-                 title: 'Nickname',
+                 title: strings.nickname,
                  message: strings.nicknameExits,
                  alertType: 'info',
                  position: 'bottom',
@@ -94,8 +131,17 @@ export default class EditProfile extends Component {
               return null
             }
          })
+         //////////////////////////////////////////////////////////////////////////////
+         /// Si goBack es true entonces sale de la pantalla ///
+         alert(that.goback)
+         if(that.goback === true){
+           goBack()
+         }else{
+           that.goback = true;
+         }
+         /////////////////////////////////////////////////////
      } catch(error){
-       alert("error: " + error)
+
      }
    }
 
@@ -160,7 +206,9 @@ export default class EditProfile extends Component {
                         <Item >
                             <Icon active name='mail' />
                             <Input placeholder={params.email}
-                                   onChangeText={(text) => this.setState({inputEmail: text})}/>
+                              autoCorrect = {false}
+                              keyboardType = {'email-address'}
+                              onChangeText={(text) => this.setState({inputEmail: text})}/>
                         </Item>
                         <Item >
                             <Input placeholder={strings.changePassword}
@@ -177,7 +225,7 @@ export default class EditProfile extends Component {
                 </Card>
               </Form>
             </Content>
-            <MessageBarAlert ref="alert" />
+            <MessageBarAlert ref="alert" onTapped={this.logout}/>
           </Container>
     );
   }
