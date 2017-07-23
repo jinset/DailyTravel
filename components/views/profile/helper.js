@@ -80,8 +80,9 @@ class Helper {
     user.updateEmail(email).then(function(){
        return getDatabase().ref(userNamePath).set(email)
     }, function(error) {
-       alert(error)
-       return null
+       if(error.code === 'auth/requires-recent-login'){
+         return 'null'
+       }
     });
 
   }
