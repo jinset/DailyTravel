@@ -24,7 +24,6 @@ import Helper from './helper';
 import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
-import Accordion from 'react-native-accordion';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
@@ -50,7 +49,7 @@ export default class EditProfile extends Component {
        }
     }
 
-    componentDidMount(){
+    componentWillMount(){
       const { params } = this.props.navigation.state;
       try{
         this.setState({
@@ -62,43 +61,96 @@ export default class EditProfile extends Component {
           inputBirthDay: params.birthday,
         })
       } catch(error){
-        alert("error: " + error)
+        alert("error componentDidMount: " + error.code)
       }
     }
 
    save(){
      const {goBack} = this.props.navigation;
-     let nick = this.state.inputNickname;
+     const { params } = this.props.navigation.state;
+     const { navigate } = this.props.navigation;
+     //let nick = this.state.inputNickname;
+     let email = this.state.inputEmail;
+     var that = this.state;
      try{
          MessageBarManager.registerMessageBar(this.refs.alert);
-         //Helper.setUserNickname(this.state.uid, this.state.inputNickname)
-         Helper.setUserName(this.state.uid, this.state.inputName)
-         Helper.setUserLastName(this.state.uid, this.state.inputLastName)
-         Helper.setUserEmail(this.state.uid, this.state.inputEmail)
-         Helper.setUserBirthDay(this.state.uid, this.state.inputBirthDay)
+         // Validate if there is empty values /////////////////////////////////////////////////////////
+         if (that.inputNickname == ''|| that.inputName == ''||
+             that.inputLastName == '' || that.inputEmail == ''){
 
-         let userNamePath = "/users/"+this.state.uid+"/nickname"
-         let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(nick);
-         checkNick.once('value', function(snapshot) {
-             if (snapshot.exists() == false) {
-               goBack()
-               return getDatabase().ref(userNamePath).set(nick)
-            }else{
-              MessageBarManager.showAlert({
-                 title: 'Nickname',
-                 message: strings.nicknameExits,
-                 alertType: 'info',
-                 position: 'bottom',
-                 duration: 4000,
-                 stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
-              });
-              return null
-            }
-         })
+                 MessageBarManager.showAlert({
+                    title: 'Campos',
+                    message: strings.blankinputs,
+                    alertType: 'info',
+                    position: 'bottom',
+                    duration: 4000,
+                    stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+                 });
+          }else{
+            let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(that.inputNickname);
+            checkNick.once('value', function(snapshot) {
+               // Validate if a nickname exits or input nickname repeated /////////////
+               if(snapshot.exists() == true && params.nickname !== that.inputNickname){
+                 MessageBarManager.showAlert({
+                    title: strings.nickname,
+                    message: strings.nicknameExits,
+                    alertType: 'info',
+                    position: 'bottom',
+                    duration: 4000,
+                    stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+                 });//MessageBarManager nicknameExits
+               }else{
+                 let emailPath = "/users/"+that.uid+"/email"
+                 var user = firebase.auth().currentUser;
+                      user.updateEmail(that.inputEmail).then(function(){
+                            getDatabase().ref(emailPath).set(that.inputEmail)
+                            getDatabase().ref().child('users/' + that.uid).update({
+                              nickname: that.inputNickname,
+                              name: that.inputName,
+                              lastName: that.inputLastName,
+                              email: that.inputEmail,
+                              bornDay: that.inputBirthDay,
+                            }); //update user
+                            goBack()
+                      }, function(error) {
+                          if(error.code === 'auth/requires-recent-login'){
+                            MessageBarManager.showAlert({
+                                title: "Reinicia sesión para cambiar el correo",
+                                message: "Toque este mensaje si desea cerrar sesión",
+                                alertType: 'info',
+                                position: 'bottom',
+                                duration: 15000,
+                                stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' },
+                                onTapped: () =>{
+                                                AsyncStorage.removeItem("user")
+                                                navigate('login')
+                                              },
+                            }) // MessageBarManager please login again
+                          }else // If requires-recent-login
+                            if(error.code === 'auth/invalid-email'){
+                              MessageBarManager.showAlert({
+                                  title: "Correo",
+                                  message: "Correo mal redactado",
+                                  alertType: 'info',
+                                  position: 'bottom',
+                                  duration: 4000,
+                                  stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' },
+                              }) // MessageBarManager please login again
+                          }else{
+                            alert("unknown error: "+error.code)
+                          }
+                       }); // user.updateEmail error
+               }// snapshot.exists == true
+            })// checkNick.once
+         }// else blanckinputs
      } catch(error){
+<<<<<<< HEAD
 
+=======
+       alert("Error desconocido"+error.code)
+>>>>>>> 1d5bd4e5155b3556e6203e6f98eb407dc8e08050
      }
-   }
+   }// save()
 
    logout() {
      const { navigate } = this.props.navigation;
@@ -109,6 +161,7 @@ export default class EditProfile extends Component {
   render() {
     const { navigate } = this.props.navigation;
     const { params } = this.props.navigation.state;
+    const { navigate } = this.props.navigation;
     return (
           <Container>
             <Content>
@@ -166,10 +219,12 @@ export default class EditProfile extends Component {
                     </View>
                 </Left>
                 <Card>
-                        <Item >
+                        <Item>
                             <Icon active name='mail' />
                             <Input placeholder={params.email}
-                                   onChangeText={(text) => this.setState({inputEmail: text})}/>
+                              autoCorrect = {false}
+                              keyboardType = {'email-address'}
+                              onChangeText={(text) => this.setState({inputEmail: text})}/>
                         </Item>
                         <Item >
                             <Input placeholder={strings.changePassword}
@@ -186,10 +241,15 @@ export default class EditProfile extends Component {
                 </Card>
               </Form>
             </Content>
-            <MessageBarAlert ref="alert" />
+            <MessageBarAlert
+                        ref="alert"
+                        onTapped={() =>{
+                            alert("aaa")
+                        }}/>
           </Container>
     );
   }
+
 }
 
 const styles = StyleSheet.create({
