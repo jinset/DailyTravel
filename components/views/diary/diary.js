@@ -1,6 +1,6 @@
 import { Alert,Image, Dimensions } from 'react-native';
 import React, {Component} from 'react';
-import { Container, Content,  Toast, Button,Text,Body, Right,
+import { Container, Content,  Toast, Button,Text,Body, Right,List,ListItem,
  Card, CardItem, Thumbnail, Left, Tab, Tabs } from 'native-base';
 import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
@@ -23,33 +23,44 @@ static navigationOptions = ({ navigation }) => ({
     console.disableYellowBox = true;
     this.state = {
       active: 'false',
-    };
-
-    try{
-      const { params } = this.props.navigation.state;
-        let ref = "/diary/"+ params.diaryKey
-        firebase.database().ref(ref).on('value', (snap) => {
-          if(snap.val()){
-              url= snap.val().url,
-              idOwner=snap.val().idOwner,
-              name= snap.val().name,
-              description= snap.val().description
-
-           }
-           if(snap.val().culture){
-              culture= strings.culture +": "+ snap.val().culture
-           }
-        });
-      }catch(error){
-         {/* Toast.show({
-              text: strings.error,
-              position: 'bottom',
-              buttonText: 'Okay'
-            })*/}
-           const { navigate } = this.props.navigation;
-           navigate('profile');
-        }
+      url: '',
+      idOwne: '',
+      name: '',
+      description: '',
+        };
   }
+  ////////////////////////////////////////////////OBTIENE DATOS DEL DIARIO////////////////////////////////////////////////////////////////
+     async componentDidMount(){
+
+           try{
+             const { params } = this.props.navigation.state;
+               let ref = "/diary/"+ params.diaryKey
+               firebase.database().ref(ref).on('value', (snap) => {
+                 if(snap.val()){
+                    this.setState({
+                       url: snap.val().url,
+                       idOwner:snap.val().idOwner,
+                       name: snap.val().name,
+                       description: snap.val().description,
+
+                   })
+                  }
+                   if(snap.val().culture){
+                     this.setState({
+                     culture: 'Cultura: '+ snap.val().culture
+                      })
+                   }
+               });
+             }catch(error){
+                {/* Toast.show({
+                     text: strings.error,
+                     position: 'bottom',
+                     buttonText: 'Okay'
+                   })*/}
+                  const { navigate } = this.props.navigation;
+                  navigate('profile');
+               }
+     }
   render() {
         const { navigate } = this.props.navigation;
         const { params } = this.props.navigation.state;
@@ -57,12 +68,23 @@ static navigationOptions = ({ navigation }) => ({
 
          <Container>
         <Content>
-          <Card style={{flex: 0}} >
-                <Image source={{uri: url}}
+                <Image source={{uri: this.state.url}}
                 style={{height: 100, width: Dimensions.get('window').width}}/>
+                <Card >
+                  <CardItem  style={{padding:10}}>
+                    <Right>
+                      <List  style={{flex:  1, flexDirection: 'row'}}>
+                        <ListItem avatar>
+                          <Thumbnail small source={{ uri: 'https://scontent.fsyq1-1.fna.fbcdn.net/v/t1.0-1/p160x160/16708363_1540542605957763_7227193132559657605_n.jpg?oh=9306caebcffc90ec0aab2042804f1704&oe=59F65BB3' }} />
+                        </ListItem>
+                      </List>
+                    </Right>
+                  </CardItem>
+                </Card>
+                  <Card style={{flex: 0}} >
                 <CardItem>
                   <Left>
-                    <Text style={{fontWeight: 'bold',fontSize: 18}}>{name}</Text>
+                    <Text style={{fontWeight: 'bold',fontSize: 18}}>{this.state.name}</Text>
                   </Left>
                   <Right>
                     <Button transparent small
@@ -73,12 +95,12 @@ static navigationOptions = ({ navigation }) => ({
                 </CardItem>
                 <CardItem>
                   <Body>
-                    <Text>{description}</Text>
+                    <Text>{this.state.description}</Text>
                   </Body>
                 </CardItem>
                 <CardItem>
                   <Body>
-                    <Text>{culture}</Text>
+                    <Text> {this.state.culture}</Text>
                   </Body>
                 </CardItem>
           </Card>
