@@ -53,10 +53,23 @@ export const DTNewDiary = StackNavigator({
         editDaily: { screen: EditDaily },
 });
 
+DTNewDiary.navigationOptions = {
+  title : 'profile'
+}
+
 export const DailyTravelTabs = TabNavigator({
-        homeTab: { screen: DTHome },
-        createDiaryTab: {screen: DTNewDiary },
-        profileTab: { screen: DTProfile },
+        homeTab: { screen: DTHome,
+        navigationOptions:{
+          tabBarLabel: 'Home',
+        }},
+        createDiaryTab: {screen: DTNewDiary,
+          navigationOptions:{
+            tabBarLabel: 'Diary',
+          }},
+        profileTab: { screen: DTProfile,
+          navigationOptions:{
+            tabBarLabel: 'Profile',
+          }},
     },
   {
     tabBarOptions: {

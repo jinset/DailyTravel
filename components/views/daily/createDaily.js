@@ -9,11 +9,13 @@ import {
   Dimensions,
 } from 'react-native';
 
-import { Container, Content, Button, Text, Input,Item,Label } from 'native-base';
+import { Container, Content, Button, Text, Input,Item,Label, Form } from 'native-base';
 import { getDatabase } from '../../common/database';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
 import strings from '../../common/local_strings.js';
+import { Icon } from 'react-native-elements';
+import AutogrowInput from 'react-native-autogrow-input';
 
 export default class CreateDaily extends Component{
 
@@ -31,14 +33,15 @@ export default class CreateDaily extends Component{
 
   static navigationOptions = {
     title: strings.daily,
-    headerTitle: 'New Daily',
     headerStyle: {backgroundColor: '#70041b',height: 50 },
     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
  };
 
-  onPressAddDaily(){
+  addDaily(){
     const { goBack } = this.props.navigation;
-    getDatabase().ref().child('daily/').push({
+    const { params } = this.props.navigation.state;
+    let idDiary = params.diaryKey;
+    getDatabase().ref().child('/diary/'+idDiary+"/daily/").push({
       name: this.state.name,
       date: this.state.date,
       experience: this.state.experience,
@@ -51,55 +54,51 @@ export default class CreateDaily extends Component{
     return(
       <Container>
         <Content>
-          <Item floatingLabel>
-            <Label>{strings.name }</Label>
-            <Input
-              onChangeText={(text) => this.setState({name:text})}
+        <Form>
+
+            <Item stackedLabel>
+              <Label>{strings.name }</Label>
+              <Input
+                onChangeText={(text) => this.setState({name:text})}
+              />
+            </Item >
+
+            <DatePicker
+                iconComponent={<Icon active name='date-range' style={{position: 'absolute', left: 5, top: 5, marginLeft: 0}}/>}
+                style={{width: 150, margin:10}}
+                date={Moment(this.state.date, 'MM/DD/YY')}
+                mode="date"
+                placeholder="select date"
+                format="MM/DD/YY"
+                //minDate="2016-05-01"
+                //maxDate="2016-05-01"
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={{
+                 }}
+               onDateChange={(date) => {this.setState({date: date})}}
             />
-          </Item >
 
-          <DatePicker
-            style={{width: 150, margin:10}}
-               date={Moment(this.state.date, 'MM/DD/YY')}
-               mode="date"
-               placeholder="select date"
-               format="MM/DD/YY"
-               //minDate="2016-05-01"
-               //maxDate="2016-05-01"
-               confirmBtnText="Confirm"
-               cancelBtnText="Cancel"
-               customStyles={{
-                 dateIcon: {
-                     position: 'absolute',
-                     left: 0,
-                     top: 4,
-                   marginLeft: 0
-                 },
-               dateInput: {
-                   marginLeft: 36
-               }
-             }}
-             onDateChange={(date) => {this.setState({date: date})}}
-          />
 
-          <Item floatingLabel>
-            <Label>{strings.experiences }</Label>
-            <Input
-              onChangeText={(text) => this.setState({experience:text})}
-            />
-          </Item>
+              <Label>{strings.experiences}</Label>
+              <AutogrowInput
+                style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+                onChangeText={(text) => this.setState({experience:text})}
+              />
 
-          <Item floatingLabel>
-            <Label>{strings.tips }</Label>
-            <Input
-              onChangeText={(text) => this.setState({tips:text})}
-            />
-          </Item >
 
+
+              <Label>{strings.tips }</Label>
+              <AutogrowInput
+                style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+                onChangeText={(text) => this.setState({tips:text})}
+              />
+
+          </Form>
         </Content>
 
           <Button full light style= {{backgroundColor: '#D3D0CB'}}
-              onPress={this.onPressAddDaily.bind(this)}>
+              onPress={this.addDaily.bind(this)}>
               <Text>{strings.save}</Text>
           </Button>
 

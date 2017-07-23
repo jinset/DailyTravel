@@ -46,7 +46,6 @@ export default class Profile extends Component {
 
     static navigationOptions = {
       title: strings.profile,
-      headerTitle: "Profile",
       headerStyle: {backgroundColor: '#70041b',height: 50 },
       headerTitleStyle : {color:'white', fontWeight: 'ligth', alignSelf: 'center'},
     }
