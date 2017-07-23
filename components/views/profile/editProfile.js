@@ -77,9 +77,8 @@ export default class EditProfile extends Component {
          // Validate if there is empty values /////////////////////////////////////////////////////////
          if (that.inputNickname == ''|| that.inputName == ''||
              that.inputLastName == '' || that.inputEmail == ''){
-
                  MessageBarManager.showAlert({
-                    title: 'Campos',
+                    title: strings.espaces,
                     message: strings.blankinputs,
                     alertType: 'info',
                     position: 'bottom',
@@ -115,8 +114,8 @@ export default class EditProfile extends Component {
                       }, function(error) {
                           if(error.code === 'auth/requires-recent-login'){
                             MessageBarManager.showAlert({
-                                title: "Reinicia sesión para cambiar el correo",
-                                message: "Toque este mensaje si desea cerrar sesión",
+                                title: strings.restart,
+                                message: strings.touchToRestart,
                                 alertType: 'info',
                                 position: 'bottom',
                                 duration: 15000,
@@ -144,11 +143,7 @@ export default class EditProfile extends Component {
             })// checkNick.once
          }// else blanckinputs
      } catch(error){
-<<<<<<< HEAD
-
-=======
        alert("Error desconocido"+error.code)
->>>>>>> 1d5bd4e5155b3556e6203e6f98eb407dc8e08050
      }
    }// save()
 
@@ -161,7 +156,6 @@ export default class EditProfile extends Component {
   render() {
     const { navigate } = this.props.navigation;
     const { params } = this.props.navigation.state;
-    const { navigate } = this.props.navigation;
     return (
           <Container>
             <Content>
@@ -241,11 +235,7 @@ export default class EditProfile extends Component {
                 </Card>
               </Form>
             </Content>
-            <MessageBarAlert
-                        ref="alert"
-                        onTapped={() =>{
-                            alert("aaa")
-                        }}/>
+            <MessageBarAlert ref="alert"/>
           </Container>
     );
   }
