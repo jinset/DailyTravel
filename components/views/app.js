@@ -77,14 +77,15 @@ export const DailyTravelTabs = TabNavigator({
           navigationOptions:{
             tabBarLabel: 'Diary',
           }},
-        profileTab: { screen: DTProfile,
-          navigationOptions:{
-            tabBarLabel: 'Profile',
-          }},
         friendsTab: { screen: DTFriends,
             navigationOptions:{
               tabBarLabel: 'Friends',
           }},
+        profileTab: { screen: DTProfile,
+          navigationOptions:{
+            tabBarLabel: 'Profile',
+          }},
+
     },
   {
     tabBarOptions: {
