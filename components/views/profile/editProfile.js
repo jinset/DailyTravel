@@ -144,11 +144,7 @@ export default class EditProfile extends Component {
             })// checkNick.once
          }// else blanckinputs
      } catch(error){
-<<<<<<< HEAD
-
-=======
        alert("Error desconocido"+error.code)
->>>>>>> 1d5bd4e5155b3556e6203e6f98eb407dc8e08050
      }
    }// save()
 
@@ -161,7 +157,6 @@ export default class EditProfile extends Component {
   render() {
     const { navigate } = this.props.navigation;
     const { params } = this.props.navigation.state;
-    const { navigate } = this.props.navigation;
     return (
           <Container>
             <Content>
