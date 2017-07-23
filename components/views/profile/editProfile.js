@@ -46,11 +46,10 @@ export default class EditProfile extends Component {
          inputNickname: '',
          inputEmail: '',
          inputBirthDay: '',
-         goback: true,
        }
     }
 
-    componentDidMount(){
+    componentWillMount(){
       const { params } = this.props.navigation.state;
       try{
         this.setState({
@@ -66,87 +65,92 @@ export default class EditProfile extends Component {
       }
     }
 
-    logout(){
-      alert("logout")
-      const { navigate } = this.props.navigation;
-      AsyncStorage.removeItem("user");
-      navigate('login');
-    }
-
-    setGoBack(bool){
-      setState(goback: bool)
-    }
-
    save(){
      const {goBack} = this.props.navigation;
      const { params } = this.props.navigation.state;
-     let nick = this.state.inputNickname;
+     const { navigate } = this.props.navigation;
+     //let nick = this.state.inputNickname;
      let email = this.state.inputEmail;
      var that = this.state;
      try{
          MessageBarManager.registerMessageBar(this.refs.alert);
-         //Helper.setUserNickname(this.state.uid, this.state.inputNickname)
-         Helper.setUserName(this.state.uid, this.state.inputName)
-         Helper.setUserLastName(this.state.uid, this.state.inputLastName)
-         //Helper.setUserEmail(this.state.uid, this.state.inputEmail)
-         Helper.setUserBirthDay(this.state.uid, this.state.inputBirthDay)
+         // Validate if there is empty values /////////////////////////////////////////////////////////
+         if (that.inputNickname == ''|| that.inputName == ''||
+             that.inputLastName == '' || that.inputEmail == ''){
 
-         ////////////////////////// Set Email /////////////////////////////////////
-             let emailPath = "/users/"+this.state.uid+"/email"
-             var user = firebase.auth().currentUser;
-
-             user.updateEmail(email).then(function(){
-                return getDatabase().ref(emailPath).set(email)
-             }, function(error) {
-                this.setGoBack.bind(this)
-                if(error.code === 'auth/requires-recent-login'){
-                  MessageBarManager.showAlert({
-                      title: "Reinicia sesión para cambiar el correo",
-                      message: "Toca este mensaje si desea cerrar sesión",
-                      alertType: 'info',
-                      position: 'bottom',
-                      duration: 15000,
-                      stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
-                  })
-                }
-             });
-          ////////////////////////////////////////////////////////////////////////
-
-         /////////////////// Set Nickname //////////////////////////////////////////////
-         let nicknamePath = "/users/"+this.state.uid+"/nickname"
-         let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(nick);
-         checkNick.once('value', function(snapshot) {
-             if (snapshot.exists() == false || params.nickname === nick) {
-               return getDatabase().ref(nicknamePath).set(nick)
-            }else{
-              this.setGoBack(false)
-              MessageBarManager.showAlert({
-                 title: strings.nickname,
-                 message: strings.nicknameExits,
-                 alertType: 'info',
-                 position: 'bottom',
-                 duration: 4000,
-                 stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
-              });
-              return null
-            }
-         })
-         //////////////////////////////////////////////////////////////////////////////
-         /// Si goBack es true entonces sale de la pantalla ///
-         alert(that.goback)
-         if(that.goback === true){
-           goBack()
-         }else{
-           that.goback = true;
-         }
-         /////////////////////////////////////////////////////
+                 MessageBarManager.showAlert({
+                    title: 'Campos',
+                    message: strings.blankinputs,
+                    alertType: 'info',
+                    position: 'bottom',
+                    duration: 4000,
+                    stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+                 });
+          }else{
+            let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(that.inputNickname);
+            checkNick.once('value', function(snapshot) {
+               // Validate if a nickname exits or input nickname repeated /////////////
+               if(snapshot.exists() == true && params.nickname !== that.inputNickname){
+                 MessageBarManager.showAlert({
+                    title: strings.nickname,
+                    message: strings.nicknameExits,
+                    alertType: 'info',
+                    position: 'bottom',
+                    duration: 4000,
+                    stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+                 });//MessageBarManager nicknameExits
+               }else{
+                 let emailPath = "/users/"+that.uid+"/email"
+                 var user = firebase.auth().currentUser;
+                      user.updateEmail(that.inputEmail).then(function(){
+                            getDatabase().ref(emailPath).set(that.inputEmail)
+                            getDatabase().ref().child('users/' + that.uid).update({
+                              nickname: that.inputNickname,
+                              name: that.inputName,
+                              lastName: that.inputLastName,
+                              email: that.inputEmail,
+                              bornDay: that.inputBirthDay,
+                            }); //update user
+                            goBack()
+                      }, function(error) {
+                          if(error.code === 'auth/requires-recent-login'){
+                            MessageBarManager.showAlert({
+                                title: "Reinicia sesión para cambiar el correo",
+                                message: "Toque este mensaje si desea cerrar sesión",
+                                alertType: 'info',
+                                position: 'bottom',
+                                duration: 15000,
+                                stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' },
+                                onTapped: () =>{
+                                                AsyncStorage.removeItem("user")
+                                                navigate('login')
+                                              },
+                            }) // MessageBarManager please login again
+                          }else // If requires-recent-login
+                            if(error.code === 'auth/invalid-email'){
+                              MessageBarManager.showAlert({
+                                  title: "Correo",
+                                  message: "Correo mal redactado",
+                                  alertType: 'info',
+                                  position: 'bottom',
+                                  duration: 4000,
+                                  stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' },
+                              }) // MessageBarManager please login again
+                          }else{
+                            alert("unknown error: "+error.code)
+                          }
+                       }); // user.updateEmail error
+               }// snapshot.exists == true
+            })// checkNick.once
+         }// else blanckinputs
      } catch(error){
-
+       alert("Error desconocido"+error.code)
      }
-   }
+   }// save()
 
   render() {
     const { params } = this.props.navigation.state;
+    const { navigate } = this.props.navigation;
     return (
           <Container>
             <Content>
@@ -203,7 +207,7 @@ export default class EditProfile extends Component {
                     </View>
                 </Left>
                 <Card>
-                        <Item >
+                        <Item>
                             <Icon active name='mail' />
                             <Input placeholder={params.email}
                               autoCorrect = {false}
@@ -225,10 +229,15 @@ export default class EditProfile extends Component {
                 </Card>
               </Form>
             </Content>
-            <MessageBarAlert ref="alert" onTapped={this.logout}/>
+            <MessageBarAlert
+                        ref="alert"
+                        onTapped={() =>{
+                            alert("aaa")
+                        }}/>
           </Container>
     );
   }
+
 }
 
 const styles = StyleSheet.create({
