@@ -49,12 +49,7 @@ export default class Profile extends Component {
       headerStyle: {backgroundColor: '#70041b',height: 50 },
       headerTitleStyle : {color:'white', fontWeight: 'ligth', alignSelf: 'center'},
     }
-    logout() {
-      const { navigate } = this.props.navigation;
 
-      AsyncStorage.removeItem("user");
-      navigate('login');
-    }
     async componentDidMount(){
      try{
        AsyncStorage.getItem("user").then((value) => {
@@ -176,9 +171,6 @@ export default class Profile extends Component {
               <Card>
                     {listTable}
                </Card>
-               <Button block info onPress = {this.logout.bind(this)} style={{marginTop:15}}>
-                  <Text style={{color:'white'}}>logout</Text>
-               </Button>
           </Content>
           </Container>
     );
