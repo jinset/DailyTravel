@@ -88,7 +88,10 @@ export const DailyTravelTabs = TabNavigator({
 export const DailyTravelInitiate = StackNavigator({
     login: { screen: Login },
     signup: {screen: Signup },
-    dtTabs: {screen: DailyTravelTabs},
+    dtTabs: {screen: DailyTravelTabs,
+      navigationOptions:{
+        header: null,
+      }},
 });
 
 
