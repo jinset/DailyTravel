@@ -11,6 +11,7 @@ import {
   Image,
   Dimensions,
   StyleSheet,
+  AsyncStorage,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
@@ -95,11 +96,18 @@ export default class EditProfile extends Component {
             }
          })
      } catch(error){
-       alert("error: " + error)
+
      }
    }
 
+   logout() {
+     const { navigate } = this.props.navigation;
+     AsyncStorage.removeItem("user");
+     navigate('login');
+   }
+
   render() {
+    const { navigate } = this.props.navigation;
     const { params } = this.props.navigation.state;
     return (
           <Container>
@@ -107,6 +115,7 @@ export default class EditProfile extends Component {
               <Form>
                <View style={styles.centerCamera}>
                     <CameraComponent />
+                    <Icon active large onPress={this.logout.bind(this)} name='exit-to-app' />
                     <Text>{strings.changePerfilPhoto}</Text>
                </View>
                 <Card>
