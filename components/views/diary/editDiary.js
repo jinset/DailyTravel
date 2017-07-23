@@ -25,7 +25,7 @@ let ref='';
 // Nav options can be defined as a function of the screen's props:
   static navigationOptions = ({ navigation }) => ({
       title: strings.diary,
-      headerStyle: {backgroundColor: '#70041b',height: 50 },
+      headerStyle: {backgroundColor: '#70041b', height: 50 },
       headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   });
   ////////////////////////////////////////////////////////CONSTRUCTOR/////////////////////////////////////////////////
