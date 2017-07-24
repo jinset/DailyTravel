@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Header, Form, Segment, Item, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
+import { Container, Content, Header, Form, Segment, Item, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, List, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
@@ -36,24 +36,75 @@ export default class Profile extends Component {
        super(props);
        this.state = {
          uid: '',
+         inputSearch: '',
+         users: [],
        }
     }
+
+    search(text){
+      if(text != ''){
+        let ref = getDatabase().ref("/users")
+        userList = (ref.orderByChild("nickname").startAt(text).endAt(text+'\uf8ff'))
+        userList.on('value', (snap) => {
+            var users = [];
+            snap.forEach((child) => {
+                users.push({
+                  id: child.key,
+                  nickname: child.val().nickname,
+                  name: child.val().name,
+                  lastName: child.val().lastName,
+                  url: child.val().url,
+                });//users.push
+            });//snap.forEach
+            this.setState({
+              users: users,
+            })
+        })//userList.on
+      }/*if text has content*/else{
+        this.setState({
+          users: [],
+        })
+      }//else
+    }//search
 
   render() {
     const { navigate } = this.props.navigation;
 
+    let listTable = this.state.users.map((u,i) => {
+      return (
+                    <ListItem>
+                          <Thumbnail
+                            small
+                            source={{uri: u.url}}
+                          />
+                        <Text style={styles.nick}>{u.nickname}</Text>
+                        <Text>{u.name} {u.lastName}</Text>
+                    </ListItem>
+            )
+      });
+
     return (
           <Container>
-                <Header style={{backgroundColor: 'white'}} searchBar rounded>
-                      <Item>
-                        <Icon name="search" />
-                        <Input placeholder="Search" />
-                        <Icon name="people" />
-                      </Item>
-                      <Button transparent>
-                        <Text>Search</Text>
-                      </Button>
-                </Header>
+              <Content>
+                    <Header style={{backgroundColor: 'white'}} searchBar rounded>
+                          <Item>
+                            <Icon name="search" />
+                            <Input placeholder="Search"
+                                   maxLength = {20}
+                                   onChangeText={(text) => this.search(text)}
+                            />
+                            <Icon name="people" />
+                          </Item>
+                          <Button transparent>
+                            <Text>Search</Text>
+                          </Button>
+                    </Header>
+                    <Body>
+                      <List>
+                          {listTable}
+                      </List>
+                    </Body>
+                </Content>
           </Container>
     );
   }
@@ -85,6 +136,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontSize: 16,
     color: '#000000',
+    padding: 15,
   },
   diary: {
     fontStyle: 'italic',
