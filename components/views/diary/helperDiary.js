@@ -21,6 +21,10 @@ class HelperDiary {
       })
   }
 
+  static deleteDiary(diaryId){
+    let diaryNamePath = "/diary/"+diaryId
+    return getDatabase().ref(diaryNamePath).update({status:'false',});
+  }
 }
 
 module.exports = HelperDiary

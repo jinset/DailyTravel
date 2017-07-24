@@ -6,6 +6,7 @@ import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import DailyList from '../daily/listDaily.js';
+import HelperDiary from './helperDiary';
 import * as firebase from 'firebase';
 
 var idOwner, name, description, culture, url
@@ -60,6 +61,11 @@ static navigationOptions = ({ navigation }) => ({
                   this.props.navigation.goBack()
                }
      }
+     deleteDiary(diaryId){
+       HelperDiary.deleteDiary(diaryId)
+       const { navigate } = this.props.navigation;
+      navigate('profile')
+     }
   render() {
         const { navigate } = this.props.navigation;
         const { params } = this.props.navigation.state;
@@ -79,17 +85,18 @@ static navigationOptions = ({ navigation }) => ({
             </Left>
           </CardItem>
           </Card>
-          <Card style={{flex: 0}} >
+          <Card  >
             <CardItem>
-            <Left>
-              <Text style={{fontWeight: 'bold',fontSize: 18}}>{this.state.name}</Text>
-            </Left>
-            <Right>
+              <Text style={{fontWeight: 'bold',fontSize: 18, width:260}}>{this.state.name}</Text>
+
+              <Button transparent small
+                      onPress={() => this.deleteDiary(params.diaryKey)}>
+                  <Icon active name='delete' />
+                </Button>
               <Button transparent small
                       onPress={()=> navigate('editDiary', {diaryKey:params.diaryKey})}>
                   <Icon active name='mode-edit' />
                 </Button>
-            </Right>
             </CardItem>
             <CardItem>
               <Body>

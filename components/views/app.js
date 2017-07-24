@@ -51,6 +51,7 @@ export const DTFriends = StackNavigator({
 export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
     newDiary: { screen: NewDiary },
+      profile: { screen: Profile },
     editDiary: { screen: EditDiary },
       DairyView: { screen: DairyView },
       //Daily
