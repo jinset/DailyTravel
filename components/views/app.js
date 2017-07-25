@@ -15,6 +15,9 @@ import Home from './home/home';
 //Import de vista Profile
 import Profile from './profile/profile';
 
+//Import de vista Friends
+import Friends from './friends/friends.js'
+
 //Import de vistas daily
 import CreateDaily from './daily/createDaily';
 import EditDaily from './daily/editDaily';
@@ -43,6 +46,11 @@ export const DTProfile = StackNavigator({
 
 });
 
+export const DTFriends = StackNavigator({
+  //Friends
+    friends: { screen: Friends },
+});
+
 export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
     newDiary: { screen: NewDiary },
@@ -66,10 +74,15 @@ export const DailyTravelTabs = TabNavigator({
           navigationOptions:{
             tabBarLabel: 'Diary',
           }},
+        friendsTab: { screen: DTFriends,
+            navigationOptions:{
+              tabBarLabel: 'Friends',
+          }},
         profileTab: { screen: DTProfile,
           navigationOptions:{
             tabBarLabel: 'Profile',
           }},
+
     },
   {
     tabBarOptions: {
@@ -88,7 +101,10 @@ export const DailyTravelTabs = TabNavigator({
 export const DailyTravelInitiate = StackNavigator({
     login: { screen: Login },
     signup: {screen: Signup },
-    dtTabs: {screen: DailyTravelTabs},
+    dtTabs: {screen: DailyTravelTabs,
+      navigationOptions:{
+        header: null,
+      }},
 });
 
 

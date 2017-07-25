@@ -52,9 +52,10 @@ let strings = new LocalizedStrings({
    blankinputs: "Some inputs are blanks",
    birthday: "Birthday",
    passwordWeak : "The password is too weak",
-   emailExits: "Email already exists"
-
-
+   emailExits: "Email already exists",
+   espaces: "Espaces",
+   restart: "Restart session to change email",
+   touchToRestart: "Touch this message if you wish to log out",
  },
  es:{
    home:"Inicio",
@@ -106,7 +107,10 @@ let strings = new LocalizedStrings({
    blankinputs: "Algunas entradas estan vacias",
    birthday:"Cumpleaños",
    passwordWeak : "La contraseña es muy corta",
-   emailExits: "Este correcto electrónico ya existe"
+   emailExits: "Este correo electrónico ya existe",
+   espaces: "Campos",
+   restart: "Reinicia sesión para cambiar el correo",
+   touchToRestart: "Toque este mensaje si desea cerrar sesión",
  }
 });
 
