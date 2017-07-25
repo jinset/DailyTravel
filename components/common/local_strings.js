@@ -50,7 +50,7 @@ let strings = new LocalizedStrings({
    lastName: "Last name",
    nickname: "Nickname",
    blankinputs: "Some inputs are blanks",
-   birthday: "Cumpleaños",
+   birthday: "Birthday",
    passwordWeak : "The password is too weak",
    emailExits: "Email already exists",
    espaces: "Espaces",
