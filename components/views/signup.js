@@ -50,11 +50,13 @@ export default class Signup extends Component {
     MessageBarManager.registerMessageBar(this.refs.alert);
     var that = this.state;
     if (that.name == '' || that.lastName == '' || that.email == '' || that.password == '' || that.country == '' || that.nickname == '') {
-      Toast.show({
-              text: strings.blankinputs,
-              position: 'bottom',
-              buttonText: 'Okay'
-            })
+      MessageBarManager.showAlert({
+         message: strings.blankinputs,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 4000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }else{
       const { goBack } = this.props.navigation;
       var checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(this.state.nickname);
@@ -65,17 +67,21 @@ export default class Signup extends Component {
             var errorCode = error.code;
             var errorMessage = error.message;
             if (errorCode == 'auth/weak-password') {
-              Toast.show({
-                      text: strings.passwordWeak,
-                      position: 'bottom',
-                      buttonText: 'Okay'
-                    })
+              MessageBarManager.showAlert({
+                 message: strings.passwordWeak,
+                 alertType: 'info',
+                 position: 'bottom',
+                 duration: 4000,
+                 stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+              });
             } else {
-              Toast.show({
-                      text: strings.emailExits,
-                      position: 'bottom',
-                      buttonText: 'Okay'
-                    })
+              MessageBarManager.showAlert({
+                   message: strings.emailExits,
+                   alertType: 'info',
+                   position: 'bottom',
+                   duration: 4000,
+                   stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+                });
             }
           }).then(function(firebaseUser) {
             if (firebaseUser == undefined) {
