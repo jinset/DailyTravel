@@ -6,10 +6,13 @@ import {
   AsyncStorage,
 } from 'react-native';
 
-import { Container, Content,Form, Item, Input, Label, Button,Toast, Icon, Spinner, Body} from 'native-base';
+import { Container, Content,Form, Item, Input, Label, Button, Icon, Spinner, Body} from 'native-base';
 import React, {Component} from 'react';
 import {getAuth} from '../common/database';
 import strings from '../common/local_strings.js';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
+
 
 export default class Login extends Component {
 
@@ -31,20 +34,27 @@ export default class Login extends Component {
   login() {
     const { navigate } = this.props.navigation;
     //this.setState({ showSpinner: true });
-    getAuth().signInWithEmailAndPassword(this.state.email,
-      this.state.password).then(function(firebaseUser) {
-        AsyncStorage.setItem("user", firebaseUser.uid);
-        navigate('dtTabs');
+    try {
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      getAuth().signInWithEmailAndPassword(this.state.email,
+        this.state.password).then(function(firebaseUser) {
+          AsyncStorage.setItem("user", firebaseUser.uid);
+          navigate('dtTabs');
 
-    }).catch(function(error) {
-      //this.setState({ showSpinner: false });
-  
-      // Toast.show({
-      //         text: strings.nicknameExits,
-      //         position: 'bottom',
-      //         buttonText: 'Okay'
-      //       })
-    });
+      }).catch(function(error) {
+        //this.setState({ showSpinner: false });
+        MessageBarManager.showAlert({
+           message: strings.wrongPassEmail,
+           alertType: 'info',
+           position: 'bottom',
+           duration: 4000,
+           stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+        });
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
   }
   render() {
     const { navigate } = this.props.navigation;
@@ -83,6 +93,7 @@ export default class Login extends Component {
                 </Button>
                </Body>
              </Content>
+             <MessageBarAlert ref="alert" />
            </Container>
 
     );
