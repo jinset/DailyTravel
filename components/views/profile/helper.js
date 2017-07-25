@@ -150,12 +150,14 @@ static setUserBirthDay(userId, birthday){
     diaryList.on('value', (snap) => {
         var diarys = [];
         snap.forEach((child) => {
+          if(child.val().status===true){
             diarys.push({
               id: child.key,
               name: child.val().name,
               description: child.val().description,
               url: child.val().url,
             });
+          }
         });
         callback(diarys)
     })

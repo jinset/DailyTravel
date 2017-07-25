@@ -105,8 +105,7 @@ export default class Profile extends Component {
         return (
                 <ScrollView>
                     <CardItem key={i}>
-                       <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
-                        <Body>
+                      <Body>
 
                           <View style={styles.row}>
 
@@ -114,23 +113,27 @@ export default class Profile extends Component {
                                 small
                                 source={{uri: this.state.imagePath}}
                               />
-                            <View style={styles.center}>
-                                  <Text style={styles.diary}>{"    " +d.name} </Text>
-                              </View>
+                              <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                                <View style={styles.center}>
+                                    <Text style={styles.diary}>{"    " +d.name} </Text>
+                                </View>
+                              </TouchableHighlight>
                               <Right>
                                   <Icon active name='more-vert' />
                               </Right>
                           </View>
-                          <Left>
-                              <Image
-                                source={{uri: d.url}}
-                                style={{height: 300, width: Dimensions.get('window').width}}
-                              />
-                              <Text style={styles.description}> {d.description} </Text>
-                         </Left>
+                          <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                            <Left>
+                                <Image
+                                  source={{uri: d.url}}
+                                  style={{height: 300, width: Dimensions.get('window').width}}
+                                />
+                                <Text style={styles.description}> {d.description} </Text>
+                           </Left>
+
+                         </TouchableHighlight>
 
                         </Body>
-                        </TouchableHighlight>
                     </CardItem>
                     <Separator></Separator>
                 </ScrollView>
