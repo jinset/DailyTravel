@@ -12,6 +12,7 @@ import {
   Dimensions,
   StyleSheet,
   Text,
+  AsyncStorage,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
@@ -47,19 +48,23 @@ export default class Profile extends Component {
         userList = (ref.orderByChild("nickname").startAt(text).endAt(text+'\uf8ff'))
         userList.on('value', (snap) => {
             var users = [];
+            AsyncStorage.getItem("user").then((value) => {
             snap.forEach((child) => {
-                users.push({
-                  id: child.key,
-                  nickname: child.val().nickname,
-                  name: child.val().name,
-                  lastName: child.val().lastName,
-                  url: child.val().url,
-                });//users.push
+                if(child.key != value){
+                  users.push({
+                    id: child.key,
+                    nickname: child.val().nickname,
+                    name: child.val().name,
+                    lastName: child.val().lastName,
+                    url: child.val().url,
+                  });//users.push
+                }
             });//snap.forEach
             this.setState({
               users: users,
-            })
+            }) //AsyncStorage
         })//userList.on
+      })
       }/*if text has content*/else{
         this.setState({
           users: [],
