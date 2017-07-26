@@ -40,9 +40,6 @@ export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
     editProfile: {screen: EditProfile},
-  //Acceso a la vista de diario
-    DairyView: { screen: DairyView },
-    editDiary: { screen: EditDiary },
 
 });
 
@@ -54,8 +51,15 @@ export const DTFriends = StackNavigator({
 export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
     newDiary: { screen: NewDiary },
+      profile: { screen: Profile },
     editDiary: { screen: EditDiary },
+      DairyView: { screen: DairyView },
       //Daily
+        listDaily: { screen: ListDaily },
+        createDaily: { screen: CreateDaily },
+        editDaily: { screen: EditDaily },
+});
+export const DTNewDaily = StackNavigator({
         listDaily: { screen: ListDaily },
         createDaily: { screen: CreateDaily },
         editDaily: { screen: EditDaily },
