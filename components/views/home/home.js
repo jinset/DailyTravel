@@ -16,12 +16,13 @@ import { getDatabase } from '../../common/database';
 
    constructor(props) {
      super(props);
-     this.dataRef = getDatabase().ref('/diary').orderByChild("privacy").equalTo(false);
      console.disableYellowBox = true;
      this.state = {
        dataSource: new ListView.DataSource({
          rowHasChanged: (row1, row2) => row1 !== row2,
-       })
+       }),
+       showSpinner: false
+
      };
    }
     static navigationOptions = {
@@ -29,41 +30,79 @@ import { getDatabase } from '../../common/database';
         header: null,
     }
 
-
-    getDiaryList(dataRef) {
-      var diaries = [];
-      dataRef.on('value', (snap) => {
-        snap.forEach((child) => {
-        //  var user = getDatabase().ref('users/' + child.val().idOwner);
-          //user.once('value', function(snapshot) {
-            //alert(snapshot.val().name + "  " + child.val().name);
+    /*
+      Obtiene los diarios que su privacidad esten en falsos
+     */
+    async getDiaries() {
+      return new Promise((resolve, reject) => {
+        var url = getDatabase().ref('diary').orderByChild("privacy").equalTo(false);
+        url.on('value', (snap) => {
+          var diaries = [];
+          snap.forEach((child) => {
             diaries.push({
               _key: child.key,
               name: child.val().name,
-              date: child.val().description,
+              description: child.val().description,
               url: child.val().url,
-              //user: snapshot.val().name,
-              //userPhoto: snapshot.val().url
+              idOwner: child.val().idOwner
             });
-          //})
-        });
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(diaries)
-        });
+          });
+          resolve(diaries)
+        })
+      })
+    }
+    /*
+      Obtiene el usuario y arma un objeto con el usuario + diario donde retorna ese objeto
+     */
+    async getUser(dataUser) {
+      return new Promise((resolve, reject) => {
+        var diaries = [];
+        var ref = getDatabase().ref("users/" + dataUser.idOwner);
+        ref.once("value", (snapshot) => {
+          var val = snapshot.val();
+          diaries = {
+            _key: dataUser._key,
+            name: dataUser.name,
+            description: dataUser.description,
+            url: dataUser.url,
+            idOwner: dataUser.idOwner,
+            userNick: val.nickname,
+            photoUser: val.url
+          }
+          console.log(diaries);
+          resolve(diaries);
+        })
       });
+    };
+
+  async componentDidMount() {
+    try {
+      let homeArray = [];
+      console.log('First');
+      let array = await this.getDiaries();
+      console.log(array);
+      for (var i in array) {
+        await this.getUser(array[i]).then(data => {
+          homeArray.push(data)
+        });
+      }
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(homeArray)
+      });
+      console.log('End');
+    } catch (error) {
+      console.log(error.message);
     }
 
-  componentDidMount() {
-    this.getDiaryList(this.dataRef);
   }
   _renderItem(item) {
     return (
       <Card style={{flex: 0}} key={item._key}>
       <CardItem >
         <Left>
-          <Thumbnail source={item.url} />
+          <Thumbnail source={{uri: item.photoUser}} />
           <Body>
-            <Text>{item.name}</Text>
+            <Text>{item.userNick}</Text>
             <Text note>April 15, 2016</Text>
           </Body>
         </Left>
@@ -77,14 +116,7 @@ import { getDatabase } from '../../common/database';
         </Body>
       </CardItem>
       <CardItem>
-        <Left>
-          <Button transparent textStyle={{color: '#87838B'}}>
-          </Button>
-        </Left>
-        <Right>
-          <Button transparent textStyle={{color: '#87838B'}}>
-          </Button>
-        </Right>
+           <Text>{item.name}</Text>
       </CardItem>
       </Card>
 
@@ -95,6 +127,8 @@ import { getDatabase } from '../../common/database';
     return (
       <Container>
          <Content>
+         { this.state.showSpinner ? <Spinner /> : null }
+
            <ListView
              dataSource={this.state.dataSource}
              renderRow={this._renderItem.bind(this)}
