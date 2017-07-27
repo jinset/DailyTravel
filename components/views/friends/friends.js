@@ -44,6 +44,7 @@ export default class Profile extends Component {
          inputSearch: '',
          users: [],
          btnText: 'Seguir',
+         txt: '',
        }
     }
 
@@ -75,6 +76,7 @@ export default class Profile extends Component {
                               that.setState({
                                   users: users,
                                   uidCurrentUser: value,
+                                  txt: text,
                               })//setState
                           })//checkRepeat.once
                       });//snap.forEach
@@ -98,13 +100,20 @@ export default class Profile extends Component {
             });
         }
       })//checkRepeat.once
-      this.setState({
-
-      })
+      this.search(that.txt)
     }
 
     unfollow(i){
-      alert("despues de hacer push, pull y pull r hago este metodo")
+      var that = this.state;
+      let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
+      followList = (ref.orderByChild("uid").equalTo(that.users[i].id))
+      followList.on('value', (snap) => {
+          var follows = [];
+          snap.forEach((child) => {
+              ref.child(child.key).remove();
+          });
+      })
+      this.search(that.txt)
     }
 
   render() {
