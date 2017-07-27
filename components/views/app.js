@@ -19,6 +19,7 @@ import Profile from './profile/profile';
 import Friends from './friends/friends.js'
 
 //Import de vistas daily
+import Daily from './daily/daily';
 import CreateDaily from './daily/createDaily';
 import EditDaily from './daily/editDaily';
 import ListDaily from './daily/listDaily';
@@ -40,6 +41,9 @@ export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
     editProfile: {screen: EditProfile},
+  //Acceso a la vista de diario
+    DairyView: { screen: DairyView },
+    editDiary: { screen: EditDiary },
 
 });
 
@@ -51,23 +55,13 @@ export const DTFriends = StackNavigator({
 export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
     newDiary: { screen: NewDiary },
-      profile: { screen: Profile },
     editDiary: { screen: EditDiary },
-      DairyView: { screen: DairyView },
       //Daily
         listDaily: { screen: ListDaily },
         createDaily: { screen: CreateDaily },
         editDaily: { screen: EditDaily },
+        daily: { screen: Daily },
 });
-export const DTNewDaily = StackNavigator({
-        listDaily: { screen: ListDaily },
-        createDaily: { screen: CreateDaily },
-        editDaily: { screen: EditDaily },
-});
-
-DTNewDiary.navigationOptions = {
-  title : 'profile'
-}
 
 export const DailyTravelTabs = TabNavigator({
         homeTab: { screen: DTHome,
@@ -78,29 +72,15 @@ export const DailyTravelTabs = TabNavigator({
           navigationOptions:{
             tabBarLabel: 'Diary',
           }},
-        friendsTab: { screen: DTFriends,
-            navigationOptions:{
-              tabBarLabel: 'Friends',
-          }},
         profileTab: { screen: DTProfile,
           navigationOptions:{
             tabBarLabel: 'Profile',
           }},
-
-    },
-  {
-    tabBarOptions: {
-      style: {
-       backgroundColor: '#70041b',
-      },
-      tabStyle: {
-        width: 90,
-      },
-    },
-    tabBarPosition: 'bottom',
-    showIcon: true,
-    lazyLoad: true,
-});
+        friendsTab: { screen: DTFriends,
+            navigationOptions:{
+              tabBarLabel: 'Friends',
+          }},
+      });
 
 export const DailyTravelInitiate = StackNavigator({
     login: { screen: Login },
@@ -108,7 +88,14 @@ export const DailyTravelInitiate = StackNavigator({
     dtTabs: {screen: DailyTravelTabs,
       navigationOptions:{
         header: null,
-      }},
+      },
+      style: {
+        backgroundColor: '#70041b',
+      },
+      tabBarPosition: 'bottom',
+      showIcon: true,
+      lazyLoad: true,
+    },
 });
 
 

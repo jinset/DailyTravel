@@ -20,26 +20,20 @@ export default class EditDaily extends Component{
 
   constructor(props){
     super(props);
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.state = {
-      name: null,
-      experience: null,
-      tips: null,
-      date: null,
-      dataSource: ds.cloneWithRows([null]),
-    };
-  }
-
-  async componentDidMount(){
     const { params } = this.props.navigation.state;
-    this.setState({
-      name: params.daily.name,
-      date: params.daily.date,
-      experience: params.daily.experience,
-      tips: params.daily.tips,
-      idDaily: params.daily._key,
-      idDiary: params.idDiary,
-
+    let idDiary = params.idDiary;
+    let idDaily = params.idDaily;
+    this.dataRef = getDatabase().ref("/diary/"+idDiary+"/daily/"+idDaily);
+    this.dataRef.on('value', (snap) => {
+        this.state= {
+          idDiary: params.idDiary,
+          idDaily: snap.key,
+          name: snap.val().name,
+          date: snap.val().date,
+          experience: snap.val().experience,
+          tips: snap.val().tips,
+          status: true,
+        };
     });
   }
 
@@ -52,6 +46,7 @@ export default class EditDaily extends Component{
       date: this.state.date,
       experience: this.state.experience,
       tips: this.state.tips,
+      status: this.state.status,
     });
     goBack();
   }

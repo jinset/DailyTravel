@@ -27,6 +27,7 @@ export default class CreateDaily extends Component{
       experience: null,
       tips: null,
       date: new Date().toLocaleDateString(),
+      status: true,
       dataSource: ds.cloneWithRows([null]),
     };
   }
@@ -46,6 +47,7 @@ export default class CreateDaily extends Component{
       date: this.state.date,
       experience: this.state.experience,
       tips: this.state.tips,
+      status: this.state.status,
     });
     goBack();
   }

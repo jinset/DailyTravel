@@ -20,7 +20,7 @@ export default class ListDaily extends Component{
 
     const { params } = this.props.navigation.state;
     let idDiary = params.diaryKey;
-    this.dataRef = getDatabase().ref("/diary/"+idDiary+"/daily/");
+    this.dataRef = getDatabase().ref("/diary/"+idDiary+"/daily/").orderByChild("status").equalTo(true);
     this.state = {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
@@ -57,17 +57,18 @@ export default class ListDaily extends Component{
     this.getDailyList(this.dataRef);
   }
 
-  _renderItem(item) {
+  _renderItem(daily) {
     const { navigate } = this.props.navigation;
     const { params } = this.props.navigation.state;
     return (
       <ListItem
-        key= {item._key}
-        title={item.date + "          " + item.name}
-        onPress={() => navigate('editDaily', {daily: item, idDiary: params.diaryKey})}
-      />
+        key= {daily._key}
+        title={daily.date + "          " + daily.name}
+        onPress={() => navigate('daily', {idDaily: daily._key, idDiary: params.diaryKey})}>
+      </ListItem>
     );
   }
+
   addDaily=()=>{
     const { navigate } = this.props.navigation;
     const { params } = this.props.navigation.state;
@@ -88,6 +89,7 @@ export default class ListDaily extends Component{
             renderRow={this._renderItem.bind(this)}
             enableEmptySections={true}
             style={styles.listview}>
+
           </ListView>
       </Content>
     </Container>
