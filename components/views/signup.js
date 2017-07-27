@@ -96,7 +96,8 @@ export default class Signup extends Component {
                 birthPlace: that.country,
                 bornDay: that.date,
                 nickname: that.nickname,
-                url: that.url
+                url: that.url,
+                follows: [],
               });
               goBack();
             }
