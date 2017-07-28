@@ -1,25 +1,17 @@
-import {
-  AppRegistry,
-  TextInput,
-  View,StyleSheet,
-  TouchableHighlight,
-  ToolbarAndroid,
-  ActivityIndicator,
-  Alert,ListView ,Dimensions,Platform
-} from 'react-native';
+import { TouchableHighlight, Alert ,Dimensions,Platform,Image } from 'react-native';
 import React, {Component} from 'react';
-import { StackNavigator } from 'react-navigation';
-import { Container, Content,Header,Picker, Form,List,Toast,ListItem,Radio, Item,Title, Input, Label, Button ,Text,Body,CheckBox ,ActionSheet, Right, Switch, Card, CardItem, Thumbnail, Left,Image, Footer, FooterTab, Badge  } from 'native-base';
+import { Container, Content, Form,List,Toast,ListItem,Radio, Item, Input, Label, Button ,Text,Body , Right, Switch, Card,
+   CardItem, Thumbnail, Left  } from 'native-base';
 import strings from '../../common/local_strings.js';
-import FooterNav from  '../../common/footerNav.js';
+import { Icon } from 'react-native-elements';
+import AutogrowInput from 'react-native-autogrow-input';
+//Firebase
 import { getDatabase } from '../../common/database';
-import PopupDialog, { SlideAnimation } from 'react-native-popup-dialog';
-import { DialogTitle } from 'react-native-popup-dialog';
 import * as firebase from 'firebase';
+//Image Picker
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import HelperDiary from './helperDiary';
-import { Icon } from 'react-native-elements';
 const Blob = RNFetchBlob.polyfill.Blob
 const fs = RNFetchBlob.fs
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
@@ -29,39 +21,14 @@ var key ='';
 var usuario ='';
 let ref='';
 
-const uploadImage = (uri, imageName) => {
-      const mime='image/jpg'
-      return new Promise((resolve, reject) => {
-         const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
-         let uploadBlob = null
-         const imageRef = firebase.storage().ref('images/diary').child(imageName)
-         fs.readFile(uploadUri, 'base64')
-             .then((data) => {
-                return Blob.build(data, {type: `${mime};BASE64`})
-             })
-             .then((blob) => {
-                uploadBlob = blob
-                return imageRef.put(blob, {contentType: mime})
-             })
-             .then(() => {
-               uploadBlob.close()
-               return imageRef.getDownloadURL()
-             })
-             .then((url) => {
-               resolve(url)
-             })
-             .catch((error) => {
-               reject(error)
-             })
-      })
-   }
  export default class NewDiary extends Component {
 // Nav options can be defined as a function of the screen's props:
   static navigationOptions = ({ navigation }) => ({
       title: strings.diary,
-      headerStyle: {backgroundColor: '#70041b',height: 50 },
+      headerStyle: {backgroundColor: '#70041b', height: 50 },
       headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   });
+  ////////////////////////////////////////////////////////CONSTRUCTOR/////////////////////////////////////////////////
   constructor(props){
     super(props)
      try{
@@ -93,14 +60,8 @@ const uploadImage = (uri, imageName) => {
         }
   }
 
-//Obtiene el usuario loggeado
+///////////////////////////////////////////////////////OBTIENE IMAGEN////////////////////////////////////////////////////////////////
    async componentDidMount(){
-     try{
-       let user = await firebase.auth().currentUser
-          usuario= user.uid;
-     } catch(error){
-       alert("error: " + error)
-     }
      try{
        HelperDiary.getImageUrl(key, (url) => {
          this.setState({
@@ -114,7 +75,7 @@ const uploadImage = (uri, imageName) => {
        console.log(error)
      }
    }
-
+////////////////////////////////////////////////////ABRE EL IMAGE PICKER////////////////////////////////////////////////////////
    openImagePicker(){
      var options = {
        title: 'Select Avatar',
@@ -134,30 +95,35 @@ const uploadImage = (uri, imageName) => {
          this.setState({
            imagePath: response.uri,
          })
+          this.createImage()
+        }
+        })
        }
-       if(this.state.key){
-           try{
-              this.state.imagePath ?
-                  uploadImage(this.state.imagePath, `${this.state.key}.jpg`)
-                      .then((responseData) => {
-                        HelperDiary.setImageUrl(this.state.key, responseData)
-                      })
-                      .done()
-                  : null
-           } catch(error){
-             alert(error)
-           }
+       ///////////////////////////////////////////////////CREA IMAGEN///////////////////////////////////////////////////////////
+       createImage(){
+         if(this.state.key){
+             try{
+                this.state.imagePath ?
+                    uploadImage(this.state.imagePath, `${this.state.key}.jpg`)
+                        .then((responseData) => {
+                          HelperDiary.setImageUrl(this.state.key, responseData)
+                        })
+                        .done()
+                    : null
+             } catch(error){
+               alert(error)
+             }
+         }
        }
-     })
-   }
-  //Cambia la privacidad
+
+  ///////////////////////////////////////////////////////CAMBIA PRIVACIDAD////////////////////////////////////////////////////
   privacyChange(){
     this.setState( {privacy: !this.state.privacy})
   }
-   //Agrega el diario
+   ///////////////////////////////////////////////////////AGREGA DIARIO///////////////////////////////////////////////////////
   add(){
      getDatabase().ref().child(ref).set({
-      idOwner:usuario,
+      idOwner:this.state.idOwner,
        name:this.state.name,
        description:this.state.description,
        culture: this.state.culture,
@@ -165,53 +131,62 @@ const uploadImage = (uri, imageName) => {
        url:this.state.url,
        status:this.state.status,
    })
-    const { navigate } = this.props.navigation;
        this.props.navigation.goBack()
 }
-
+/////////////////////////////////////////////////////////EMPIEZA RENDER///////////////////////////////////////////////////////
   render() {
     const { navigate } = this.props.navigation;
     return (
 
-        <Container>
-          <Content>
-            <Form>
-            <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
-              <Thumbnail
-                large  style={{ alignSelf: "center" }}
-                source={{uri: this.state.imagePath}}
-              />
-            </TouchableHighlight>
-              <Right>
-                <Label>{strings.privacy }</Label>
-                <Switch
-                value={ this.state.privacy }
-                onValueChange={this.privacyChange.bind( this ) }/>
+      <Container>
+        <Content>
+          <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
+          <Image source={{uri: this.state.imagePath}}
+          style={{height: 100, width: Dimensions.get('window').width}}/>
+          </TouchableHighlight>
+
+          <Card >
+            <CardItem  style={{padding:10}}>
+              <Right style={{flex:  1, flexDirection: 'row'}}>
+                <Button rounded  transparent>
+                  <Icon name='people' />
+                </Button>
+                <List  style={{flex:  1, flexDirection: 'row'}}>
+                  <ListItem avatar>
+                    <Thumbnail small source={{ uri: 'https://scontent.fsyq1-1.fna.fbcdn.net/v/t1.0-1/p160x160/16708363_1540542605957763_7227193132559657605_n.jpg?oh=9306caebcffc90ec0aab2042804f1704&oe=59F65BB3' }} />
+                  </ListItem>
+                </List>
               </Right>
-              <Item floatingLabel>
-                <Label>{strings.name }</Label>
-                <Input onChangeText={(text) => this.setState({name:text})}
-                returnKeyLabel = {"next"} value={ this.state.name } />
-              </Item>
-              <Item floatingLabel>
-                <Label>{strings.description }</Label>
-                <Input onChangeText={(text) => this.setState({description:text})}
-                returnKeyLabel = {"next"}  value={ this.state.description }/>
-              </Item>
-              <Item floatingLabel>
-                <Label>{strings.culture }</Label>
-                <Input onChangeText={(text) => this.setState({culture:text})}
-                returnKeyLabel = {"next"}  value={ this.state.culture }/>
-              </Item>
+            </CardItem>
+          </Card>
 
+          <Form   style={{padding:10, backgroundColor:'white'}}>
+          <Right>
+            <Label>{strings.privacy }</Label>
+            <Switch value={ this.state.privacy }
+              onValueChange={this.privacyChange.bind( this ) }/>
+          </Right>
 
-            </Form>
-          </Content>
-              <Button full light style= {{backgroundColor: '#D3D0CB'}}
-               onPress={() => this.add()} >
-               <Text>{strings.save }</Text>
-              </Button>
-        </Container>
+          <Label>{strings.name }</Label>
+          <Input onChangeText={(text) => this.setState({name:text})} value={ this.state.name } />
+
+          <Label>{strings.description }</Label>
+          <AutogrowInput style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+            onChangeText={(text) => this.setState({description:text})}  value={ this.state.description }
+            />
+
+          <Label>{strings.culture }</Label>
+          <AutogrowInput  style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+            onChangeText={(text) => this.setState({culture:text})}  value={ this.state.culture }
+          />
+
+          <Button full light style= {{backgroundColor: '#D3D0CB'}}
+            onPress={() => this.add()} >
+              <Text>{strings.save }</Text>
+          </Button>
+          </Form>
+        </Content>
+      </Container>
     );
   }
 }
@@ -257,76 +232,32 @@ const uploadImage = (uri, imageName) => {
   }
 }
 */}
-class DiaryList extends Component{
 
-  constructor(props) {
-    super(props);
 
-    this.dataRef = getDatabase().ref('/users');
-
-    this.state = {
-      dataSource: new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1 !== row2,
+///////////////////////////////////////////////VARIABLE IMAGEN////////////////////////////////////////////////////////////////////
+const uploadImage = (uri, imageName) => {
+      const mime='image/jpg'
+      return new Promise((resolve, reject) => {
+         const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
+         let uploadBlob = null
+         const imageRef = firebase.storage().ref('images/diary').child(imageName)
+         fs.readFile(uploadUri, 'base64')
+             .then((data) => {
+                return Blob.build(data, {type: `${mime};BASE64`})
+             })
+             .then((blob) => {
+                uploadBlob = blob
+                return imageRef.put(blob, {contentType: mime})
+             })
+             .then(() => {
+               uploadBlob.close()
+               return imageRef.getDownloadURL()
+             })
+             .then((url) => {
+               resolve(url)
+             })
+             .catch((error) => {
+               reject(error)
+             })
       })
-    };
-  }
-
-  getDailyList(dataRef) {
-    dataRef.on('value', (snap) => {
-      var diaries = [];
-      snap.forEach((child) => {
-        diaries.push({
-          name: child.val().Name,
-          _key: child.key
-          });
-      });
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(diaries)
-      });
-    });
-  }
-
-  componentDidMount() {
-    this.getDailyList(this.dataRef);
-
-  }
-
-  _renderItem(item) {
-    return (
-      <ListItem
-        key= {item._key}
-        title={item.name}
-      />
-    );
-  }
-  render() {
-    return(
-
-        <Container>
-          <Content>
-    <ListView
-      dataSource={this.state.dataSource}
-      renderRow={this._renderItem.bind(this)}
-      enableEmptySections={true}>
-    </ListView>
-
-
-          </Content>
-        </Container>
-    );
-  }
-}
-const styles = StyleSheet.create({
-  littleComponent:{
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  addDailyForm:{
-    flexDirection: 'column',
-  },
-  addButton:{
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: Dimensions.get('window').width,
-  }
-});
+   }

@@ -12,6 +12,7 @@ import {
   Dimensions,
   StyleSheet,
   Text,
+  AsyncStorage,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
@@ -23,6 +24,9 @@ import CameraComponent from '../cameraComponent/CameraComponent';
 import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
+import HideableView from 'react-native-hideable-view';
+
+var bools = [true,false,true]
 
 export default class Profile extends Component {
 
@@ -35,9 +39,12 @@ export default class Profile extends Component {
    constructor(props) {
        super(props);
        this.state = {
+         uidCurrentUser: '',
          uid: '',
          inputSearch: '',
          users: [],
+         btnText: 'Seguir',
+         txt: '',
        }
     }
 
@@ -45,27 +52,69 @@ export default class Profile extends Component {
       if(text != ''){
         let ref = getDatabase().ref("/users")
         userList = (ref.orderByChild("nickname").startAt(text).endAt(text+'\uf8ff'))
+        var that = this
         userList.on('value', (snap) => {
             var users = [];
-            snap.forEach((child) => {
-                users.push({
-                  id: child.key,
-                  nickname: child.val().nickname,
-                  name: child.val().name,
-                  lastName: child.val().lastName,
-                  url: child.val().url,
-                });//users.push
-            });//snap.forEach
-            this.setState({
-              users: users,
-            })
-        })//userList.on
+            AsyncStorage.getItem("user").then((value) => {
+                      snap.forEach((child) => {
+                          let checkRepeat = getDatabase().ref('users/'+value+'/follows/').orderByChild("uid").equalTo(child.key);
+                          checkRepeat.once('value', function(snapshot) {
+                              var f = false
+                              if(snapshot.exists() == false){
+                                  f = true
+                              }/*If does not exists*/
+                              if(child.key != value){
+                                users.push({
+                                  id: child.key,
+                                  nickname: child.val().nickname,
+                                  name: child.val().name,
+                                  lastName: child.val().lastName,
+                                  url: child.val().url,
+                                  foll: f,
+                                });//users.push
+                              }//if nick diff from current
+                              that.setState({
+                                  users: users,
+                                  uidCurrentUser: value,
+                                  txt: text,
+                              })//setState
+                          })//checkRepeat.once
+                      });//snap.forEach
+           })//AsyncStorage
+      })//userList.on
       }/*if text has content*/else{
         this.setState({
           users: [],
         })
-      }//else
+      }//else text has no content
     }//search
+
+    follow(i){
+      var that = this.state;
+      let checkRepeat = getDatabase().ref('users/'+that.uidCurrentUser+'/follows/').orderByChild("uid").equalTo(that.users[i].id);
+      checkRepeat.once('value', function(snapshot) {
+        if(snapshot.exists() == false){
+            getDatabase().ref().child('users/'+that.uidCurrentUser+'/follows/').push({
+              uid: that.users[i].id,
+              nickname: that.users[i].nickname,
+            });
+        }
+      })//checkRepeat.once
+      this.search(that.txt)
+    }
+
+    unfollow(i){
+      var that = this.state;
+      let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
+      followList = (ref.orderByChild("uid").equalTo(that.users[i].id))
+      followList.on('value', (snap) => {
+          var follows = [];
+          snap.forEach((child) => {
+              ref.child(child.key).remove();
+          });
+      })
+      this.search(that.txt)
+    }
 
   render() {
     const { navigate } = this.props.navigation;
@@ -79,6 +128,18 @@ export default class Profile extends Component {
                           />
                         <Text style={styles.nick}>{u.nickname}</Text>
                         <Text>{u.name} {u.lastName}</Text>
+                        <HideableView visible={u.foll} removeWhenHidden={true} duration={100}>
+                            <Button light onPress={() => this.follow(i)}>
+                              <Text>{this.state.btnText+"    "}</Text>
+                              <Icon name='person-add' />
+                            </Button>
+                        </HideableView>
+                        <HideableView visible={!u.foll} removeWhenHidden={true} duration={100}>
+                            <Button light onPress={() => this.unfollow(i)}>
+                              <Text>Unfollow</Text>
+                              <Icon name='person-add' />
+                            </Button>
+                        </HideableView>
                     </ListItem>
             )
       });
