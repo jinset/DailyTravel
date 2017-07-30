@@ -13,6 +13,7 @@ import {
   StyleSheet,
   Text,
   AsyncStorage,
+  TouchableOpacity,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
@@ -25,8 +26,11 @@ import Helper from './helper';
 import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
+import HideableView from 'react-native-hideable-view';
 
 let diarys = [{id: null, name: null, description: null, url: null}]
+let follows = [{id: null, nickname: null, name: null, lastName: null, url: null}]
+let followers = [{id: null, nickname: null, name: null, lastName: null, url: null}]
 
 export default class Profile extends Component {
    constructor(props) {
@@ -41,6 +45,8 @@ export default class Profile extends Component {
          imagePath: '',
          birthday: '',
          diarys: diarys,
+         followers: followers,
+         follows: follows,
        }
     }
 
@@ -52,6 +58,7 @@ export default class Profile extends Component {
 
     async componentDidMount(){
      try{
+       var that = this;
        AsyncStorage.getItem("user").then((value) => {
              this.setState({
                uid: value
@@ -91,11 +98,86 @@ export default class Profile extends Component {
                  diarys: d,
               })
             })
+            Helper.getFollowers(this.state.uid, (f) => {
+               this.setState({
+                 followers: f,
+               })
+             })
+             Helper.getFollows(this.state.uid, (f) => {
+               this.setState({
+                 follows: f,
+               })
+             })
+            that.showButton()
        })
      } catch(error){
        alert("error: " + error)
      }
    }
+
+   ///////////////////////////////////////// Follow /////////////////////////////////////////////////////////////
+       follow(){
+         var that = this.state;
+         var tthat = this;
+         let checkRepeat = getDatabase().ref('users/'+that.uidCurrentUser+'/follows/').orderByChild("uid").equalTo(that.uid);
+         checkRepeat.once('value', function(snapshot) {
+           if(snapshot.exists() == false){
+               getDatabase().ref().child('users/'+that.uidCurrentUser+'/follows/').push({
+                 uid: that.uid,
+                 nickname: that.nickname,
+                 name: that.userName,
+                 lastName: that.lastName,
+                 url: that.url,
+               });
+               tthat.addFollowers()
+           }
+         })//checkRepeat.once
+       }
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   ///////////////////////////////////////// Add Followers ///////////////////////////////////////////////////////
+       addFollowers(){
+         var that = this.state;
+         let checkRepeat = getDatabase().ref('users/'+that.uidCurrentUser);
+         checkRepeat.once('value', function(snapshot) {
+               getDatabase().ref().child('users/'+that.uid+'/followers/').push({
+                 uid: that.uidCurrentUser,
+                 nickname: snapshot.child("nickname").val(),
+                 name: snapshot.child("name").val(),
+                 lastName: snapshot.child("lastName").val(),
+                 url: snapshot.child("url").val(),
+               });
+         })
+       }
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   ///////////////////////////////////////// Unfollow /////////////////////////////////////////////////////////////
+       unfollow(){
+         var that = this.state;
+         var tthat = this;
+         let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
+         followList = (ref.orderByChild("uid").equalTo(that.uid))
+         followList.on('value', (snap) => {
+             snap.forEach((child) => {
+                 ref.child(child.key).remove();
+             });
+             tthat.removeFollowers()
+         })
+       }
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   ///////////////////////////////////////// Remove Followers //////////////////////////////////////////////////////
+       removeFollowers(){
+         var that = this.state;
+         let ref = getDatabase().ref('/users/'+that.uid+'/followers/')
+         followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
+         followersList.on('value', (snap) => {
+             snap.forEach((child) => {
+                 ref.child(child.key).remove();
+             });
+         })
+       }
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
 
@@ -148,14 +230,25 @@ export default class Profile extends Component {
                   <Left>
                     <View style={styles.column}>
                         <CameraComponent />
-                            {this.state.nickname ?
+                          <View style={styles.center}>
                               <Text style={styles.nick}>{this.state.nickname}</Text>
-                              : null
-                            }
-                            {/*{this.state.userName && this.state.lastName ?
-                              <Text>{this.state.userName} {this.state.lastName}</Text>
-                              : null
-                            } */}
+                          </View>
+                        </View>
+                        <View style={styles.column}>
+                          <View style={styles.row}>
+                              <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
+                                  <Text style={styles.number}> { this.state.follows.length } </Text>
+                                  <Text style={styles.follow}> {"Seguidos"} </Text>
+                              </TouchableOpacity>
+                              <View style={styles.column, styles.center}>
+                                  <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
+                                  <Text style={styles.follow}> {"Seguidores"} </Text>
+                              </View>
+                                  {/*{this.state.userName && this.state.lastName ?
+                                    <Text>{this.state.userName} {this.state.lastName}</Text>
+                                    : null
+                                  } */}
+                          </View>
                     </View>
                  </Left>
                     <Button transparent small
@@ -188,7 +281,6 @@ const styles = StyleSheet.create({
   },
   center: {
       alignItems: 'center',
-      flexDirection: 'row',
   },
   privateInfo: {
     paddingTop: 15,
@@ -220,5 +312,19 @@ const styles = StyleSheet.create({
     textDecorationStyle: 'solid',
     color: '#000000',
     paddingLeft: 20,
+  },
+  follow: {
+    fontStyle: 'italic',
+    textAlign: 'justify',
+    fontSize: 15,
+    textDecorationStyle: 'solid',
+    color: '#000000',
+    paddingLeft: 25,
+    paddingRight: 10,
+  },
+  number: {
+    fontStyle: 'italic',
+    fontSize: 25,
+    color: '#000000',
   }
 });
