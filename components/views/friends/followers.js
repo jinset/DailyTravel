@@ -27,14 +27,17 @@ import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
 
-export default class Profile extends Component {
+export default class Followers extends Component {
 
+////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
   static navigationOptions = {
-    title: "Friends",
+    title: "Followers",
     headerStyle: {backgroundColor: '#70041b',height: 50 },
     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////// Constructor ///////////////////////////////////////////////////////////
    constructor(props) {
        super(props);
        this.state = {
@@ -42,81 +45,80 @@ export default class Profile extends Component {
          uid: '',
          inputSearch: '',
          users: [],
-         btnText: 'Seguir',
+         follList: [],
          txt: '',
+         isMe: [],
        }
     }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////// Search ///////////////////////////////////////////////////////
-    search(text){
-      if(text != ''){
-        let ref = getDatabase().ref("/users")
-        userList = (ref.orderByChild("nickname").startAt(text).endAt(text+'\uf8ff'))
-        var that = this
-        userList.on('value', (snap) => {
-            var users = [];
-            AsyncStorage.getItem("user").then((value) => {
-                      snap.forEach((child) => {
-                          let checkRepeat = getDatabase().ref('users/'+value+'/follows/').orderByChild("uid").equalTo(child.key);
-                          checkRepeat.once('value', function(snapshot) {
-                              var f = false
-                              if(snapshot.exists() == false){
-                                  f = true
-                              }/*If does not exists*/
-                              if(child.key != value){
-                                users.push({
-                                  id: child.key,
-                                  nickname: child.val().nickname,
-                                  name: child.val().name,
-                                  lastName: child.val().lastName,
-                                  url: child.val().url,
-                                  foll: f,
-                                });//users.push
-                              }//if nick diff from current
-                              that.setState({
-                                  users: users,
-                                  uidCurrentUser: value,
-                                  txt: text,
-                              })//setState
-                          })//checkRepeat.once
-                      });//snap.forEach
-           })//AsyncStorage
-      })//userList.on
-      }/*if text has content*/else{
-        this.setState({
-          users: [],
-        })
-      }//else text has no content
-    }//search
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////// Component Did Mount //////////////////////////////////////////////////
+    async componentDidMount(){
+      const { params } = this.props.navigation.state;
+      var that = this
+      var tthat = this.state
+      var wat = params.followers
+      var flist = [];
+      var isMeList = [];
+      AsyncStorage.getItem("user").then((value) => {
+                    wat.forEach((child, i) => {
+                        let checkRepeat = getDatabase().ref('users/'+value+'/follows/').orderByChild("uid").equalTo(child.id);
+                        checkRepeat.once('value', function(snapshot) {
+                            var f = false
+                            if(snapshot.exists() == false){
+                                f = true
+                            }/*If does not exists*/
+                            if(child.id == value){
+                              isMeList.push(true)
+                            }else{
+                              isMeList.push(false)
+                            }
+                            flist.push(f)
+                            that.setState({
+                              uidCurrentUser: value,
+                              follList: flist,
+                              isMe: isMeList,
+                            })
+                        })//checkRepeat.once
+                    });//snap.forEach
+      })//AsyncStorage
+      /*that.setState({
+        follList: flist.reverse(),
+        isMe: isMeList.reverse(),
+      })*/
+    }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////// Follow /////////////////////////////////////////////////////////////
     follow(i){
+      const { params } = this.props.navigation.state;
       var that = this.state;
       var tthat = this;
-      let checkRepeat = getDatabase().ref('users/'+that.uidCurrentUser+'/follows/').orderByChild("uid").equalTo(that.users[i].id);
+      var wat = params.followers
+      let checkRepeat = getDatabase().ref('users/'+that.uidCurrentUser+'/follows/').orderByChild("uid").equalTo(wat[i].id);
       checkRepeat.once('value', function(snapshot) {
         if(snapshot.exists() == false){
             getDatabase().ref().child('users/'+that.uidCurrentUser+'/follows/').push({
-              uid: that.users[i].id,
-              nickname: that.users[i].nickname,
-              name: that.users[i].name,
-              lastName: that.users[i].lastName,
-              url: that.users[i].url,
+              uid: wat[i].id,
+              nickname: wat[i].nickname,
+              name: wat[i].name,
+              lastName: wat[i].lastName,
+              url: wat[i].url,
             });
             tthat.addFollowers(i)
         }
       })//checkRepeat.once
-      this.search(that.txt)
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////// Add Followers ///////////////////////////////////////////////////////
     addFollowers(i){
+      const { params } = this.props.navigation.state;
+      var wat = params.followers
       var that = this.state;
       let checkRepeat = getDatabase().ref('users/'+that.uidCurrentUser);
       checkRepeat.once('value', function(snapshot) {
-            getDatabase().ref().child('users/'+that.users[i].id+'/followers/').push({
+            getDatabase().ref().child('users/'+wat[i].id+'/followers/').push({
               uid: that.uidCurrentUser,
               nickname: snapshot.child("nickname").val(),
               name: snapshot.child("name").val(),
@@ -129,24 +131,27 @@ export default class Profile extends Component {
 
 ///////////////////////////////////////// Unfollow /////////////////////////////////////////////////////////////
     unfollow(i){
+      const { params } = this.props.navigation.state;
+      var wat = params.followers;
       var that = this.state;
       var tthat = this;
       let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
-      followList = (ref.orderByChild("uid").equalTo(that.users[i].id))
+      followList = (ref.orderByChild("uid").equalTo(wat[i].id))
       followList.on('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
           tthat.removeFollowers(i)
       })
-      this.search(that.txt)
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////// Remove Followers //////////////////////////////////////////////////////
     removeFollowers(i){
+      const { params } = this.props.navigation.state;
+      var wat = params.followers;
       var that = this.state;
-      let ref = getDatabase().ref('/users/'+that.users[i].id+'/followers/')
+      let ref = getDatabase().ref('/users/'+wat[i].id+'/followers/')
       followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
       followersList.on('value', (snap) => {
           snap.forEach((child) => {
@@ -158,8 +163,9 @@ export default class Profile extends Component {
 
   render() {
     const { navigate } = this.props.navigation;
-
-    let listTable = this.state.users.map((u,i) => {
+    const { params } = this.props.navigation.state;
+    var that = this.state
+    let listTable = params.followers.map((u,i) => {
       return (
                     <ListItem>
                         <TouchableOpacity onPress={() => navigate('visitProfile', {uid:u.id})} style={styles.row}>
@@ -170,18 +176,23 @@ export default class Profile extends Component {
                         <Text style={styles.nick}>{u.nickname}</Text>
                         <Text style={styles.name}>{u.name} {u.lastName}</Text>
                         </TouchableOpacity>
-                        <HideableView visible={u.foll} removeWhenHidden={true} duration={100}>
-                            <Button light onPress={() => this.follow(i)}>
-                              <Text>{"Seguir"}</Text>
-                              <Icon name='add-circle-outline' />
-                            </Button>
-                        </HideableView>
-                        <HideableView visible={!u.foll} removeWhenHidden={true} duration={100}>
-                            <Button light onPress={() => this.unfollow(i)}>
-                              <Text>{"Dejar de Seguir"}</Text>
-                              <Icon name='remove-circle-outline' />
-                            </Button>
-                        </HideableView>
+
+                            <HideableView visible={that.follList[i]} removeWhenHidden={true} duration={100}>
+                                <Button light onPress={() => this.follow(i)}>
+                                  <Text>{"Seguir"}</Text>
+                                  <Icon name='add-circle-outline' />
+                                </Button>
+                            </HideableView>
+                            <HideableView visible={!that.follList[i]} removeWhenHidden={true} duration={100}>
+                                <Button light onPress={() => this.unfollow(i)}>
+                                  <Text>{"Dejar de Seguir"}</Text>
+                                  <Icon name='remove-circle-outline' />
+                                </Button>
+                            </HideableView>
+                            <HideableView visible={that.isMe[i]} removeWhenHidden={true} duration={100}>
+                                  <Text>Tú</Text>
+                                  <Icon name='face' />
+                            </HideableView>
                     </ListItem>
             )
       });
@@ -189,19 +200,6 @@ export default class Profile extends Component {
     return (
           <Container>
               <Content>
-                    <Header style={{backgroundColor: 'white'}} searchBar rounded>
-                          <Item>
-                            <Icon name="search" />
-                            <Input placeholder="Search"
-                                   maxLength = {20}
-                                   onChangeText={(text) => this.search(text)}
-                            />
-                            <Icon name="people" />
-                          </Item>
-                          <Button transparent>
-                            <Text>Search</Text>
-                          </Button>
-                    </Header>
                     <Body>
                       <List>
                           {listTable}
