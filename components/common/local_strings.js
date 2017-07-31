@@ -56,6 +56,8 @@ let strings = new LocalizedStrings({
    espaces: "Espaces",
    restart: "Restart session to change email",
    touchToRestart: "Touch this message if you wish to log out",
+   createDiary:"Create diary",
+   editDiary:"Edit diary",
  },
  es:{
    home:"Inicio",
@@ -111,6 +113,8 @@ let strings = new LocalizedStrings({
    espaces: "Campos",
    restart: "Reinicia sesión para cambiar el correo",
    touchToRestart: "Toque este mensaje si desea cerrar sesión",
+   createDiary:"Crear diario",
+   editDiary:"Modificar diario"
  }
 });
 

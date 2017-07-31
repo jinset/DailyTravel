@@ -43,6 +43,13 @@ export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
     editProfile: {screen: EditProfile},
+      newDiary: { screen: NewDiary },
+      editDiary: { screen: EditDiary },
+        DairyView: { screen: DairyView },
+        //Daily
+          listDaily: { screen: ListDaily },
+          createDaily: { screen: CreateDaily },
+          editDaily: { screen: EditDaily },
 });
 
 export const DTFriends = StackNavigator({
@@ -56,7 +63,6 @@ export const DTFriends = StackNavigator({
 export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
     newDiary: { screen: NewDiary },
-      profile: { screen: Profile },
     editDiary: { screen: EditDiary },
       DairyView: { screen: DairyView },
       //Daily
@@ -79,10 +85,6 @@ export const DailyTravelTabs = TabNavigator({
         navigationOptions:{
           tabBarLabel: 'Home',
         }},
-        createDiaryTab: {screen: DTNewDiary,
-          navigationOptions:{
-            tabBarLabel: 'Diary',
-          }},
         friendsTab: { screen: DTFriends,
             navigationOptions:{
               tabBarLabel: 'Friends',
@@ -96,7 +98,7 @@ export const DailyTravelTabs = TabNavigator({
   {
     tabBarOptions: {
       style: {
-       backgroundColor: '#70041b',
+       backgroundColor: '#45B0A4',
       },
       tabStyle: {
         height: 50,

@@ -6,9 +6,9 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left,Right, Body,Drawer} from 'native-base';
+import {  Container, Content, Card, CardItem, Thumbnail, Text, Button,View,Fab, Left,Right, Body,Drawer} from 'native-base';
 import { ListItem } from 'react-native-elements';
-
+import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 
@@ -124,6 +124,7 @@ import { getDatabase } from '../../common/database';
   }
 
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <Container>
          <Content>
@@ -136,6 +137,17 @@ import { getDatabase } from '../../common/database';
            </ListView>
          </Content>
 
+         <View>
+           <Fab
+             active='false'
+             direction="up"
+             containerStyle={{ }}
+             style={{  backgroundColor:'#45B0A4'}}
+             position="bottomRight"
+             onPress={()=> navigate('newDiary')}>
+             <Icon color='white' name="library-books" />
+           </Fab>
+         </View>
        </Container>
     );
   }

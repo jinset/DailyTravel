@@ -1,7 +1,6 @@
 import {
   AppRegistry,
   TextInput,
-  View,
   TouchableHighlight,
   ToolbarAndroid,
   ActivityIndicator,
@@ -17,7 +16,7 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Header, Form, Segment, Item, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, List, ListItem} from 'native-base';
+import { Container, Content, Header, Form, Segment, Item,View,Fab, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, List, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
@@ -33,6 +32,7 @@ export default class Profile extends Component {
     title: "Friends",
     headerStyle: {backgroundColor: '#70041b',height: 50 },
     headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    header: null,
   }
 
    constructor(props) {
@@ -208,6 +208,17 @@ export default class Profile extends Component {
                       </List>
                     </Body>
                 </Content>
+                <View>
+                  <Fab
+                    active='false'
+                    direction="up"
+                    containerStyle={{ }}
+                    style={{  backgroundColor:'#45B0A4'}}
+                    position="bottomRight"
+                    onPress={()=> navigate('newDiary')}>
+                    <Icon color='white' name="library-books" />
+                  </Fab>
+                </View>
           </Container>
     );
   }

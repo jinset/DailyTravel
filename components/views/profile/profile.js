@@ -17,8 +17,9 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Segment, Item, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
+import { Container, Content, Form, Segment, Item, Separator, Input, Label, Button,Fab,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
+import baseStyles from '../../style/baseStyles.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
 import CameraComponent from '../cameraComponent/CameraComponent';
@@ -51,10 +52,11 @@ export default class Profile extends Component {
     }
 
     static navigationOptions = {
-      title: strings.profile,
+      title: strings.diary,
       headerStyle: {backgroundColor: '#70041b',height: 50 },
-      headerTitleStyle : {color:'white', fontWeight: 'ligth', alignSelf: 'center'},
-    }
+      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+      header: null,
+      }
 
     async componentDidMount(){
      try{
@@ -268,6 +270,17 @@ export default class Profile extends Component {
                     {listTable}
                </Card>
           </Content>
+          <View>
+            <Fab
+              active='false'
+              direction="up"
+              containerStyle={{ }}
+              style={{  backgroundColor:'#45B0A4'}}
+              position="bottomRight"
+              onPress={()=> navigate('newDiary')}>
+              <Icon color='white' name="library-books" />
+            </Fab>
+          </View>
           </Container>
     );
   }

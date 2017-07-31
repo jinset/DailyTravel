@@ -1,6 +1,6 @@
 import { Alert,Image, Dimensions } from 'react-native';
 import React, {Component} from 'react';
-import { Container, Content,  Toast, Button,Text,Body, Right,List,ListItem,
+import { Container, Content,  Toast, Button,Text,Body, Right,View,List,ListItem,
  Card, CardItem, Thumbnail, Left, Tab, Tabs } from 'native-base';
 import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
@@ -15,9 +15,8 @@ export default class DiaryView extends Component {
   /////////////////////////////////////////NAVIGATE OPTIONS/////////////////////////////////////
 static navigationOptions = ({ navigation }) => ({
     title: strings.diary,
-    headerStyle: {backgroundColor: '#70041b', height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
-  });
+    headerStyle: {backgroundColor: 'transparent' },
+    });
   ///////////////////////////////////////////CONSTRUCTOR//////////////////////////////////////////
   constructor(props) {
     super(props);
@@ -109,13 +108,13 @@ static navigationOptions = ({ navigation }) => ({
               </Body>
             </CardItem>
           </Card>
-          <Right>
-            <Button light full  style= {{backgroundColor: '#D3D0CB'}}
-              onPress={()=> navigate('listDaily', {diaryKey:params.diaryKey})}>
-                <Text>{strings.daily}</Text>
-            </Button>
-          </Right>
         </Content>
+        <View>
+          <Button light full
+            onPress={()=> navigate('listDaily', {diaryKey:params.diaryKey})}>
+              <Text>{strings.daily}</Text>
+          </Button>
+        </View>
       </Container>
     );
   }

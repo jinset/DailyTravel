@@ -24,9 +24,10 @@ let ref='';
  export default class NewDiary extends Component {
 // Nav options can be defined as a function of the screen's props:
   static navigationOptions = ({ navigation }) => ({
-      title: strings.diary,
-      headerStyle: {backgroundColor: '#70041b', height: 50 },
-      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+      title: strings.editDiary,
+      headerStyle: {backgroundColor: 'transparent' },
+    //  headerStyle: {backgroundColor: '#70041b', height: 50 },
+      //headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   });
   ////////////////////////////////////////////////////////CONSTRUCTOR/////////////////////////////////////////////////
   constructor(props){
