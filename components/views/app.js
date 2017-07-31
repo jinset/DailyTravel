@@ -17,6 +17,9 @@ import Profile from './profile/profile';
 
 //Import de vista Friends
 import Friends from './friends/friends.js'
+import VisitProfile from './friends/visitProfile.js'
+import Follows from './friends/follows.js'
+import Followers from './friends/followers.js'
 
 //Import de vistas daily
 import CreateDaily from './daily/createDaily';
@@ -40,12 +43,14 @@ export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
     editProfile: {screen: EditProfile},
-
 });
 
 export const DTFriends = StackNavigator({
   //Friends
     friends: { screen: Friends },
+    visitProfile: {screen: VisitProfile},
+    follows: {screen: Follows},
+    followers: {screen: Followers},
 });
 
 export const DTNewDiary = StackNavigator({
