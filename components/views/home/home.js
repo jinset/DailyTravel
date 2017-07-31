@@ -3,15 +3,18 @@ import {
   Image,
   ListView,
   TouchableHighlight,
+  AsyncStorage,
+  Dimensions,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left,Right, Body,Drawer} from 'native-base';
+import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left,Right, Body} from 'native-base';
 import { ListItem } from 'react-native-elements';
 import Spinner from 'react-native-loading-spinner-overlay';
-
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
+import { createNotification } from '../../common/notification';
+
 
  export default class Home extends Component {
 
@@ -22,7 +25,8 @@ import { getDatabase } from '../../common/database';
        dataSource: new ListView.DataSource({
          rowHasChanged: (row1, row2) => row1 !== row2,
        }),
-       visible: false
+       visible: false,
+       userId: ""
 
      };
    }
@@ -30,6 +34,17 @@ import { getDatabase } from '../../common/database';
         title: strings.home,
         header: null,
     }
+
+    /*async getUserLogin(idUser) {
+      return new Promise((resolve, reject) => {
+        var diaries = [];
+        var ref = getDatabase().ref("users/" + idUser);
+        ref.once("value", (snapshot) => {
+          var val = snapshot.val();
+          resolve(val);
+        })
+      });
+    };*/
 
     /*
       Obtiene los diarios que su privacidad esten en falsos
@@ -40,13 +55,15 @@ import { getDatabase } from '../../common/database';
         url.on('value', (snap) => {
           var diaries = [];
           snap.forEach((child) => {
-            diaries.push({
-              _key: child.key,
-              name: child.val().name,
-              description: child.val().description,
-              url: child.val().url,
-              idOwner: child.val().idOwner
-            });
+            if (child.val().status === true) {
+              diaries.push({
+                _key: child.key,
+                name: child.val().name,
+                description: child.val().description,
+                url: child.val().url,
+                idOwner: child.val().idOwner
+              });
+            }
           });
           resolve(diaries)
         })
@@ -78,9 +95,10 @@ import { getDatabase } from '../../common/database';
 
   async componentDidMount() {
     try {
+
       let homeArray = [];
       /*Muestra el loading*/
-
+      //createNotification('userIdGet','userSend','type','date');
       this.setState({
         visible: !this.state.visible
       });
@@ -92,11 +110,11 @@ import { getDatabase } from '../../common/database';
         });
       }
       /*Carga el home en el dataSource*/
-      this.setState({
+    this.setState({
         dataSource: this.state.dataSource.cloneWithRows(homeArray)
       });
       /*Desaparece el loading*/
-      this.setState({
+     this.setState({
         visible: !this.state.visible
       });
     } catch (error) {
@@ -120,12 +138,15 @@ import { getDatabase } from '../../common/database';
             <Text note>April 15, 2016</Text>
           </Body>
         </Left>
+        <Right>
+            <Icon active name='more-vert' />
+        </Right>
       </CardItem>
       <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item._key})}>
       <CardItem >
         <Body style={{alignItems:'center'}} >
           <Image source={{uri: item.url}}
-          style={{height: 200, width: 200, flex: 1}}
+            style={{height: 300, width: Dimensions.get('window').width}}
           />
           <Text>
             {item.description}
