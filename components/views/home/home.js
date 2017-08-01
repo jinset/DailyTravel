@@ -3,7 +3,6 @@ import {
   Image,
   ListView,
   TouchableHighlight,
-  AsyncStorage,
   Dimensions,
 } from 'react-native';
 import React, {Component} from 'react';
@@ -26,8 +25,8 @@ import { createNotification } from '../../common/notification';
          rowHasChanged: (row1, row2) => row1 !== row2,
        }),
        visible: false,
-       userId: ""
-
+       userId: "",
+       currentPageIndex : 1
      };
    }
     static navigationOptions = {
@@ -49,9 +48,11 @@ import { createNotification } from '../../common/notification';
     /*
       Obtiene los diarios que su privacidad esten en falsos
      */
-    async getDiaries() {
+    async getDiaries(current) {
       return new Promise((resolve, reject) => {
-        var url = getDatabase().ref('diary').orderByChild("privacy").equalTo(false);
+        var pageSize = current * 10;
+        console.log(pageSize);
+        var url = getDatabase().ref('diary').limitToLast(pageSize).orderByChild("privacy").equalTo(false);
         url.on('value', (snap) => {
           var diaries = [];
           snap.forEach((child) => {
@@ -65,7 +66,7 @@ import { createNotification } from '../../common/notification';
               });
             }
           });
-          resolve(diaries)
+          resolve(diaries.reverse())
         })
       })
     }
@@ -93,6 +94,7 @@ import { createNotification } from '../../common/notification';
       });
     };
 
+
   async componentDidMount() {
     try {
 
@@ -102,7 +104,7 @@ import { createNotification } from '../../common/notification';
       this.setState({
         visible: !this.state.visible
       });
-      let array = await this.getDiaries();
+      let array = await this.getDiaries(this.state.currentPageIndex);
       console.log(array);
       for (var i in array) {
         await this.getUser(array[i]).then(data => {
@@ -122,6 +124,40 @@ import { createNotification } from '../../common/notification';
     }
 
   }
+async load() {
+  try {
+    var current = this.state.currentPageIndex;
+    current = current +1;
+    this.setState({
+      currentPageIndex: current
+    });
+    console.log(this.state.currentPageIndex);
+    let homeArray = [];
+    /*Muestra el loading*/
+    //createNotification('userIdGet','userSend','type','date');
+    this.setState({
+      visible: !this.state.visible
+    });
+    let array = await this.getDiaries(current);
+    console.log(array);
+    for (var i in array) {
+      await this.getUser(array[i]).then(data => {
+        homeArray.push(data)
+      });
+    }
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(homeArray)
+    });
+    /*Desaparece el loading*/
+    this.setState({
+      visible: !this.state.visible
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+
+}
+
   _renderItem(item) {
     const { navigate } = this.props.navigation;
     return (
@@ -129,10 +165,8 @@ import { createNotification } from '../../common/notification';
       <CardItem >
         <Left>
         <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item._key})}>
-          <Thumbnail source={{uri: item.photoUser}}
-          />
+          <Thumbnail source={{uri: item.photoUser}}/>
           </TouchableHighlight>
-
           <Body>
             <Text>{item.userNick}</Text>
             <Text note>April 15, 2016</Text>
@@ -175,6 +209,10 @@ import { createNotification } from '../../common/notification';
              renderRow={this._renderItem.bind(this)}
              enableEmptySections={true}>
            </ListView>
+
+           <Button block info onPress = {this.load.bind(this)} style={{marginTop:15,backgroundColor: '#70041b'}}>
+              <Text style={{color:'white'}}>{strings.seeMore}</Text>
+           </Button>
          </Content>
 
        </Container>

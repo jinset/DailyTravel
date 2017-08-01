@@ -24,9 +24,8 @@ let strings = new LocalizedStrings({
    map:"Map",
    search:"Search",
    notifications:"Notifications",
-   singin:"Singin",
-   signup:"Signup",
-   loging:"Login",
+   signup:"Don't have an account? Sign up",
+   loging:"Log in",
    report:"Report",
    cancel:"Cancel",
    follow:"Follow",
@@ -56,7 +55,10 @@ let strings = new LocalizedStrings({
    espaces: "Espaces",
    restart: "Restart session to change email",
    touchToRestart: "Touch this message if you wish to log out",
-   loading: "Loading..."
+   loading: "Loading...",
+   forgetpass: "Forgot password?",
+   createNewAccount: "Create new account",
+   seeMore: "See more"
  },
  es:{
    home:"Inicio",
@@ -81,7 +83,7 @@ let strings = new LocalizedStrings({
    map:"Mapa",
    search:"Buscar",
    notifications:"Notificaciones",
-   signup:"Registrarse",
+   signup:"¿No tienes una cuenta? Regístrate",
    loging:"Iniciar sesión",
    report:"Reportar",
    cancel:"Cancelar",
@@ -112,7 +114,10 @@ let strings = new LocalizedStrings({
    espaces: "Campos",
    restart: "Reinicia sesión para cambiar el correo",
    touchToRestart: "Toque este mensaje si desea cerrar sesión",
-   loading: "Cargando..."
+   loading: "Cargando...",
+   forgetpass: "¿Has olvidado la contraseña?",
+   createNewAccount: "Crear nueva cuenta",
+   seeMore: "Ver mas"
 
  }
 });
