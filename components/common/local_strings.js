@@ -56,6 +56,7 @@ let strings = new LocalizedStrings({
    espaces: "Espaces",
    restart: "Restart session to change email",
    touchToRestart: "Touch this message if you wish to log out",
+   loading: "Loading..."
  },
  es:{
    home:"Inicio",
@@ -63,7 +64,7 @@ let strings = new LocalizedStrings({
    daily:"Vivencia diaria",
    travel:"Viaje",
    add:"Agregar",
-   update:"Atualizar",
+   update:"Actualizar",
    save:"Guardar",
    delete:"Eliminar",
    privacy:"Privacidad",
@@ -101,7 +102,7 @@ let strings = new LocalizedStrings({
    chooseFromLibrary: "Desde Librería",
    nicknameExits: "Apodo ya existe ",
    tips:"Recomendaciones",
-   country: "Pais",
+   country: "País",
    lastName: "Apellido",
    nickname: "Apodo",
    blankinputs: "Algunas entradas estan vacias",
@@ -111,6 +112,8 @@ let strings = new LocalizedStrings({
    espaces: "Campos",
    restart: "Reinicia sesión para cambiar el correo",
    touchToRestart: "Toque este mensaje si desea cerrar sesión",
+   loading: "Cargando..."
+
  }
 });
 
