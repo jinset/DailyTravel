@@ -275,7 +275,6 @@ showButton(){
                     </View>
                     <View style={styles.column}>
 
-                          <HideableView visible={this.state.isMe} removeWhenHidden={true} duration={100} style={styles.center}>
                                 <View style={styles.row}>
                                     <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
                                         <Text style={styles.number}> { this.state.follows.length } </Text>
@@ -290,16 +289,17 @@ showButton(){
                                           : null
                                         } */}
                                 </View>
-                            </HideableView>
+                        <HideableView visible={this.state.isMe} removeWhenHidden={true} duration={100} style={styles.center}>
+                        </HideableView>
                         <HideableView visible={this.state.foll} removeWhenHidden={true} duration={100}>
-                            <Button light onPress={() => this.follow()} style={{width: (Dimensions.get('window').width)/2}}>
-                                <Text>{"Seguir    "}</Text>
-                                <Icon name='add-circle-outline' />
-                            </Button>
+                                <Button light onPress={() => this.follow()} style={{width: (Dimensions.get('window').width)/1.8}}>
+                                    <Text style={styles.center}>{"Seguir"}</Text>
+                                    <Icon name='add-circle-outline' />
+                                </Button>
                         </HideableView>
                         <HideableView visible={!this.state.foll} removeWhenHidden={true} duration={100}>
-                            <Button light onPress={() => this.unfollow()} style={{width: (Dimensions.get('window').width)/2}}>
-                                <Text>Dejar de seguir</Text>
+                            <Button light onPress={() => this.unfollow()} style={{width: (Dimensions.get('window').width)/1.8}}>
+                                <Text style={styles.center}>Dejar de seguir</Text>
                                 <Icon name='remove-circle-outline' />
                             </Button>
                         </HideableView>
