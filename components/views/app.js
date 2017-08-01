@@ -19,10 +19,10 @@ import Profile from './profile/profile';
 import Friends from './friends/friends.js'
 
 //Import de vistas daily
-import Daily from './daily/daily';
 import CreateDaily from './daily/createDaily';
 import EditDaily from './daily/editDaily';
 import ListDaily from './daily/listDaily';
+import Daily from './daily/daily';
 
 //Import de vistas Diary
 import DairyView from './diary/diary';
@@ -33,78 +33,96 @@ import {getAuth} from '../common/database';
 
 
 export const DTHome = StackNavigator({
-  //Home
-    home: { screen: Home },
+//Home
+home: { screen: Home },
 });
 
 export const DTProfile = StackNavigator({
-  //Profile
-    profile: { screen: Profile },
-    editProfile: {screen: EditProfile},
-  //Acceso a la vista de diario
-    DairyView: { screen: DairyView },
-    editDiary: { screen: EditDiary },
+//Profile
+profile: { screen: Profile },
+editProfile: {screen: EditProfile},
 
 });
 
 export const DTFriends = StackNavigator({
-  //Friends
-    friends: { screen: Friends },
+//Friends
+friends: { screen: Friends },
 });
 
 export const DTNewDiary = StackNavigator({
-  //Acceso rapidopara crear diario
-    newDiary: { screen: NewDiary },
-    editDiary: { screen: EditDiary },
-      //Daily
-        listDaily: { screen: ListDaily },
-        createDaily: { screen: CreateDaily },
-        editDaily: { screen: EditDaily },
-        daily: { screen: Daily },
+//Acceso rapidopara crear diario
+newDiary: { screen: NewDiary },
+profile: { screen: Profile },
+editDiary: { screen: EditDiary },
+DairyView: { screen: DairyView },
+//Daily
+listDaily: { screen: ListDaily },
+createDaily: { screen: CreateDaily },
+editDaily: { screen: EditDaily },
+daily: { screen:  Daily},
 });
+export const DTNewDaily = StackNavigator({
+listDaily: { screen: ListDaily },
+createDaily: { screen: CreateDaily },
+editDaily: { screen: EditDaily },
+});
+
+DTNewDiary.navigationOptions = {
+title : 'profile'
+}
 
 export const DailyTravelTabs = TabNavigator({
-        homeTab: { screen: DTHome,
-        navigationOptions:{
-          tabBarLabel: 'Home',
-        }},
-        createDiaryTab: {screen: DTNewDiary,
-          navigationOptions:{
-            tabBarLabel: 'Diary',
-          }},
-        profileTab: { screen: DTProfile,
-          navigationOptions:{
-            tabBarLabel: 'Profile',
-          }},
-        friendsTab: { screen: DTFriends,
-            navigationOptions:{
-              tabBarLabel: 'Friends',
-          }},
-      });
+  homeTab: { screen: DTHome,
+    navigationOptions:{
+    tabBarLabel: 'Home',
+    }
+  },
+  createDiaryTab: {screen: DTNewDiary,
+    navigationOptions:{
+    tabBarLabel: 'Diary',
+    }
+  },
+  friendsTab: { screen: DTFriends,
+    navigationOptions:{
+    tabBarLabel: 'Friends',
+    }
+  },
+  profileTab: { screen: DTProfile,
+    navigationOptions:{
+    tabBarLabel: 'Profile',
+    }
+  },
+},
+{
+  tabBarOptions: {
+    style: {
+    backgroundColor: '#70041b',
+    },
+    tabStyle: {
+    width: 90,
+    },
+  },
+  tabBarPosition: 'bottom',
+  showIcon: true,
+  lazyLoad: true,
+});
 
 export const DailyTravelInitiate = StackNavigator({
-    login: { screen: Login },
-    signup: {screen: Signup },
-    dtTabs: {screen: DailyTravelTabs,
-      navigationOptions:{
-        header: null,
-      },
-      style: {
-        backgroundColor: '#70041b',
-      },
-      tabBarPosition: 'bottom',
-      showIcon: true,
-      lazyLoad: true,
-    },
+login: { screen: Login },
+signup: {screen: Signup },
+dtTabs: {screen: DailyTravelTabs,
+navigationOptions:{
+header: null,
+}},
 });
 
 
 //
 //
 //
-//   //Diary
-//     diaryView: { screen: DairyView },
-//     newDiary: { screen: NewDiary },
+// //Diary
+// diaryView: { screen: DairyView },
+// newDiary: { screen: NewDiary },
 //
-//     footerNav: { screen: FooterNav },
+// footerNav: { screen: FooterNav },
 // });
