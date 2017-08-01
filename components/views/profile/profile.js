@@ -47,6 +47,7 @@ export default class Profile extends Component {
          diarys: diarys,
          followers: followers,
          follows: follows,
+         showPig: false,
        }
     }
 
@@ -94,9 +95,18 @@ export default class Profile extends Component {
               })
             })
             Helper.getDairysByUser(this.state.uid, (d) => {
-             this.setState({
-                 diarys: d,
-              })
+              this.setState({
+                  diarys: d,
+               })
+                if(d.length === 0){
+                    this.setState({
+                        showPig: true,
+                     })
+                }else{
+                  this.setState({
+                      showPig: false,
+                   })
+                }
             })
             Helper.getFollowers(this.state.uid, (f) => {
                this.setState({
@@ -108,7 +118,6 @@ export default class Profile extends Component {
                  follows: f,
                })
              })
-            that.showButton()
        })
      } catch(error){
        alert("error: " + error)
@@ -119,10 +128,10 @@ export default class Profile extends Component {
        follow(){
          var that = this.state;
          var tthat = this;
-         let checkRepeat = getDatabase().ref('users/'+that.uidCurrentUser+'/follows/').orderByChild("uid").equalTo(that.uid);
+         let checkRepeat = getDatabase().ref('users/'+that.uid+'/follows/').orderByChild("uid").equalTo(that.uid);
          checkRepeat.once('value', function(snapshot) {
            if(snapshot.exists() == false){
-               getDatabase().ref().child('users/'+that.uidCurrentUser+'/follows/').push({
+               getDatabase().ref().child('users/'+that.uid+'/follows/').push({
                  uid: that.uid,
                  nickname: that.nickname,
                  name: that.userName,
@@ -138,7 +147,7 @@ export default class Profile extends Component {
    ///////////////////////////////////////// Add Followers ///////////////////////////////////////////////////////
        addFollowers(){
          var that = this.state;
-         let checkRepeat = getDatabase().ref('users/'+that.uidCurrentUser);
+         let checkRepeat = getDatabase().ref('users/'+that.uid);
          checkRepeat.once('value', function(snapshot) {
                getDatabase().ref().child('users/'+that.uid+'/followers/').push({
                  uid: that.uidCurrentUser,
@@ -155,7 +164,7 @@ export default class Profile extends Component {
        unfollow(){
          var that = this.state;
          var tthat = this;
-         let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
+         let ref = getDatabase().ref('/users/'+that.uid+'/follows/')
          followList = (ref.orderByChild("uid").equalTo(that.uid))
          followList.on('value', (snap) => {
              snap.forEach((child) => {
@@ -170,7 +179,7 @@ export default class Profile extends Component {
        removeFollowers(){
          var that = this.state;
          let ref = getDatabase().ref('/users/'+that.uid+'/followers/')
-         followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
+         followersList = (ref.orderByChild("uid").equalTo(that.uid))
          followersList.on('value', (snap) => {
              snap.forEach((child) => {
                  ref.child(child.key).remove();
@@ -264,8 +273,20 @@ export default class Profile extends Component {
 
                 </CardItem>
               </Card>
+                  <Card>
+                        {listTable}
+                  </Card>
               <Card>
-                    {listTable}
+                    <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
+
+                       <Text style={styles.message}>{"Yo aparezco cuando no tienes diarios"}</Text>
+                       <Text style={styles.message}>{"Tocame para crear uno"}</Text>
+                       <TouchableOpacity onPress={()=>navigate('createDiaryTab')}>
+                         <Image
+                            style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
+                            source={require('./ProfilePig.jpg')} />
+                      </TouchableOpacity>
+                    </HideableView>
                </Card>
           </Content>
           </Container>
@@ -313,6 +334,14 @@ const styles = StyleSheet.create({
     color: '#000000',
     paddingLeft: 20,
   },
+  message: {
+    fontStyle: 'italic',
+    textAlign: 'justify',
+    fontSize: 18,
+    textDecorationStyle: 'solid',
+    color: '#000000',
+    paddingLeft: 20,
+  },
   follow: {
     fontStyle: 'italic',
     textAlign: 'justify',
@@ -326,5 +355,9 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontSize: 25,
     color: '#000000',
+  },
+  redCard: {
+    padding: 20,
+    backgroundColor: '#000000',
   }
 });

@@ -33,12 +33,39 @@ let followers = [{id: null, nickname: null, name: null, lastName: null, url: nul
 
 export default class EditProfile extends Component {
 
+  //////////////////////////////// Constructor //////////////////////////////////////////////////////////////////
+     constructor(props) {
+         super(props);
+         console.disableYellowBox = true;
+         this.state = {
+           uidCurrentUser: '',
+           uid: '',
+           userName: '',
+           lastName: '',
+           email: '',
+           nickname: '',
+           url: '',
+           birthday: '',
+           foll: '',
+           diarys: diarys,
+           followers: followers,
+           follows: follows,
+           isMe: false,
+         }
+      }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //////////////////////////// Component Did Mount ///////////////////////////////////////////////////////////
     async componentDidMount(){
     const { params } = this.props.navigation.state;
      try{
        var that = this;
        AsyncStorage.getItem("user").then((value) => {
+             if(value == params.uid){
+               this.setState({ isMe: false })
+             }else{
+               this.setState({ isMe: true })
+             }
              this.setState({
                uid: params.uid,
                uidCurrentUser: value
@@ -95,27 +122,6 @@ export default class EditProfile extends Component {
      }
    }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////// Constructor //////////////////////////////////////////////////////////////////
-   constructor(props) {
-       super(props);
-       console.disableYellowBox = true;
-       this.state = {
-         uidCurrentUser: '',
-         uid: '',
-         userName: '',
-         lastName: '',
-         email: '',
-         nickname: '',
-         url: '',
-         birthday: '',
-         foll: '',
-         diarys: diarys,
-         followers: followers,
-         follows: follows,
-       }
-    }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////// Navigation Options ///////////////////////////////////////////////////////////////
     static navigationOptions = {
@@ -268,20 +274,23 @@ showButton(){
                         </View>
                     </View>
                     <View style={styles.column}>
-                        <View style={styles.row}>
-                            <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
-                                <Text style={styles.number}> { this.state.follows.length } </Text>
-                                <Text style={styles.follow}> {"Seguidos"} </Text>
-                            </TouchableOpacity>
-                            <View style={styles.column, styles.center}>
-                                <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
-                                <Text style={styles.follow}> {"Seguidores"} </Text>
-                            </View>
-                                {/*{this.state.userName && this.state.lastName ?
-                                  <Text>{this.state.userName} {this.state.lastName}</Text>
-                                  : null
-                                } */}
-                        </View>
+
+                          <HideableView visible={this.state.isMe} removeWhenHidden={true} duration={100} style={styles.center}>
+                                <View style={styles.row}>
+                                    <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
+                                        <Text style={styles.number}> { this.state.follows.length } </Text>
+                                        <Text style={styles.follow}> {"Seguidos"} </Text>
+                                    </TouchableOpacity>
+                                    <View style={styles.column, styles.center}>
+                                        <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
+                                        <Text style={styles.follow}> {"Seguidores"} </Text>
+                                    </View>
+                                        {/*{this.state.userName && this.state.lastName ?
+                                          <Text>{this.state.userName} {this.state.lastName}</Text>
+                                          : null
+                                        } */}
+                                </View>
+                            </HideableView>
                         <HideableView visible={this.state.foll} removeWhenHidden={true} duration={100}>
                             <Button light onPress={() => this.follow()} style={{width: (Dimensions.get('window').width)/2}}>
                                 <Text>{"Seguir    "}</Text>
