@@ -79,10 +79,11 @@ var usuario ='';
                                });//users.push
                              } //if nick diff from current
                            }
+                           //If user es owner
                            if(child.key == value){
                              diaryUsers.push({
                                id: child.key,
-                               nickname: child.val().nickname,
+                               nickname: strings.me,
                                name: child.val().name,
                                lastName: child.val().lastName,
                                url: child.val().url,
@@ -167,13 +168,15 @@ openImagePicker(){
     this.setState({
       key: snap.key,
     })
-    this.addDiaryUsers(this.state.idOwner,true);
       var diaryUsers =[];
       diaryUsers=this.state.diaryUsers;
       var tthat = this;
       diaryUsers.forEach(function(elemento) {
-          alert(elemento.id)
-          tthat.addDiaryUsers(elemento.id,false);
+          if(elemento.id!=this.state.idOwner){
+            tthat.addDiaryUsers(elemento.id,false);
+          }else{
+            tthat.addDiaryUsers(elemento.id,true);
+          }
       });
   });
     this.createImage()
@@ -231,6 +234,8 @@ openImagePicker(){
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
     title: strings.createDiary,
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#808080',fontSize:17},
   }
   render() {  const { navigate } = this.props.navigation;
 
@@ -275,7 +280,7 @@ openImagePicker(){
           });
     return (
         <Container>
-          <PopupDialog 
+          <PopupDialog
               ref={(popupDialog) => { this.popupDialog = popupDialog; }}
             >
             <View>
@@ -292,9 +297,11 @@ openImagePicker(){
             </View>
           </PopupDialog>
           <Content  style={{zIndex: -1}}>
+
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
-            <Image source={{uri: this.state.url}}
-            style={{height: 100, width: Dimensions.get('window').width}}/>
+            <Thumbnail
+              style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
+              source={{uri: this.state.url}} />
             </TouchableHighlight>
             <Card >
               <CardItem  style={{padding:10}}>
@@ -320,21 +327,22 @@ openImagePicker(){
               </Right>
 
               <Label>{strings.name }</Label>
-              <Input  onChangeText={(text) => this.setState({name:text})} />
+              <AutogrowInput style={{ fontSize: 18}}  maxLength={30}
+                onChangeText={(text) => this.setState({name:text})} />
 
               <Label>{strings.description }</Label>
-              <AutogrowInput style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+              <AutogrowInput style={{ fontSize: 18,minHeight:Dimensions.get('window').height/8}}  maxLength={90}
                 onChangeText={(text) => this.setState({description:text})}/>
 
               <Label>{strings.culture }</Label>
-              <AutogrowInput style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+              <AutogrowInput style={{ fontSize: 18,minHeight:Dimensions.get('window').height/6}}  maxLength={150}
                 onChangeText={(text) => this.setState({culture:text})} />
-              <Button full light style= {{backgroundColor: '#D3D0CB'}}
-               onPress={() => this.add()} >
-               <Text>{strings.save }</Text>
-              </Button>
             </Form>
           </Content>
+        <Button full dark style= {{backgroundColor: '#41BEB6'}}
+         onPress={() => this.add()} >
+         <Text>{strings.save }</Text>
+        </Button>
 
         </Container>
     );

@@ -15,7 +15,8 @@ export default class DiaryView extends Component {
   /////////////////////////////////////////NAVIGATE OPTIONS/////////////////////////////////////
 static navigationOptions = ({ navigation }) => ({
     title: strings.diary,
-    headerStyle: {backgroundColor: 'transparent' },
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#808080',fontSize:17},
     });
   ///////////////////////////////////////////CONSTRUCTOR//////////////////////////////////////////
   constructor(props) {

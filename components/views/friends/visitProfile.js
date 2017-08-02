@@ -120,8 +120,8 @@ export default class EditProfile extends Component {
 /////////////////////////// Navigation Options ///////////////////////////////////////////////////////////////
     static navigationOptions = {
       title: strings.profile,
-      headerStyle: {backgroundColor: '#70041b',height: 50 },
-      headerTitleStyle : {color:'white', fontWeight: 'ligth', alignSelf: 'center'},
+      headerStyle: {height: 50 },
+      headerTitleStyle : {color:'#9A9DA4',fontSize:17},
     }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

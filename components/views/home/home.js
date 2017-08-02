@@ -142,7 +142,7 @@ import { getDatabase } from '../../common/database';
              active='false'
              direction="up"
              containerStyle={{ }}
-             style={{  backgroundColor:'#45B0A4'}}
+             style={{  backgroundColor:'#41BEB6'}}
              position="bottomRight"
              onPress={()=> navigate('newDiary')}>
              <Icon color='white' name="library-books" />

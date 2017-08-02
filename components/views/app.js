@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppRegistry } from 'react-native';
 import { StackNavigator, TabNavigator } from 'react-navigation';
+import strings from '../common/local_strings';
 
 //Import FooterNav
 import FooterNav from '../common/footerNav';
@@ -81,24 +82,24 @@ DTNewDiary.navigationOptions = {
 }
 
 export const DailyTravelTabs = TabNavigator({
-        homeTab: { screen: DTHome,
-        navigationOptions:{
-          tabBarLabel: 'Home',
-        }},
-        friendsTab: { screen: DTFriends,
-            navigationOptions:{
-              tabBarLabel: 'Friends',
-          }},
-        profileTab: { screen: DTProfile,
-          navigationOptions:{
-            tabBarLabel: 'Profile',
-          }},
+    homeTab: { screen: DTHome,
+      navigationOptions:{
+        tabBarLabel: strings.home,
+      }},
+    friendsTab: { screen: DTFriends,
+      navigationOptions:{
+        tabBarLabel: strings.friends,
+      }},
+    profileTab: { screen: DTProfile,
+      navigationOptions:{
+        tabBarLabel: strings.myDiaries,
+      }},
 
     },
   {
     tabBarOptions: {
       style: {
-       backgroundColor: '#45B0A4',
+       backgroundColor: '#E3904E',
       },
       tabStyle: {
         height: 50,

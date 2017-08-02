@@ -53,8 +53,8 @@ export default class Profile extends Component {
 
     static navigationOptions = {
       title: strings.diary,
-      headerStyle: {backgroundColor: '#70041b',height: 50 },
-      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+      headerStyle: {height: 50 },
+      headerTitleStyle : {color:'#9A9DA4',fontSize:17},
       header: null,
       }
 
@@ -275,7 +275,7 @@ export default class Profile extends Component {
               active='false'
               direction="up"
               containerStyle={{ }}
-              style={{  backgroundColor:'#45B0A4'}}
+              style={{  backgroundColor:'#41BEB6'}}
               position="bottomRight"
               onPress={()=> navigate('newDiary')}>
               <Icon color='white' name="library-books" />
