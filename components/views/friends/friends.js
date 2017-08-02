@@ -25,6 +25,7 @@ import CameraComponent from '../cameraComponent/CameraComponent';
 import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
+import Helper from './helper';
 import HideableView from 'react-native-hideable-view';
 
 export default class Profile extends Component {
@@ -42,10 +43,44 @@ export default class Profile extends Component {
          uid: '',
          inputSearch: '',
          users: [],
+         follows: [],
          btnText: 'Seguir',
          txt: '',
        }
     }
+
+///////////////////////////////////////// Component Will Mount ///////////////////////////////////////////////////
+async componentWillMount(){
+  try{
+    var that = this;
+    AsyncStorage.getItem("user").then((value) => {
+          this.setState({
+            uid: value,
+            uidCurrentUser: value
+          })
+          Helper.getFollows(this.state.uid, (f) => {
+            this.setState({
+              follows: f,
+              users: f,
+            })
+          })
+    })
+    this.search('')
+  } catch(error){
+    alert("error: " + error)
+  }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+getFollows(){
+    var that = this;
+    Helper.getFollows(this.state.uid, (f) => {
+          this.setState({
+            follows: f,
+            users: f,
+          })
+        })
+}
 
 /////////////////////////////////////////// Search ///////////////////////////////////////////////////////
     search(text){
@@ -53,7 +88,7 @@ export default class Profile extends Component {
         let ref = getDatabase().ref("/users")
         userList = (ref.orderByChild("nickname").startAt(text).endAt(text+'\uf8ff'))
         var that = this
-        userList.on('value', (snap) => {
+        userList.once('value', (snap) => {
             var users = [];
             AsyncStorage.getItem("user").then((value) => {
                       snap.forEach((child) => {
@@ -83,9 +118,12 @@ export default class Profile extends Component {
            })//AsyncStorage
       })//userList.on
       }/*if text has content*/else{
-        this.setState({
-          users: [],
-        })
+        Helper.getFollows(this.state.uidCurrentUser, (f) => {
+              this.setState({
+                follows: f,
+                users: f,
+              })
+            })
       }//else text has no content
     }//search
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +145,6 @@ export default class Profile extends Component {
             tthat.addFollowers(i)
         }
       })//checkRepeat.once
-      this.search(that.txt)
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -124,6 +161,7 @@ export default class Profile extends Component {
               url: snapshot.child("url").val(),
             });
       })
+      this.search(that.txt)
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -133,13 +171,12 @@ export default class Profile extends Component {
       var tthat = this;
       let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
       followList = (ref.orderByChild("uid").equalTo(that.users[i].id))
-      followList.on('value', (snap) => {
+      followList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
           tthat.removeFollowers(i)
       })
-      this.search(that.txt)
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -148,13 +185,14 @@ export default class Profile extends Component {
       var that = this.state;
       let ref = getDatabase().ref('/users/'+that.users[i].id+'/followers/')
       followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
-      followersList.on('value', (snap) => {
+      followersList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
       })
+      this.search(that.txt)
     }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
     const { navigate } = this.props.navigation;

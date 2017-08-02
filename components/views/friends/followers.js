@@ -46,6 +46,7 @@ export default class Followers extends Component {
          inputSearch: '',
          users: [],
          follList: [],
+         unfollList: [],
          txt: '',
          isMe: [],
        }
@@ -54,11 +55,18 @@ export default class Followers extends Component {
 
 ///////////////////////////////////////// Component Did Mount //////////////////////////////////////////////////
     async componentDidMount(){
+      this.showButton()
+    }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////// Show Button /////////////////////////////////////////////////////
+    showButton(){
       const { params } = this.props.navigation.state;
       var that = this
       var tthat = this.state
       var wat = params.followers
       var flist = [];
+      var fwerlist = [];
       var isMeList = [];
       AsyncStorage.getItem("user").then((value) => {
                     wat.forEach((child, i) => {
@@ -70,22 +78,27 @@ export default class Followers extends Component {
                             }/*If does not exists*/
                             if(child.id == value){
                               isMeList.push(true)
+                              flist.push(false)
+                              fwerlist.push(false)
                             }else{
                               isMeList.push(false)
+                              flist.push(f)
+                              fwerlist.push(!f)
                             }
-                            flist.push(f)
                             that.setState({
                               uidCurrentUser: value,
                               follList: flist,
+                              unfollList: fwerlist,
                               isMe: isMeList,
                             })
                         })//checkRepeat.once
                     });//snap.forEach
       })//AsyncStorage
-      /*that.setState({
+      that.setState({
         follList: flist.reverse(),
+        unfollList: fwerlist.reverse(),
         isMe: isMeList.reverse(),
-      })*/
+      })
     }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -126,6 +139,11 @@ export default class Followers extends Component {
               url: snapshot.child("url").val(),
             });
       })
+      this.setState({
+        follList: !this.state.follList,
+        unfollList: !this.state.unfollList
+      })
+      this.showButton()
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -137,7 +155,7 @@ export default class Followers extends Component {
       var tthat = this;
       let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
       followList = (ref.orderByChild("uid").equalTo(wat[i].id))
-      followList.on('value', (snap) => {
+      followList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
@@ -153,11 +171,16 @@ export default class Followers extends Component {
       var that = this.state;
       let ref = getDatabase().ref('/users/'+wat[i].id+'/followers/')
       followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
-      followersList.on('value', (snap) => {
+      followersList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
       })
+      this.setState({
+        follList: !this.state.follList,
+        unfollList: !this.state.unfollList
+      })
+      this.showButton()
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -176,14 +199,13 @@ export default class Followers extends Component {
                         <Text style={styles.nick}>{u.nickname}</Text>
                         <Text style={styles.name}>{u.name} {u.lastName}</Text>
                         </TouchableOpacity>
-
                             <HideableView visible={that.follList[i]} removeWhenHidden={true} duration={100}>
                                 <Button light onPress={() => this.follow(i)}>
                                   <Text>{"Seguir"}</Text>
                                   <Icon name='add-circle-outline' />
                                 </Button>
                             </HideableView>
-                            <HideableView visible={!that.follList[i]} removeWhenHidden={true} duration={100}>
+                            <HideableView visible={that.unfollList[i]} removeWhenHidden={true} duration={100}>
                                 <Button light onPress={() => this.unfollow(i)}>
                                   <Text>{"Dejar de Seguir"}</Text>
                                   <Icon name='remove-circle-outline' />
