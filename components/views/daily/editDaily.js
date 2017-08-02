@@ -62,7 +62,7 @@ export default class EditDaily extends Component{
     let idDiary = params.idDiary;
     let idDaily = params.idDaily;
     this.dataRef = getDatabase().ref("/diary/"+idDiary+"/daily/"+idDaily);
-    this.dataRef.on('value', (snap) => {
+    this.dataRef.once('value', (snap) => {
         this.state= {
           idDiary: params.idDiary,
           idDaily: snap.key,
@@ -105,6 +105,7 @@ export default class EditDaily extends Component{
   }
 
   saveImage(){
+    alert(this.state.imagePath);
     let idDiary = this.state.idDiary;
     let idDaily = this.state.idDaily;
     try{
@@ -115,6 +116,7 @@ export default class EditDaily extends Component{
            getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/photos/").push({
              url: responseData,
            });
+           getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/url").set(responseData);
          })
          .done()
        : null

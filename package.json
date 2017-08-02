@@ -37,6 +37,7 @@
     "react-native-tab-view": "^0.0.67",
     "react-native-toggle": "^1.0.3",
     "react-native-vector-icons": "^4.2.0",
+    "react-native-viewpager": "^0.2.13",
     "react-navigation": "git+https://github.com/react-community/react-navigation.git",
     "react-window-size": "^1.1.0",
     "rx-lite-aggregates": "^4.0.8"

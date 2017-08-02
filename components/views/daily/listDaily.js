@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { Container, Content, Button, Text, Input, Right, Header, Item } from 'native-base';
+import { Container, Content, Button, Text, Input, Right, Header, Item, Card, CardItem } from 'native-base';
 import { ListItem } from 'react-native-elements';
 import { getDatabase } from '../../common/database';
 import strings from '../../common/local_strings.js';
@@ -45,9 +45,9 @@ export default class ListDaily extends Component{
           date: child.val().date,
           experience: child.val().experience,
           tips: child.val().tips,
+          url: child.val().url,
           });
       });
-
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(dailies)
       });
@@ -63,9 +63,11 @@ export default class ListDaily extends Component{
     const { params } = this.props.navigation.state;
     return (
       <ListItem
+        roundAvatar
         key= {daily._key}
-        title={daily.date + "          " + daily.name}
-        source={{uri:daily.photos}}
+        avatar={{uri:daily.url}}
+        title={daily.name}
+        subtitle={daily.date}
         onPress={() => navigate('daily', {idDaily: daily._key, idDiary: params.diaryKey})}>
       </ListItem>
     );
@@ -92,6 +94,7 @@ export default class ListDaily extends Component{
                   date: child.val().date,
                   experience: child.val().experience,
                   tips: child.val().tips,
+                  url: child.val().url,
                 });//dalies.push
               that.setState({
                 dataSource: this.state.dataSource.cloneWithRows(dailies)
@@ -107,34 +110,37 @@ export default class ListDaily extends Component{
     return(
       <Container>
         <Content>
+          <Card>
+              <Header style={{backgroundColor: 'white'}} searchBar rounded>
+                <Item>
+                  <Icon name="search" />
+                  <Input placeholder="Search"
+                    maxLength = {20}
+                    onChangeText={(text) => this.searchDaily(text)}
+                  />
 
-          <Button transparent large
-            onPress={this.addDaily.bind(this)}>
-              <Icon active name='add' />
-          </Button>
+                  <Button transparent
+                    onPress={this.addDaily.bind(this)}>
+                      <Icon active name='add' />
+                      <Icon active name='book'/>
+                  </Button>
+                </Item>
 
-          <Header style={{backgroundColor: 'white'}} searchBar rounded>
-            <Item>
-              <Icon name="search" />
-              <Input placeholder="Search"
-                maxLength = {20}
-                onChangeText={(text) => this.searchDaily(text)}
-              />
-              <Icon name="book" />
-            </Item>
+                <Button transparent>
+                  <Text>Search</Text>
+                </Button>
+              </Header>
 
-            <Button transparent>
-              <Text>Search</Text>
-            </Button>
-          </Header>
+            <CardItem>
+              <ListView
+                dataSource={this.state.dataSource}
+                renderRow={this._renderItem.bind(this)}
+                enableEmptySections={true}
+                style={styles.listview}>
+              </ListView>
+            </CardItem>
 
-          <ListView
-            dataSource={this.state.dataSource}
-            renderRow={this._renderItem.bind(this)}
-            enableEmptySections={true}
-            style={styles.listview}>
-          </ListView>
-
+        </Card>
       </Content>
     </Container>
     );

@@ -121,6 +121,8 @@ export default class CreateDaily extends Component{
           getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/photos/").push({
             url: responseData,
           });
+          getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/url").set(responseData);
+
         })
         .done()
       : null
