@@ -8,6 +8,7 @@ import FooterNav from '../common/footerNav';
 //Import de vistas Login
 import Login from './login';
 import Signup from './signup';
+import GetPassword from './getPassword'
 
 //Import de vistas Home
 import Home from './home/home';
@@ -110,6 +111,7 @@ export const DailyTravelTabs = TabNavigator({
 export const DailyTravelInitiate = StackNavigator({
     login: { screen: Login },
     signup: {screen: Signup },
+    getPassword: {screen: GetPassword },
     dtTabs: {screen: DailyTravelTabs,
       navigationOptions:{
         header: null,
