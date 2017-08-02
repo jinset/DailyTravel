@@ -27,6 +27,8 @@ import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import Helper from './helper';
 import HideableView from 'react-native-hideable-view';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 export default class Profile extends Component {
 
@@ -162,6 +164,16 @@ getFollows(){
             });
       })
       this.search(that.txt)
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Ahora sigues a: ' + that.users[i].nickname,
+        message: that.users[i].name + " " + that.users[i].lastName ,
+        avatar: that.users[i].url,
+        alertType: 'info',
+        position: 'bottom',
+        duration: 6000,
+        stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -191,6 +203,16 @@ getFollows(){
           });
       })
       this.search(that.txt)
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Dejaste de seguir a: ' + that.users[i].nickname,
+        message: that.users[i].name + " " + that.users[i].lastName ,
+         avatar: that.users[i].url,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 6000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -245,7 +267,9 @@ getFollows(){
                           {listTable}
                       </List>
                     </Body>
+
                 </Content>
+                <MessageBarAlert ref="alert"/>
           </Container>
     );
   }

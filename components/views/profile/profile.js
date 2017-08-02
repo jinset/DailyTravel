@@ -21,7 +21,7 @@ import { Container, Content, Form, Segment, Item, Separator, Input, Label, Butto
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
-import CameraComponent from '../cameraComponent/CameraComponent';
+import CameraProfileComponent from '../cameraComponent/CameraProfileComponent';
 import Helper from './helper';
 import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
@@ -245,7 +245,7 @@ export default class Profile extends Component {
                 <CardItem>
                   <Left>
                     <View style={styles.column}>
-                        <CameraComponent />
+                        <CameraProfileComponent />
                           <View style={styles.center}>
                               <Text style={styles.nick}>{this.state.nickname}</Text>
                           </View>

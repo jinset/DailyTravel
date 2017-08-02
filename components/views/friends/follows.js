@@ -26,6 +26,8 @@ import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 export default class Follows extends Component {
 
@@ -50,6 +52,7 @@ export default class Follows extends Component {
          btnText: 'Seguir',
          txt: '',
          isMe: [],
+         nav: [],
        }
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,6 +72,7 @@ showButton(){
   var flist = [];
   var fwerlist = [];
   var isMeList = [];
+  var navList = [];
   AsyncStorage.getItem("user").then((value) => {
                 wat.forEach((child, i) => {
                     let checkRepeat = getDatabase().ref('users/'+value+'/follows/').orderByChild("uid").equalTo(child.id);
@@ -81,16 +85,19 @@ showButton(){
                           isMeList.push(true)
                           flist.push(false)
                           fwerlist.push(false)
+                          navList.push('profile')
                         }else{
                           isMeList.push(false)
                           flist.push(f)
                           fwerlist.push(!f)
+                          navList.push('visitProfile')
                         }
                         that.setState({
                           uidCurrentUser: value,
                           follList: flist,
                           unfollList: fwerlist,
                           isMe: isMeList,
+                          nav: navList,
                         })
                     })//checkRepeat.once
                 });//snap.forEach
@@ -99,6 +106,7 @@ showButton(){
     follList: flist.reverse(),
     unfollList: fwerlist.reverse(),
     isMe: isMeList.reverse(),
+    nav: navList.reverse(),
   })
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,6 +153,16 @@ showButton(){
         unfollList: !this.state.unfollList
       })
       this.showButton()
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Ahora sigues a: ' + params.follows[i].nickname,
+        message: params.follows[i].name + " " + params.follows[i].lastName ,
+        avatar: params.follows[i].url,
+        alertType: 'info',
+        position: 'bottom',
+        duration: 6000,
+        stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -182,6 +200,16 @@ showButton(){
         unfollList: !this.state.unfollList
       })
       this.showButton()
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Dejaste de seguir a: ' + that.users[i].nickname,
+        message: that.users[i].name + " " + that.users[i].lastName ,
+         avatar: that.users[i].url,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 6000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -192,7 +220,7 @@ showButton(){
     let listTable = params.follows.map((u,i) => {
       return (
                     <ListItem>
-                        <TouchableOpacity onPress={() => navigate('visitProfile', {uid:u.id})} style={styles.row}>
+                        <TouchableOpacity onPress={() => navigate(this.state.nav[i], {uid:u.id})} style={styles.row}>
                           <Thumbnail
                             small
                             source={{uri: u.url}}
@@ -231,6 +259,7 @@ showButton(){
                       </List>
                     </Body>
                 </Content>
+                <MessageBarAlert ref="alert"/>
           </Container>
     );
   }

@@ -26,6 +26,8 @@ import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 let diarys = [{id: null, name: null, description: null, url: null}]
 let follows = [{id: null, nickname: null, name: null, lastName: null, url: null}]
@@ -170,6 +172,16 @@ export default class EditProfile extends Component {
         unfoll: !this.state.unfoll
       })
       this.showButton.bind(this)
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Ahora sigues a: ' + that.nickname,
+        message: that.userName + " " + that.lastName ,
+        avatar: that.url,
+        alertType: 'info',
+        position: 'bottom',
+        duration: 6000,
+        stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -203,6 +215,16 @@ export default class EditProfile extends Component {
         unfoll: !this.state.unfoll
       })
       this.showButton.bind(this)
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Dejaste de seguir a: ' + that.nickname,
+        message: that.userName + " " + that.lastName ,
+         avatar: that.url,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 6000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -324,6 +346,7 @@ showButton(){
                     {listTable}
                </Card>
           </Content>
+          <MessageBarAlert ref="alert"/>
           </Container>
     );
   }
