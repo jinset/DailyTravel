@@ -58,7 +58,10 @@ let strings = new LocalizedStrings({
    loading: "Loading...",
    forgetpass: "Forgot password?",
    createNewAccount: "Create new account",
-   seeMore: "See more"
+   seeMore: "See more",
+   checkEmail: "Check your e-mail",
+   unknowEmail: "The email does not exists",
+   somethingGoesWrong: "Something goes wrong"
  },
  es:{
    home:"Inicio",
@@ -117,8 +120,10 @@ let strings = new LocalizedStrings({
    loading: "Cargando...",
    forgetpass: "¿Has olvidado la contraseña?",
    createNewAccount: "Crear nueva cuenta",
-   seeMore: "Ver mas"
-
+   seeMore: "Ver mas",
+   checkEmail: "Revisar su correo electrónico",
+   unknowEmail: "Correo electrónico no existe",
+   somethingGoesWrong: "Algo malo sucedio "
  }
 });
 
