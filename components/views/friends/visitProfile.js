@@ -303,7 +303,7 @@ showButton(){
                   <Left>
                     <View style={styles.column}>
                         <Thumbnail
-                          style={{width: 150, height: 200, borderStyle: 'solid', borderWidth: 2, borderColor: '#70041b', }}
+                          style={{width: 150, height: 200, borderStyle: 'solid', borderWidth: 2, borderColor: '#41BEB6', }}
                           source={{uri: this.state.url}}
                         />
                         <View style={styles.center}>
@@ -311,7 +311,7 @@ showButton(){
                         </View>
                     </View>
                     <View style={styles.column}>
-
+                        <Text style={styles.fullname}>{this.state.userName} {this.state.lastName}</Text>
                                 <View style={styles.row}>
                                     <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
                                         <Text style={styles.number}> { this.state.follows.length } </Text>
@@ -321,10 +321,6 @@ showButton(){
                                         <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
                                         <Text style={styles.follow}> {"Seguidores"} </Text>
                                     </View>
-                                        {/*{this.state.userName && this.state.lastName ?
-                                          <Text>{this.state.userName} {this.state.lastName}</Text>
-                                          : null
-                                        } */}
                                 </View>
                         <HideableView visible={this.state.foll} removeWhenHidden={true} duration={100}>
                                 <Button light onPress={() => this.follow()} style={{width: (Dimensions.get('window').width)/1.8}}>
@@ -375,8 +371,15 @@ const styles = StyleSheet.create({
   },
   nick: {
     fontStyle: 'italic',
-    fontSize: 16,
+    fontSize: 18,
     color: '#000000',
+  },
+  fullname: {
+    fontStyle: 'italic',
+    fontSize: 20,
+    color: '#000000',
+    paddingLeft: 45,
+    paddingRight: 10,
   },
   diary: {
     fontStyle: 'italic',
