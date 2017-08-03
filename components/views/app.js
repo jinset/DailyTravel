@@ -103,7 +103,7 @@ export const DailyTravelTabs = TabNavigator({
   {
     tabBarOptions: {
       style: {
-       backgroundColor: '#41BEB6',
+        backgroundColor: '#E3904E',
       },
       tabStyle: {
         height: 50,
