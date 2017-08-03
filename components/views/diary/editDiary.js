@@ -1,10 +1,11 @@
 import { TouchableHighlight, Alert ,Dimensions,Platform,Image } from 'react-native';
 import React, {Component} from 'react';
-import { Container, Content, Form,List,Toast,ListItem,Radio, Item, Input, Label, Button ,Text,Body , Right, Switch, Card,
+import { Container, Content, Form,List,Toast,ListItem,Radio,View, Item, Input, Label, Button ,Text,Body , Right, Switch, Card,
    CardItem, Thumbnail, Left  } from 'native-base';
 import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
+import PopupDialog, { DialogTitle } from 'react-native-popup-dialog';
 //Firebase
 import { getDatabase } from '../../common/database';
 import * as firebase from 'firebase';
@@ -46,6 +47,9 @@ let ref='';
               status:snap.val().status,
               key: '',
               imagePath:'',
+              diaryUsers: [],
+              users: [],
+              uidCurrentUser:'',
             }
 
         });
@@ -60,6 +64,64 @@ let ref='';
         }
   }
 
+////////////////////////////////////////////OBTIENE USUARIO LOGGEADO//////////////////////////
+   async componentDidMount(){
+     try{
+       AsyncStorage.getItem("user").then((value) => {
+          this.setState({
+            idOwner:value,
+          })
+        })
+     } catch(error){
+       alert("error: " + error)
+     }
+     //usuarios
+     let ref = getDatabase().ref("/users")
+     userList = (ref.orderByChild("nickname"))
+     var that = this
+     userList.on('value', (snap) => {
+         var users = [];
+         var diaryUsers = [];
+         AsyncStorage.getItem("user").then((value) => {
+                   snap.forEach((child) => {
+                       let checkRepeat = getDatabase().ref('users/'+value+'/follows/').orderByChild("uid").equalTo(child.key);
+                       checkRepeat.once('value', function(snapshot) {
+                           var f = false
+                           if(snapshot.exists() == true){
+                             if(child.key != value){
+                               users.push({
+                                 id: child.key,
+                                 nickname: child.val().nickname,
+                                 name: child.val().name,
+                                 lastName: child.val().lastName,
+                                 url: child.val().url,
+                                 invited: f,
+                               });//users.push
+                             } //if nick diff from current
+                           }
+                           //If user es owner
+                           if(child.key == value){
+                             diaryUsers.push({
+                               id: child.key,
+                               nickname: strings.me,
+                               name: child.val().name,
+                               lastName: child.val().lastName,
+                               url: child.val().url,
+                               invited: !f,
+                             });
+                           }
+
+       alert("sirve: " + users)
+                           that.setState({
+                               users: users,
+                               diaryUsers:diaryUsers,
+                               uidCurrentUser: value,
+                           })//setState
+                       })//checkRepeat.once
+                   });//snap.forEach
+        })//AsyncStorage
+   })//userList.on
+  }
 ///////////////////////////////////////////////////////OBTIENE IMAGEN////////////////////////////////////////////////////////////////
    async componentDidMount(){
      try{
@@ -133,13 +195,127 @@ let ref='';
    })
        this.props.navigation.goBack()
 }
+
+   addDiaryUsers(userId,userstatus){
+     var myRef = getDatabase().ref().push();
+          getDatabase().ref().child('userDiary/').push({
+          idUser:userId,
+          idDiary: this.state.key,
+          invitationStus:userstatus,
+          status:this.state.status,
+      }).catch(function(error) {
+          alert(error);
+     });
+   }
+///////////////////////////////////////// addGuest /////////////////////////////////////////////////////////////
+    addGuest(i){
+      var diaryUsers =[];
+      diaryUsers=this.state.diaryUsers;
+      diaryUsers.push({
+        id:this.state.users[i].id,
+        nickname: this.state.users[i].nickname,
+        name: this.state.users[i].name,
+        lastName: this.state.users[i].lastName,
+        url: this.state.users[i].url,
+        invited: !this.state.users[i].invited,
+      });//users.push
+
+      var users = [];
+      users=this.state.users;
+      users.splice(i, 1);
+      this.setState({
+          users: users,
+          diaryUsers:diaryUsers,
+      })//users.push
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////// removeGuest /////////////////////////////////////////////////////////////
+    removeGuest(i){
+      if(this.state.uidCurrentUser != this.state.diaryUsers[i].id){
+        var users =[];
+        users=this.state.users;
+        users.push({
+          id:this.state.diaryUsers[i].id,
+          nickname: this.state.diaryUsers[i].nickname,
+          name: this.state.diaryUsers[i].name,
+          lastName: this.state.diaryUsers[i].lastName,
+          url: this.state.diaryUsers[i].url,
+          invited: !this.state.diaryUsers[i].invited,
+        });//users.push
+
+        var diaryUsers = [];
+        diaryUsers=this.state.diaryUsers;
+        diaryUsers.splice(i, 1);
+        this.setState({
+            users: users,
+            diaryUsers:diaryUsers,
+        })//users.push
+    }
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /////////////////////////////////////////////////////////EMPIEZA RENDER///////////////////////////////////////////////////////
   render() {
     const { navigate } = this.props.navigation;
-    return (
 
-      <Container>
-        <Content>
+    let listTable = this.state.users.map((u,i) => {
+      return (
+          <ListItem avatar>
+            <Left>
+              <Thumbnail small source={{uri: u.url}}   />
+            </Left>
+            <Body>
+              <Text>{u.nickname}</Text>
+            </Body>
+
+          <Right>
+            <Radio selected={u.invited} onPress={() => this.addGuest(i)} />
+          </Right>
+          </ListItem>
+            )
+      });
+      let listTable2 = this.state.diaryUsers.map((u,i) => {
+        return (
+            <ListItem avatar>
+              <Left>
+                <Thumbnail small source={{uri: u.url}}   />
+              </Left>
+              <Body>
+                <Text>{u.nickname}</Text>
+              </Body>
+
+            <Right>
+              <Radio selected={u.invited} onPress={() => this.removeGuest(i)} />
+            </Right>
+            </ListItem>
+              )
+        });
+        let listavatars = this.state.diaryUsers.map((u,i) => {
+          return (
+              <ListItem avatar>
+                  <Thumbnail small source={{uri: u.url}}   />
+              </ListItem>
+                )
+          });
+    return (
+        <Container>
+          <PopupDialog
+              ref={(popupDialog) => { this.popupDialog = popupDialog; }}
+            >
+            <View>
+              <List>
+              <ListItem itemDivider>
+               <Text>Invitados</Text>
+             </ListItem>
+                  {listTable2}
+                  <ListItem itemDivider>
+               <Text>Amigos</Text>
+             </ListItem>
+             {listTable}
+              </List>
+            </View>
+          </PopupDialog>
+          <Content  style={{zIndex: -1}}>
         <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
         <Thumbnail
           style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
@@ -149,8 +325,10 @@ let ref='';
           <Card >
             <CardItem  style={{padding:10}}>
               <Right style={{flex:  1, flexDirection: 'row'}}>
-                <Button rounded  transparent>
-                  <Icon name='people' />
+                <Button rounded  transparent onPress={() => {
+                    this.popupDialog.show();
+                  }}>
+                    <Icon name='group-add' />
                 </Button>
                 <List  style={{flex:  1, flexDirection: 'row'}}>
                   <ListItem avatar>

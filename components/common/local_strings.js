@@ -101,7 +101,7 @@ let strings = new LocalizedStrings({
    password:"Contraseña",
    termsConditions:"Terminos y condiciones",
    accept:"Aceptar",
-   email:"Correo Electrónico",
+   email:"Correo electrónico",
    wrongPassEmail: "Contraseña o correo electrónico incorrectos",
    changePassword: "Cambiar contraseña",
    privateInformation: "Información Privada",
