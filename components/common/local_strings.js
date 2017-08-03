@@ -55,13 +55,17 @@ let strings = new LocalizedStrings({
    espaces: "Espaces",
    restart: "Restart session to change email",
    touchToRestart: "Touch this message if you wish to log out",
+   createDiary:"Create diary",
+   editDiary:"Edit diary",
+   me:"Me",
+   myDiaries:"Diaries",
    loading: "Loading...",
    forgetpass: "Forgot password?",
    createNewAccount: "Create new account",
    seeMore: "See more",
    checkEmail: "Check your e-mail",
    unknowEmail: "The email does not exists",
-   somethingGoesWrong: "Something goes wrong"
+   somethingGoesWrong: "Something goes wrong",
  },
  es:{
    home:"Inicio",
@@ -117,13 +121,17 @@ let strings = new LocalizedStrings({
    espaces: "Campos",
    restart: "Reinicia sesión para cambiar el correo",
    touchToRestart: "Toque este mensaje si desea cerrar sesión",
+   createDiary:"Crear diario",
+   editDiary:"Modificar diario",
+   me:"Yo",
+   myDiaries:"Diarios",
    loading: "Cargando...",
    forgetpass: "¿Has olvidado la contraseña?",
    createNewAccount: "Crear nueva cuenta",
    seeMore: "Ver mas",
    checkEmail: "Revisar su correo electrónico",
    unknowEmail: "Correo electrónico no existe",
-   somethingGoesWrong: "Algo malo sucedio "
+   somethingGoesWrong: "Algo malo sucedio ",
  }
 });
 
