@@ -60,7 +60,6 @@ export default class Profile extends Component {
       title: strings.profile,
       headerStyle: {height: 50 },
       headerTitleStyle : {color:'#9A9DA4',fontSize:17},
-      header: null,
       }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -253,6 +252,7 @@ export default class Profile extends Component {
                           </View>
                         </View>
                         <View style={styles.column}>
+                          <Text style={styles.fullname}>{this.state.userName} {this.state.lastName}</Text>
                           <View style={styles.row}>
                               <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
                                   <Text style={styles.number}> { this.state.follows.length } </Text>
@@ -262,10 +262,6 @@ export default class Profile extends Component {
                                   <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
                                   <Text style={styles.follow}> {"Seguidores"} </Text>
                               </View>
-                                  {/*{this.state.userName && this.state.lastName ?
-                                    <Text>{this.state.userName} {this.state.lastName}</Text>
-                                    : null
-                                  } */}
                           </View>
                     </View>
                  </Left>
@@ -290,7 +286,7 @@ export default class Profile extends Component {
 
                        <Text style={styles.message}>{"Yo aparezco cuando no tienes diarios"}</Text>
                        <Text style={styles.message}>{"Tocame para crear uno"}</Text>
-                       <TouchableOpacity onPress={()=>navigate('createDiaryTab')}>
+                       <TouchableOpacity onPress={()=>navigate('newDiary')}>
                          <Image
                             style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
                             source={require('./ProfilePig.jpg')} />
@@ -337,8 +333,15 @@ const styles = StyleSheet.create({
   },
   nick: {
     fontStyle: 'italic',
-    fontSize: 16,
+    fontSize: 18,
     color: '#000000',
+  },
+  fullname: {
+    fontStyle: 'italic',
+    fontSize: 20,
+    color: '#000000',
+    paddingLeft: 45,
+    paddingRight: 10,
   },
   diary: {
     fontStyle: 'italic',

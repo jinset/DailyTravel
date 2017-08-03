@@ -85,7 +85,7 @@ showButton(){
                           isMeList.push(true)
                           flist.push(false)
                           fwerlist.push(false)
-                          navList.push('profile')
+                          navList.push('fprofile')
                         }else{
                           isMeList.push(false)
                           flist.push(f)
@@ -202,9 +202,9 @@ showButton(){
       this.showButton()
       MessageBarManager.registerMessageBar(this.refs.alert);
       MessageBarManager.showAlert({
-        title: 'Dejaste de seguir a: ' + that.users[i].nickname,
-        message: that.users[i].name + " " + that.users[i].lastName ,
-         avatar: that.users[i].url,
+        title: 'Dejaste de seguir a: ' + params.follows[i].nickname,
+        message: params.follows[i].name + " " + params.follows[i].lastName ,
+         avatar: params.follows[i].url,
          alertType: 'info',
          position: 'bottom',
          duration: 6000,
