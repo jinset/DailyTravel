@@ -129,7 +129,7 @@ export default class CameraProfileComponent extends Component {
         <View>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
               <Thumbnail
-                style={{width: 150, height: 200, borderStyle: 'solid', borderWidth: 2, borderColor: '#70041b'}}
+                style={{width: 150, height: 200, borderStyle: 'solid', borderWidth: 2, borderColor: '#41BEB6'}}
                 large
                 source={{uri: this.state.imagePath}}
               />

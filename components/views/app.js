@@ -35,6 +35,7 @@ import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
+import { Icon } from 'react-native-elements';
 
 export const DTHome = StackNavigator({
   //Home
@@ -60,6 +61,8 @@ export const DTFriends = StackNavigator({
     visitProfile: {screen: VisitProfile},
     follows: {screen: Follows},
     followers: {screen: Followers},
+    fprofile: { screen: Profile },
+    fDairyView: { screen: DairyView },
 });
 
 export const DTNewDiary = StackNavigator({
@@ -93,14 +96,14 @@ export const DailyTravelTabs = TabNavigator({
       }},
     profileTab: { screen: DTProfile,
       navigationOptions:{
-        tabBarLabel: strings.myDiaries,
+        tabBarLabel: strings.profile,
       }},
 
     },
   {
     tabBarOptions: {
       style: {
-       backgroundColor: '#E3904E',
+        backgroundColor: '#E3904E',
       },
       tabStyle: {
         height: 50,
