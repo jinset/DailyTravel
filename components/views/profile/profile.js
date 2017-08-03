@@ -17,8 +17,9 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Segment, Item, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
+import { Container, Content, Form, Segment, Item, Separator, Input, Label, Button,Fab,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
+import baseStyles from '../../style/baseStyles.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
 import CameraProfileComponent from '../cameraComponent/CameraProfileComponent';
@@ -57,9 +58,10 @@ export default class Profile extends Component {
 /////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
     static navigationOptions = {
       title: strings.profile,
-      headerStyle: {backgroundColor: '#70041b',height: 50 },
-      headerTitleStyle : {color:'white', fontWeight: 'ligth', alignSelf: 'center'},
-    }
+      headerStyle: {height: 50 },
+      headerTitleStyle : {color:'#9A9DA4',fontSize:17},
+      header: null,
+      }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
@@ -296,6 +298,17 @@ export default class Profile extends Component {
                     </HideableView>
                </Card>
           </Content>
+              <View>
+           <Fab
+             active='false'
+             direction="up"
+             containerStyle={{ }}
+             style={{  backgroundColor:'#41BEB6'}}
+             position="bottomRight"
+             onPress={()=> navigate('newDiary')}>
+             <Icon color='white' name="library-books" />
+           </Fab>
+         </View>
           </Container>
     );
   }

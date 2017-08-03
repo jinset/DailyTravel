@@ -1,7 +1,6 @@
 import {
   AppRegistry,
   TextInput,
-  View,
   TouchableHighlight,
   ToolbarAndroid,
   ActivityIndicator,
@@ -17,7 +16,7 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Header, Form, Segment, Item, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, List, ListItem} from 'native-base';
+import { Container, Content, Header, Form, Segment, Item,View,Fab, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, List, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
@@ -34,8 +33,9 @@ export default class Profile extends Component {
 
   static navigationOptions = {
     title: "Friends",
-    headerStyle: {backgroundColor: '#70041b',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
+    header: null,
   }
 
    constructor(props) {
@@ -269,6 +269,17 @@ getFollows(){
                     </Body>
 
                 </Content>
+                <View>
+                  <Fab
+                    active='false'
+                    direction="up"
+                    containerStyle={{ }}
+                    style={{  backgroundColor:'#41BEB6'}}
+                    position="bottomRight"
+                    onPress={()=> navigate('newDiary')}>
+                    <Icon color='white' name="library-books" />
+                  </Fab>
+                </View>
                 <MessageBarAlert ref="alert"/>
           </Container>
     );
