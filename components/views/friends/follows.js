@@ -85,7 +85,7 @@ showButton(){
                           isMeList.push(true)
                           flist.push(false)
                           fwerlist.push(false)
-                          navList.push('profile')
+                          navList.push('fprofile')
                         }else{
                           isMeList.push(false)
                           flist.push(f)

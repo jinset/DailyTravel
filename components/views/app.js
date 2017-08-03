@@ -34,6 +34,7 @@ import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
+import { Icon } from 'react-native-elements';
 
 export const DTHome = StackNavigator({
   //Home
@@ -52,13 +53,15 @@ export const DTFriends = StackNavigator({
     visitProfile: {screen: VisitProfile},
     follows: {screen: Follows},
     followers: {screen: Followers},
+    fprofile: { screen: Profile },
+    fDairyView: { screen: DairyView },
 });
 
 export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
     newDiary: { screen: NewDiary },
       profile: { screen: Profile },
-    editDiary: { screen: EditDiary },
+      editDiary: { screen: EditDiary },
       DairyView: { screen: DairyView },
       //Daily
         listDaily: { screen: ListDaily },

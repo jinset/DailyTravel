@@ -270,7 +270,7 @@ showButton(){
                                 small
                                 source={{uri: this.state.url}}
                               />
-                              <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                              <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('fDairyView', {diaryKey:d.id})}>
                                 <View style={styles.center}>
                                     <Text style={styles.diary}>{"    " +d.name} </Text>
                                 </View>
@@ -279,7 +279,7 @@ showButton(){
                                   <Icon active name='more-vert' />
                               </Right>
                           </View>
-                          <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                          <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('fDairyView', {diaryKey:d.id})}>
                             <Left>
                                 <Image
                                   source={{uri: d.url}}
