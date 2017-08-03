@@ -32,8 +32,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 export default class EditProfile extends Component {
   static navigationOptions = {
     title: strings.profile,
-    headerStyle: {backgroundColor: '#70041b', height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
   }
    constructor(props) {
        super(props);
@@ -162,9 +162,40 @@ export default class EditProfile extends Component {
               <Form>
                <View style={styles.centerCamera}>
                     <CameraComponent />
-                    <Icon active large onPress={this.logout.bind(this)} name='exit-to-app' />
                     <Text>{strings.changePerfilPhoto}</Text>
                </View>
+               <Left >
+                   <View style={styles.center}>
+                   <Text>
+                       {'Cerrar Sesión'}
+                   </Text>
+                   </View>
+               </Left>
+               {/*<Accordion
+                   header={'Cerrar sesión'}
+                   content={
+
+                   }
+                   easing="easeOutCubic"
+                 />*/}
+                 <Card>
+                     <Item >
+                         <Right>
+                             <Icon large name='exit-to-app'
+                                   style={styles.centerIcon}
+                                   onPress={this.logout.bind(this)}
+                                   color={'white'} />
+                         </Right>
+                     </Item>
+                 </Card>
+                 <Left >
+                     <View style={styles.privateInfo}>
+                     <Text>
+                         {'Información pública'}
+                     </Text>
+                     </View>
+                 </Left>
+               <Card>
                 <Card>
                         <Item >
                             <Icon active name='loyalty' />
@@ -227,8 +258,7 @@ export default class EditProfile extends Component {
                             <Icon active name='keyboard-arrow-down' />
                         </Item>
                 </Card>
-                <Card>
-                    <Button full light style= {{backgroundColor: '#D3D0CB'}}
+                    <Button full dark style= {{backgroundColor: '#41BEB6'}}
                             onPress={this.save.bind(this)}>
                         <Text>{strings.save}</Text>
                     </Button>
@@ -250,6 +280,19 @@ const styles = StyleSheet.create({
   },
   privateInfo: {
     paddingTop: 15,
+  },
+  center: {
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+  },
+  centerIcon: {
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    backgroundColor: '#808080',
   },
   title: {
     alignItems: 'center',

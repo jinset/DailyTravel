@@ -19,21 +19,25 @@ export default class DailyTravel extends Component{
   }
 
   componentDidMount() {
+    try {
+      AsyncStorage.getItem("user").then((value) => {
+        this.setState({
+          user: value
+        });
+        if (this.state.user) {
+          this.setState({
+            run: < App / >
+          });
+        } else {
+          this.setState({
+            run: < Initiate / >
+          });
+        }
+      })
+    } catch (error) {
+      console.log(error);
+    }
 
-    AsyncStorage.getItem("user").then((value) => {
-      this.setState({
-        user: value
-      });
-      if (this.state.user) {
-        this.setState({
-          run: <App/>
-        });
-      } else {
-        this.setState({
-          run: <Initiate/>
-        });
-      }
-    })
   }
     render(){
       return(

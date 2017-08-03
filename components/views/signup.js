@@ -199,8 +199,9 @@ export default class Signup extends Component {
                     />
                     </ListItem>
              </Form>
-               <Button onPress = {this.add.bind(this)} full light style= {{backgroundColor: '#D3D0CB'}}>
-                  <Text style={{color:'white'}}>{strings.signup}</Text>
+               <Button  full dark style= {{backgroundColor: '#41BEB6'}}
+                onPress = {this.add.bind(this)} >
+                  <Text >{strings.createNewAccount}</Text>
                </Button>
               </Content>
               <MessageBarAlert ref="alert" />

@@ -26,6 +26,8 @@ import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 let diarys = [{id: null, name: null, description: null, url: null}]
 let follows = [{id: null, nickname: null, name: null, lastName: null, url: null}]
@@ -33,12 +35,40 @@ let followers = [{id: null, nickname: null, name: null, lastName: null, url: nul
 
 export default class EditProfile extends Component {
 
+  //////////////////////////////// Constructor //////////////////////////////////////////////////////////////////
+     constructor(props) {
+         super(props);
+         console.disableYellowBox = true;
+         this.state = {
+           uidCurrentUser: '',
+           uid: '',
+           userName: '',
+           lastName: '',
+           email: '',
+           nickname: '',
+           url: '',
+           birthday: '',
+           foll: '',
+           unfoll: '',
+           diarys: diarys,
+           followers: followers,
+           follows: follows,
+           isMe: false,
+         }
+      }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //////////////////////////// Component Did Mount ///////////////////////////////////////////////////////////
     async componentDidMount(){
     const { params } = this.props.navigation.state;
      try{
        var that = this;
        AsyncStorage.getItem("user").then((value) => {
+             if(value == params.uid){
+               this.setState({ isMe: false })
+             }else{
+               this.setState({ isMe: true })
+             }
              this.setState({
                uid: params.uid,
                uidCurrentUser: value
@@ -96,27 +126,6 @@ export default class EditProfile extends Component {
    }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////// Constructor //////////////////////////////////////////////////////////////////
-   constructor(props) {
-       super(props);
-       console.disableYellowBox = true;
-       this.state = {
-         uidCurrentUser: '',
-         uid: '',
-         userName: '',
-         lastName: '',
-         email: '',
-         nickname: '',
-         url: '',
-         birthday: '',
-         foll: '',
-         diarys: diarys,
-         followers: followers,
-         follows: follows,
-       }
-    }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 /////////////////////////// Navigation Options ///////////////////////////////////////////////////////////////
     static navigationOptions = {
       title: strings.profile,
@@ -158,6 +167,21 @@ export default class EditProfile extends Component {
               url: snapshot.child("url").val(),
             });
       })
+      this.setState({
+        foll: !this.state.foll,
+        unfoll: !this.state.unfoll
+      })
+      this.showButton.bind(this)
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Ahora sigues a: ' + that.nickname,
+        message: that.userName + " " + that.lastName ,
+        avatar: that.url,
+        alertType: 'info',
+        position: 'bottom',
+        duration: 6000,
+        stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -167,7 +191,7 @@ export default class EditProfile extends Component {
       var tthat = this;
       let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
       followList = (ref.orderByChild("uid").equalTo(that.uid))
-      followList.on('value', (snap) => {
+      followList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
@@ -181,11 +205,26 @@ export default class EditProfile extends Component {
       var that = this.state;
       let ref = getDatabase().ref('/users/'+that.uid+'/followers/')
       followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
-      followersList.on('value', (snap) => {
+      followersList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
       })
+      this.setState({
+        foll: !this.state.foll,
+        unfoll: !this.state.unfoll
+      })
+      this.showButton.bind(this)
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Dejaste de seguir a: ' + that.nickname,
+        message: that.userName + " " + that.lastName ,
+         avatar: that.url,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 6000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -200,9 +239,17 @@ showButton(){
                     if(snapshot.exists() == false){
                         f = true
                     }
-                    tthat.setState({
-                      foll: f,
-                    })//setState
+                    if(value == that.uid){
+                      tthat.setState({
+                        foll: false,
+                        unfoll: false,
+                      })//setState
+                    }else{
+                      tthat.setState({
+                        foll: f,
+                        unfoll: !f,
+                      })//setState
+                    }
                 })//checkRepeat.once
   })//AsyncStorage
 }
@@ -218,9 +265,7 @@ showButton(){
                 <ScrollView>
                     <CardItem key={i}>
                       <Body>
-
                           <View style={styles.row}>
-
                               <Thumbnail
                                 small
                                 source={{uri: this.state.url}}
@@ -242,9 +287,7 @@ showButton(){
                                 />
                                 <Text style={styles.description}> {d.description} </Text>
                            </Left>
-
                          </TouchableHighlight>
-
                         </Body>
                     </CardItem>
                     <Separator></Separator>
@@ -268,29 +311,30 @@ showButton(){
                         </View>
                     </View>
                     <View style={styles.column}>
-                        <View style={styles.row}>
-                            <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
-                                <Text style={styles.number}> { this.state.follows.length } </Text>
-                                <Text style={styles.follow}> {"Seguidos"} </Text>
-                            </TouchableOpacity>
-                            <View style={styles.column, styles.center}>
-                                <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
-                                <Text style={styles.follow}> {"Seguidores"} </Text>
-                            </View>
-                                {/*{this.state.userName && this.state.lastName ?
-                                  <Text>{this.state.userName} {this.state.lastName}</Text>
-                                  : null
-                                } */}
-                        </View>
+
+                                <View style={styles.row}>
+                                    <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
+                                        <Text style={styles.number}> { this.state.follows.length } </Text>
+                                        <Text style={styles.follow}> {"Seguidos"} </Text>
+                                    </TouchableOpacity>
+                                    <View style={styles.column, styles.center}>
+                                        <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
+                                        <Text style={styles.follow}> {"Seguidores"} </Text>
+                                    </View>
+                                        {/*{this.state.userName && this.state.lastName ?
+                                          <Text>{this.state.userName} {this.state.lastName}</Text>
+                                          : null
+                                        } */}
+                                </View>
                         <HideableView visible={this.state.foll} removeWhenHidden={true} duration={100}>
-                            <Button light onPress={() => this.follow()} style={{width: (Dimensions.get('window').width)/2}}>
-                                <Text>{"Seguir    "}</Text>
-                                <Icon name='add-circle-outline' />
-                            </Button>
+                                <Button light onPress={() => this.follow()} style={{width: (Dimensions.get('window').width)/1.8}}>
+                                    <Text style={styles.center}>{"Seguir"}</Text>
+                                    <Icon name='add-circle-outline' />
+                                </Button>
                         </HideableView>
-                        <HideableView visible={!this.state.foll} removeWhenHidden={true} duration={100}>
-                            <Button light onPress={() => this.unfollow()} style={{width: (Dimensions.get('window').width)/2}}>
-                                <Text>Dejar de seguir</Text>
+                        <HideableView visible={this.state.unfoll} removeWhenHidden={true} duration={100}>
+                            <Button light onPress={() => this.unfollow()} style={{width: (Dimensions.get('window').width)/1.8}}>
+                                <Text style={styles.center}>Dejar de seguir</Text>
                                 <Icon name='remove-circle-outline' />
                             </Button>
                         </HideableView>
@@ -302,6 +346,7 @@ showButton(){
                     {listTable}
                </Card>
           </Content>
+          <MessageBarAlert ref="alert"/>
           </Container>
     );
   }
