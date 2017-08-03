@@ -96,7 +96,7 @@ export const DailyTravelTabs = TabNavigator({
       }},
     profileTab: { screen: DTProfile,
       navigationOptions:{
-        tabBarLabel: strings.myDiaries,
+        tabBarLabel: strings.profile,
       }},
 
     },

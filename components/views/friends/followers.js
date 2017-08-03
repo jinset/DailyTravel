@@ -152,6 +152,16 @@ export default class Followers extends Component {
         unfollList: !this.state.unfollList
       })
       this.showButton()
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Ahora sigues a: ' + params.followers[i].nickname,
+        message: params.followers[i].name + " " + params.followers[i].lastName ,
+        avatar: params.followers[i].url,
+        alertType: 'info',
+        position: 'bottom',
+        duration: 6000,
+        stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -189,6 +199,16 @@ export default class Followers extends Component {
         unfollList: !this.state.unfollList
       })
       this.showButton()
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Dejaste de seguir a: ' + params.followers[i].nickname,
+        message: params.followers[i].name + " " + params.followers[i].lastName ,
+         avatar: params.followers[i].url,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 6000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -236,6 +256,7 @@ export default class Followers extends Component {
                       </List>
                     </Body>
                 </Content>
+                <MessageBarAlert ref="alert"/>
           </Container>
     );
   }
