@@ -14,7 +14,7 @@ import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import { createNotification } from '../../common/notification';
 import HideableView from 'react-native-hideable-view';
-
+import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 
  export default class Home extends Component {
 
@@ -96,7 +96,7 @@ import HideableView from 'react-native-hideable-view';
     };
 
 
-  async componentDidMount() {
+  async componentWillMount() {
     try {
       let homeArray = [];
       var arrayFollows = [];
@@ -129,7 +129,6 @@ import HideableView from 'react-native-hideable-view';
     }
 
   }
-
 
 async load() {
   try {
