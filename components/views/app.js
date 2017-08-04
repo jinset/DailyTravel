@@ -107,9 +107,11 @@ export const DailyTravelTabs = TabNavigator({
     width: 90,
     },
   },
+  swipeEnabled: false,
   tabBarPosition: 'bottom',
   showIcon: true,
   lazyLoad: true,
+
 });
 
 export const DailyTravelInitiate = StackNavigator({

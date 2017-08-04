@@ -58,14 +58,14 @@ export default class Daily extends Component{
       })
     }
 
-  async componentDidMount(){
+  async getDaily(){
     try {
       const { params } = this.props.navigation.state;
 
       let idDiary = params.idDiary;
       let idDaily = params.idDaily;
       this.dataRef = getDatabase().ref("/diary/"+idDiary+"/daily/"+idDaily);
-      this.dataRef.once('value', (snap) => {
+      this.dataRef.on('value', (snap) => {
           this.setState({
             idDiary: params.idDiary,
             idDaily: snap.key,
@@ -90,6 +90,10 @@ export default class Daily extends Component{
     } finally {
 
     }
+  }
+
+  componentDidMount(){
+    this.getDaily();
   }
 
   deleteDaily(dailyId, diaryId){

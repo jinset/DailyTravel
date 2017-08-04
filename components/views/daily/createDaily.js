@@ -5,6 +5,7 @@ import {
   View,
   TextInput,
   ListView,
+  ScrollView,
   Image,
   Platform,
   Dimensions,
@@ -20,7 +21,10 @@ import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
 import firebase from 'firebase';
 
-import ImagePicker from 'react-native-image-picker';
+
+
+import MultiImage from 'react-native-multi-image-selector'
+
 import RNFetchBlob from 'react-native-fetch-blob';
 const Blob = RNFetchBlob.polyfill.Blob
 const fs = RNFetchBlob.fs
@@ -58,16 +62,17 @@ export default class CreateDaily extends Component{
 
   constructor(props){
     super(props);
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
       name: null,
       experience: null,
       tips: null,
       date: new Date().toLocaleDateString(),
-      imagePath: null,
       imageName: new Date().toString(),
       status: true,
-      dataSource: ds.cloneWithRows([null]),
+      imageArray:null,
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      })
     };
   }
 
@@ -78,30 +83,19 @@ export default class CreateDaily extends Component{
  };
 
  openImagePicker(){
-   var options = {
-     title: strings.select,
-     takePhotoButtonTitle: strings.takePhoto,
-     chooseFromLibraryButtonTitle: strings.chooseFromLibrary,
-     cancelButtonTitle: strings.cancel,
-     mediaType: 'photo',
-     storageOptions: {
-       skipBackup: true,
-       path: 'images/daily'
-     }
-   }
-   ImagePicker.showImagePicker(options, (response) => {
-     if(response.didCancel){
-       console.log('User cancelled image picker')
-     }else if(response.error){
-       console.log('Error'+response.error)
-     }else if(response.customButton){
-       console.log('User tapped custom button'+response.customButton)
-     }else{
+   MultiImage.pickImage({}).then((imageArray)=> {
+     var images = [];
+     imageArray.map(image => {
+       images.push({
+         url: image
+       })
+     })
        this.setState({
-         imagePath: response.uri,
+         dataSource: this.state.dataSource.cloneWithRows(images),
+         imageArray: imageArray
        })
      }
-   })
+   )
  }
 
  saveImage(){
@@ -114,17 +108,18 @@ export default class CreateDaily extends Component{
   });
 
    try{
-     this.state.imagePath ?
-      uploadImage(this.state.imagePath, this.state.imageName)
-        .then((responseData) => {
-          //Helper.setImageUrl(this.state.uid, responseData)
-          getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/photos/").push({
-            url: responseData,
-          });
-          getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/url").set(responseData);
-
+     this.state.imageArray ?
+      this.state.imageArray.map(image =>{
+        uploadImage(image, this.state.imageName)
+          .then((responseData) => {
+            alert(responseData);
+            //Helper.setImageUrl(this.state.uid, responseData)
+            getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/photos/").push({
+              url: responseData,
+            });
+            getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/url").set(responseData);
+          })
         })
-        .done()
       : null
     } catch(error){
       alert(error)
@@ -144,6 +139,12 @@ export default class CreateDaily extends Component{
     });
     this.saveImage()
     goBack();
+  }
+
+  renderImages(image){
+    return(
+      <Image source={{uri: image.url}} style={{width: 100, height: 100}}/>
+    )
   }
 
   render() {
@@ -181,16 +182,26 @@ export default class CreateDaily extends Component{
                   <Icon name="photo"/>
                 </TouchableOpacity>
 
-                <Thumbnail
+                {/*<Thumbnail
                   square
-                  source={{uri: this.state.imagePath}}
-                />
+                  source={{uri: this.state.images}}
+                />*/}
+              </Item>
+
+              <Item>
+                <ScrollView horizontal={true} >
+                  <ListView
+                    horizontal={true}
+                    dataSource={this.state.dataSource}
+                    renderRow={this.renderImages.bind(this)}
+                  />
+                </ScrollView>
               </Item>
 
 
               <Label>{strings.experiences}</Label>
               <AutogrowInput
-                style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+                style={{minHeight:Dimensions.get('window').height/7, fontSize: 18}}
                 onChangeText={(text) => this.setState({experience:text})}
               />
 
@@ -198,7 +209,7 @@ export default class CreateDaily extends Component{
 
               <Label>{strings.tips }</Label>
               <AutogrowInput
-                style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+                style={{minHeight:Dimensions.get('window').height/7, fontSize: 18}}
                 onChangeText={(text) => this.setState({tips:text})}
               />
 

@@ -19,7 +19,8 @@ import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
 import firebase from 'firebase';
 
-import ImagePicker from 'react-native-image-picker';
+import MultiImage from 'react-native-multi-image-selector'
+
 import RNFetchBlob from 'react-native-fetch-blob';
 const Blob = RNFetchBlob.polyfill.Blob
 const fs = RNFetchBlob.fs
@@ -70,55 +71,54 @@ export default class EditDaily extends Component{
           date: snap.val().date,
           experience: snap.val().experience,
           tips: snap.val().tips,
-          imagePath: null,
           imageName: new Date().toString(),
           status: true,
+          imageArray:null,
+          dataSource: new ListView.DataSource({
+            rowHasChanged: (row1, row2) => row1 !== row2,
+          })
         };
     });
   }
 
+  static navigationOptions = ({ navigation }) => ({
+      title: strings.daily,
+      headerStyle: {backgroundColor: '#70041b', height: 50 },
+      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    });
+
   openImagePicker(){
-    var options = {
-      title: strings.select,
-      takePhotoButtonTitle: strings.takePhoto,
-      chooseFromLibraryButtonTitle: strings.chooseFromLibrary,
-      cancelButtonTitle: strings.cancel,
-      mediaType: 'photo',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images/daily'
-      }
-    }
-    ImagePicker.showImagePicker(options, (response) => {
-      if(response.didCancel){
-        console.log('User cancelled image picker')
-      }else if(response.error){
-        console.log('Error'+response.error)
-      }else if(response.customButton){
-        console.log('User tapped custom button'+response.customButton)
-      }else{
+    MultiImage.pickImage({}).then((imageArray)=> {
+      var images = [];
+      imageArray.map(image => {
+        images.push({
+          url: image
+        })
+      })
         this.setState({
-          imagePath: response.uri,
+          dataSource: this.state.dataSource.cloneWithRows(images),
+          imageArray: imageArray
         })
       }
-    })
+    )
   }
 
   saveImage(){
-    alert(this.state.imagePath);
     let idDiary = this.state.idDiary;
     let idDaily = this.state.idDaily;
     try{
-      this.state.imagePath ?
-       uploadImage(this.state.imagePath, this.state.imageName)
-         .then((responseData) => {
-           //Helper.setImageUrl(this.state.uid, responseData)
-           getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/photos/").push({
-             url: responseData,
-           });
-           getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/url").set(responseData);
+      this.state.imageArray ?
+       this.state.imageArray.map(image =>{
+         uploadImage(image, this.state.imageName)
+           .then((responseData) => {
+             alert(responseData);
+             //Helper.setImageUrl(this.state.uid, responseData)
+             getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/photos/").push({
+               url: responseData,
+             });
+             getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/url").set(responseData);
+           })
          })
-         .done()
        : null
      } catch(error){
        alert(error)
@@ -137,7 +137,13 @@ export default class EditDaily extends Component{
       status: this.state.status,
     });
     this.saveImage()
-    goBack();
+    goBack(null);
+  }
+
+  renderImages(image){
+    return(
+      <Image source={{uri: image.url}} style={{width: 100, height: 100}}/>
+    )
   }
 
   render() {
@@ -189,6 +195,15 @@ export default class EditDaily extends Component{
                 onChangeText={(text) => this.setState({experience:text})}
               />
 
+              <Item>
+                <ScrollView horizontal={true} >
+                  <ListView
+                    horizontal={true}
+                    dataSource={this.state.dataSource}
+                    renderRow={this.renderImages.bind(this)}
+                  />
+                </ScrollView>
+              </Item>
 
               <Label>{strings.tips }</Label>
               <AutogrowInput
