@@ -35,11 +35,8 @@
     "react-native-localization": "^0.1.31",
     "react-native-message-bar": "^1.6.0",
     "react-native-modal-dropdown": "^0.4.4",
-<<<<<<< HEAD
     "react-native-multi-image-selector": "^1.0.4",
-=======
     "react-native-pixfactory-accordion": "^0.2.3",
->>>>>>> 2cc47aa9f9e4e0a1e9dc5872b39d488fd3cc6d8c
     "react-native-popup-dialog": "^0.9.29",
     "react-native-tab-view": "^0.0.67",
     "react-native-toggle": "^1.0.3",
