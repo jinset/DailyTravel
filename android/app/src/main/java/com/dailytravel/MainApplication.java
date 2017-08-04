@@ -3,6 +3,8 @@ package com.dailytravel;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import me.nereo.multi_image_selector.MultiImagePackage;
+//import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
@@ -26,6 +28,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new MultiImagePackage(),
+//            new PickerPackage(),
             new RNFetchBlobPackage(),
             new ImagePickerPackage(),
           new ReactNativeLocalizationPackage()
