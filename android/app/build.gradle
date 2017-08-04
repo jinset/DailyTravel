@@ -94,6 +94,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         applicationId "com.dailytravel"
         minSdkVersion 16
         targetSdkVersion 22
@@ -139,6 +140,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile project(':react-native-localization')
     compile project(':react-native-image-picker')
+    compile project(':react-native-multi-image-selector')
     compile project(':react-native-fetch-blob')
 
 }
