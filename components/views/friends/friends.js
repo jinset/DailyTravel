@@ -1,7 +1,6 @@
 import {
   AppRegistry,
   TextInput,
-  View,
   TouchableHighlight,
   ToolbarAndroid,
   ActivityIndicator,
@@ -17,7 +16,7 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Header, Form, Segment, Item, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, List, ListItem} from 'native-base';
+import { Container, Content, Header, Form, Segment, Item,View,Fab, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, List, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
@@ -25,14 +24,18 @@ import CameraComponent from '../cameraComponent/CameraComponent';
 import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
+import Helper from './helper';
 import HideableView from 'react-native-hideable-view';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 export default class Profile extends Component {
 
   static navigationOptions = {
     title: "Friends",
-    headerStyle: {backgroundColor: '#70041b',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
+    header: null,
   }
 
    constructor(props) {
@@ -42,10 +45,44 @@ export default class Profile extends Component {
          uid: '',
          inputSearch: '',
          users: [],
+         follows: [],
          btnText: 'Seguir',
          txt: '',
        }
     }
+
+///////////////////////////////////////// Component Will Mount ///////////////////////////////////////////////////
+async componentWillMount(){
+  try{
+    var that = this;
+    AsyncStorage.getItem("user").then((value) => {
+          this.setState({
+            uid: value,
+            uidCurrentUser: value
+          })
+          Helper.getFollows(this.state.uid, (f) => {
+            this.setState({
+              follows: f,
+              users: f,
+            })
+          })
+    })
+    this.search('')
+  } catch(error){
+    alert("error: " + error)
+  }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+getFollows(){
+    var that = this;
+    Helper.getFollows(this.state.uid, (f) => {
+          this.setState({
+            follows: f,
+            users: f,
+          })
+        })
+}
 
 /////////////////////////////////////////// Search ///////////////////////////////////////////////////////
     search(text){
@@ -53,7 +90,7 @@ export default class Profile extends Component {
         let ref = getDatabase().ref("/users")
         userList = (ref.orderByChild("nickname").startAt(text).endAt(text+'\uf8ff'))
         var that = this
-        userList.on('value', (snap) => {
+        userList.once('value', (snap) => {
             var users = [];
             AsyncStorage.getItem("user").then((value) => {
                       snap.forEach((child) => {
@@ -83,9 +120,12 @@ export default class Profile extends Component {
            })//AsyncStorage
       })//userList.on
       }/*if text has content*/else{
-        this.setState({
-          users: [],
-        })
+        Helper.getFollows(this.state.uidCurrentUser, (f) => {
+              this.setState({
+                follows: f,
+                users: f,
+              })
+            })
       }//else text has no content
     }//search
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +147,6 @@ export default class Profile extends Component {
             tthat.addFollowers(i)
         }
       })//checkRepeat.once
-      this.search(that.txt)
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -124,6 +163,17 @@ export default class Profile extends Component {
               url: snapshot.child("url").val(),
             });
       })
+      this.search(that.txt)
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Ahora sigues a: ' + that.users[i].nickname,
+        message: that.users[i].name + " " + that.users[i].lastName ,
+        avatar: that.users[i].url,
+        alertType: 'info',
+        position: 'bottom',
+        duration: 6000,
+        stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -133,13 +183,12 @@ export default class Profile extends Component {
       var tthat = this;
       let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
       followList = (ref.orderByChild("uid").equalTo(that.users[i].id))
-      followList.on('value', (snap) => {
+      followList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
           tthat.removeFollowers(i)
       })
-      this.search(that.txt)
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -148,13 +197,24 @@ export default class Profile extends Component {
       var that = this.state;
       let ref = getDatabase().ref('/users/'+that.users[i].id+'/followers/')
       followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
-      followersList.on('value', (snap) => {
+      followersList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
       })
+      this.search(that.txt)
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Dejaste de seguir a: ' + that.users[i].nickname,
+        message: that.users[i].name + " " + that.users[i].lastName ,
+         avatar: that.users[i].url,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 6000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
     const { navigate } = this.props.navigation;
@@ -207,7 +267,20 @@ export default class Profile extends Component {
                           {listTable}
                       </List>
                     </Body>
+
                 </Content>
+                <View>
+                  <Fab
+                    active='false'
+                    direction="up"
+                    containerStyle={{ }}
+                    style={{  backgroundColor:'#41BEB6'}}
+                    position="bottomRight"
+                    onPress={()=> navigate('newDiary')}>
+                    <Icon color='white' name="library-books" />
+                  </Fab>
+                </View>
+                <MessageBarAlert ref="alert"/>
           </Container>
     );
   }

@@ -24,9 +24,9 @@ let ref='';
  export default class NewDiary extends Component {
 // Nav options can be defined as a function of the screen's props:
   static navigationOptions = ({ navigation }) => ({
-      title: strings.diary,
-      headerStyle: {backgroundColor: '#70041b', height: 50 },
-      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+      title: strings.editDiary,
+      headerStyle: {height: 50 },
+      headerTitleStyle : {color:'#808080',fontSize:17},
   });
   ////////////////////////////////////////////////////////CONSTRUCTOR/////////////////////////////////////////////////
   constructor(props){
@@ -140,9 +140,10 @@ let ref='';
 
       <Container>
         <Content>
-          <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
-          <Image source={{uri: this.state.imagePath}}
-          style={{height: 100, width: Dimensions.get('window').width}}/>
+        <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
+        <Thumbnail
+          style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
+           source={{uri: this.state.imagePath}}/>
           </TouchableHighlight>
 
           <Card >
@@ -168,24 +169,25 @@ let ref='';
           </Right>
 
           <Label>{strings.name }</Label>
-          <Input onChangeText={(text) => this.setState({name:text})} value={ this.state.name } />
+          <AutogrowInput style={{ fontSize: 18}}  maxLength={30}
+           onChangeText={(text) => this.setState({name:text})} value={ this.state.name } />
 
           <Label>{strings.description }</Label>
-          <AutogrowInput style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
-            onChangeText={(text) => this.setState({description:text})}  value={ this.state.description }
+          <AutogrowInput style={{ fontSize: 18,minHeight:Dimensions.get('window').height/8}}  maxLength={90}
+          onChangeText={(text) => this.setState({description:text})}  value={ this.state.description }
             />
 
           <Label>{strings.culture }</Label>
-          <AutogrowInput  style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+          <AutogrowInput style={{ fontSize: 18,minHeight:Dimensions.get('window').height/6}}  maxLength={150}
             onChangeText={(text) => this.setState({culture:text})}  value={ this.state.culture }
           />
 
-          <Button full light style= {{backgroundColor: '#D3D0CB'}}
-            onPress={() => this.add()} >
-              <Text>{strings.save }</Text>
-          </Button>
           </Form>
         </Content>
+                  <Button full dark style= {{backgroundColor: '#41BEB6'}}
+                    onPress={() => this.add()} >
+                      <Text>{strings.save }</Text>
+                  </Button>
       </Container>
     );
   }

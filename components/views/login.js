@@ -73,7 +73,6 @@ export default class Login extends Component {
                    onChangeText = {(text) => this.setState({email: text})}
                    value = {this.state.email}/>
               </Item>
-
               <Item floatingLabel>
                   <Label>{strings.password}</Label>
                   <Input
@@ -81,15 +80,24 @@ export default class Login extends Component {
                   value = {this.state.password}
                   secureTextEntry = {true}/>
               </Item>
-             </Form>
-               <Button block info onPress = {this.login.bind(this)} style={{marginTop:15,backgroundColor: '#70041b'}}>
-                  <Text style={{color:'white'}}>{strings.loging}</Text>
-               </Button>
-               <Body>
-                <Button transparent light onPress={() => navigate('signup')}  style={{marginTop:15, flexDirection: 'column',
+              <Button block dark onPress = {this.login.bind(this)} style={{marginTop:15,backgroundColor: '#41BEB6'}}>
+                 <Text >{strings.loging}</Text>
+              </Button>
+              <Body>
+                <Button transparent light onPress={() => navigate('getPassword')}  style={{marginTop:15, flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center'}}>
-                  <Text style={{textAlign: 'center', fontSize:18}}>{strings.signup}</Text>
+                  <Text style={{textAlign: 'center', fontSize:15}}>{strings.forgetpass}</Text>
+                </Button>
+              </Body>
+
+             </Form>
+
+               <Body style={{marginTop:35}}>
+                <Button transparent light onPress={() => navigate('signup')}  style={{flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center'}}>
+                  <Text style={{textAlign: 'center', fontSize:20}}>{strings.signup}</Text>
                 </Button>
                </Body>
              </Content>

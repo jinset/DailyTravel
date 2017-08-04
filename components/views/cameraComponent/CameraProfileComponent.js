@@ -52,7 +52,7 @@ const uploadImage = (uri, imageName) => {
       })
    }
 
-export default class CameraComponent extends Component {
+export default class CameraProfileComponent extends Component {
   constructor(props) {
       super(props);
       this.state = {
@@ -129,7 +129,7 @@ export default class CameraComponent extends Component {
         <View>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
               <Thumbnail
-                style={{width: 110, height: 110, borderStyle: 'solid', borderWidth: 2, borderColor: '#41BEB6'}}
+                style={{width: 150, height: 200, borderStyle: 'solid', borderWidth: 2, borderColor: '#41BEB6'}}
                 large
                 source={{uri: this.state.imagePath}}
               />
@@ -139,4 +139,4 @@ export default class CameraComponent extends Component {
 
 }
 
-module.export = CameraComponent;
+module.export = CameraProfileComponent;

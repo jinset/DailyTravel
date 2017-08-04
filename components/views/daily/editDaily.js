@@ -215,7 +215,7 @@ export default class EditDaily extends Component{
           </Form>
         </Content>
 
-          <Button full light style= {{backgroundColor: '#D3D0CB'}}
+          <Button full dark style= {{backgroundColor: '#41BEB6'}}
               onPress={this.updateDaily.bind(this)}>
               <Text>{strings.save}</Text>
           </Button>

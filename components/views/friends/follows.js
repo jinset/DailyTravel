@@ -26,14 +26,16 @@ import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 export default class Follows extends Component {
 
 ////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
   static navigationOptions = {
     title: "Follows",
-    headerStyle: {backgroundColor: '#70041b',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,48 +48,67 @@ export default class Follows extends Component {
          inputSearch: '',
          users: [],
          follList: [],
+         unfollList: [],
          btnText: 'Seguir',
          txt: '',
          isMe: [],
+         nav: [],
        }
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////// Component Did Mount //////////////////////////////////////////////////
     async componentDidMount(){
-      const { params } = this.props.navigation.state;
-      var that = this
-      var tthat = this.state
-      var wat = params.follows
-      var flist = [];
-      var isMeList = [];
-      AsyncStorage.getItem("user").then((value) => {
-                    wat.forEach((child, i) => {
-                        let checkRepeat = getDatabase().ref('users/'+value+'/follows/').orderByChild("uid").equalTo(child.id);
-                        checkRepeat.once('value', function(snapshot) {
-                            var f = false
-                            if(snapshot.exists() == false){
-                                f = true
-                            }/*If does not exists*/
-                            if(child.id == value){
-                              isMeList.push(true)
-                            }else{
-                              isMeList.push(false)
-                            }
-                            flist.push(f)
-                            that.setState({
-                              uidCurrentUser: value,
-                              follList: flist,
-                              isMe: isMeList,
-                            })
-                        })//checkRepeat.once
-                    });//snap.forEach
-      })//AsyncStorage
-      that.setState({
-        follList: flist.reverse(),
-        isMe: isMeList.reverse(),
-      })
+      this.showButton()
     }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////// Show Button /////////////////////////////////////////////////////
+showButton(){
+  const { params } = this.props.navigation.state;
+  var that = this
+  var tthat = this.state
+  var wat = params.follows
+  var flist = [];
+  var fwerlist = [];
+  var isMeList = [];
+  var navList = [];
+  AsyncStorage.getItem("user").then((value) => {
+                wat.forEach((child, i) => {
+                    let checkRepeat = getDatabase().ref('users/'+value+'/follows/').orderByChild("uid").equalTo(child.id);
+                    checkRepeat.once('value', function(snapshot) {
+                        var f = false
+                        if(snapshot.exists() == false){
+                            f = true
+                        }/*If does not exists*/
+                        if(child.id == value){
+                          isMeList.push(true)
+                          flist.push(false)
+                          fwerlist.push(false)
+                          navList.push('fprofile')
+                        }else{
+                          isMeList.push(false)
+                          flist.push(f)
+                          fwerlist.push(!f)
+                          navList.push('visitProfile')
+                        }
+                        that.setState({
+                          uidCurrentUser: value,
+                          follList: flist,
+                          unfollList: fwerlist,
+                          isMe: isMeList,
+                          nav: navList,
+                        })
+                    })//checkRepeat.once
+                });//snap.forEach
+  })//AsyncStorage
+  that.setState({
+    follList: flist.reverse(),
+    unfollList: fwerlist.reverse(),
+    isMe: isMeList.reverse(),
+    nav: navList.reverse(),
+  })
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////// Follow /////////////////////////////////////////////////////////////
@@ -127,6 +148,21 @@ export default class Follows extends Component {
               url: snapshot.child("url").val(),
             });
       })
+      this.setState({
+        follList: !this.state.follList,
+        unfollList: !this.state.unfollList
+      })
+      this.showButton()
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Ahora sigues a: ' + params.follows[i].nickname,
+        message: params.follows[i].name + " " + params.follows[i].lastName ,
+        avatar: params.follows[i].url,
+        alertType: 'info',
+        position: 'bottom',
+        duration: 6000,
+        stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -138,7 +174,7 @@ export default class Follows extends Component {
       var tthat = this;
       let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
       followList = (ref.orderByChild("uid").equalTo(wat[i].id))
-      followList.on('value', (snap) => {
+      followList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
@@ -154,11 +190,26 @@ export default class Follows extends Component {
       var that = this.state;
       let ref = getDatabase().ref('/users/'+wat[i].id+'/followers/')
       followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
-      followersList.on('value', (snap) => {
+      followersList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
       })
+      this.setState({
+        follList: !this.state.follList,
+        unfollList: !this.state.unfollList
+      })
+      this.showButton()
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: 'Dejaste de seguir a: ' + params.follows[i].nickname,
+        message: params.follows[i].name + " " + params.follows[i].lastName ,
+         avatar: params.follows[i].url,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 6000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -169,7 +220,7 @@ export default class Follows extends Component {
     let listTable = params.follows.map((u,i) => {
       return (
                     <ListItem>
-                        <TouchableOpacity onPress={() => navigate('visitProfile', {uid:u.id})} style={styles.row}>
+                        <TouchableOpacity onPress={() => navigate(this.state.nav[i], {uid:u.id})} style={styles.row}>
                           <Thumbnail
                             small
                             source={{uri: u.url}}
@@ -184,7 +235,7 @@ export default class Follows extends Component {
                                   <Icon name='add-circle-outline' />
                                 </Button>
                             </HideableView>
-                            <HideableView visible={!that.follList[i]} removeWhenHidden={true} duration={100}>
+                            <HideableView visible={that.unfollList[i]} removeWhenHidden={true} duration={100}>
                                 <Button light onPress={() => this.unfollow(i)}>
                                   <Text>Unfollow</Text>
                                   <Icon name='remove-circle-outline' />
@@ -208,6 +259,7 @@ export default class Follows extends Component {
                       </List>
                     </Body>
                 </Content>
+                <MessageBarAlert ref="alert"/>
           </Container>
     );
   }

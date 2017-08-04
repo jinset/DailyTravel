@@ -30,8 +30,8 @@ export default class ListDaily extends Component{
 
   static navigationOptions = {
     title: strings.daily,
-    headerStyle: {backgroundColor: '#70041b',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
   }
 
   getDailyList(dataRef) {

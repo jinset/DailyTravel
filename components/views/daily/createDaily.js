@@ -78,8 +78,8 @@ export default class CreateDaily extends Component{
 
   static navigationOptions = {
     title: strings.daily,
-    headerStyle: {backgroundColor: '#70041b',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
  };
 
  openImagePicker(){
@@ -216,7 +216,7 @@ export default class CreateDaily extends Component{
           </Form>
         </Content>
 
-          <Button full light style= {{backgroundColor: '#D3D0CB'}}
+        <Button full dark style= {{backgroundColor: '#41BEB6'}}
               onPress={this.addDaily.bind(this)}>
               <Text>{strings.save}</Text>
           </Button>

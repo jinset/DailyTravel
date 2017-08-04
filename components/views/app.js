@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppRegistry } from 'react-native';
 import { StackNavigator, TabNavigator } from 'react-navigation';
+import strings from '../common/local_strings';
 
 //Import FooterNav
 import FooterNav from '../common/footerNav';
@@ -8,6 +9,7 @@ import FooterNav from '../common/footerNav';
 //Import de vistas Login
 import Login from './login';
 import Signup from './signup';
+import GetPassword from './getPassword'
 
 //Import de vistas Home
 import Home from './home/home';
@@ -34,6 +36,7 @@ import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
+import { Icon } from 'react-native-elements';
 
 export const DTHome = StackNavigator({
 //Home
@@ -44,6 +47,13 @@ export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
     editProfile: {screen: EditProfile},
+      newDiary: { screen: NewDiary },
+      editDiary: { screen: EditDiary },
+        DairyView: { screen: DairyView },
+        //Daily
+          listDaily: { screen: ListDaily },
+          createDaily: { screen: CreateDaily },
+          editDaily: { screen: EditDaily },
 });
 
 export const DTFriends = StackNavigator({
@@ -52,19 +62,20 @@ export const DTFriends = StackNavigator({
     visitProfile: {screen: VisitProfile},
     follows: {screen: Follows},
     followers: {screen: Followers},
+    fprofile: { screen: Profile },
+    fDairyView: { screen: DairyView },
 });
 
 export const DTNewDiary = StackNavigator({
-//Acceso rapidopara crear diario
-newDiary: { screen: NewDiary },
-profile: { screen: Profile },
-editDiary: { screen: EditDiary },
-DairyView: { screen: DairyView },
-//Daily
-listDaily: { screen: ListDaily },
-createDaily: { screen: CreateDaily },
-editDaily: { screen: EditDaily },
-daily: { screen:  Daily},
+  //Acceso rapidopara crear diario
+    newDiary: { screen: NewDiary },
+    editDiary: { screen: EditDiary },
+      DairyView: { screen: DairyView },
+      //Daily
+        listDaily: { screen: ListDaily },
+        createDaily: { screen: CreateDaily },
+        editDaily: { screen: EditDaily },
+        daily: { screen:  Daily},
 });
 export const DTNewDaily = StackNavigator({
 listDaily: { screen: ListDaily },
@@ -77,34 +88,28 @@ title : 'profile'
 }
 
 export const DailyTravelTabs = TabNavigator({
-  homeTab: { screen: DTHome,
-    navigationOptions:{
-    tabBarLabel: 'Home',
-    }
-  },
-  createDiaryTab: {screen: DTNewDiary,
-    navigationOptions:{
-    tabBarLabel: 'Diary',
-    }
-  },
-  friendsTab: { screen: DTFriends,
-    navigationOptions:{
-    tabBarLabel: 'Friends',
-    }
-  },
-  profileTab: { screen: DTProfile,
-    navigationOptions:{
-    tabBarLabel: 'Profile',
-    }
-  },
-},
-{
-  tabBarOptions: {
-    style: {
-    backgroundColor: '#70041b',
+    homeTab: { screen: DTHome,
+      navigationOptions:{
+        tabBarLabel: strings.home,
+      }},
+    friendsTab: { screen: DTFriends,
+      navigationOptions:{
+        tabBarLabel: strings.friends,
+      }},
+    profileTab: { screen: DTProfile,
+      navigationOptions:{
+        tabBarLabel: strings.profile,
+      }},
+
     },
-    tabStyle: {
-    width: 90,
+  {
+    tabBarOptions: {
+      style: {
+        backgroundColor: '#E3904E',
+      },
+      tabStyle: {
+        height: 50,
+      },
     },
   },
   swipeEnabled: false,
@@ -115,12 +120,13 @@ export const DailyTravelTabs = TabNavigator({
 });
 
 export const DailyTravelInitiate = StackNavigator({
-login: { screen: Login },
-signup: {screen: Signup },
-dtTabs: {screen: DailyTravelTabs,
-navigationOptions:{
-header: null,
-}},
+    login: { screen: Login },
+    signup: {screen: Signup },
+    getPassword: {screen: GetPassword },
+    dtTabs: {screen: DailyTravelTabs,
+      navigationOptions:{
+        header: null,
+      }},
 });
 
 

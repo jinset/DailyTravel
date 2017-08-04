@@ -17,11 +17,12 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Segment, Item, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
+import { Container, Content, Form, Segment, Item, Separator, Input, Label, Button,Fab,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
+import baseStyles from '../../style/baseStyles.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
-import CameraComponent from '../cameraComponent/CameraComponent';
+import CameraProfileComponent from '../cameraComponent/CameraProfileComponent';
 import Helper from './helper';
 import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
@@ -33,6 +34,8 @@ let follows = [{id: null, nickname: null, name: null, lastName: null, url: null}
 let followers = [{id: null, nickname: null, name: null, lastName: null, url: null}]
 
 export default class Profile extends Component {
+
+/////////////////////////////////////// Constructor ///////////////////////////////////////////////////////////
    constructor(props) {
        super(props);
        console.disableYellowBox = true;
@@ -47,15 +50,20 @@ export default class Profile extends Component {
          diarys: diarys,
          followers: followers,
          follows: follows,
+         showPig: false,
        }
     }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
     static navigationOptions = {
       title: strings.profile,
-      headerStyle: {backgroundColor: '#70041b',height: 50 },
-      headerTitleStyle : {color:'white', fontWeight: 'ligth', alignSelf: 'center'},
-    }
+      headerStyle: {height: 50 },
+      headerTitleStyle : {color:'#9A9DA4',fontSize:17},
+      }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
     async componentDidMount(){
      try{
        var that = this;
@@ -94,9 +102,18 @@ export default class Profile extends Component {
               })
             })
             Helper.getDairysByUser(this.state.uid, (d) => {
-             this.setState({
-                 diarys: d,
-              })
+              this.setState({
+                  diarys: d,
+               })
+                if(d.length === 0){
+                    this.setState({
+                        showPig: true,
+                     })
+                }else{
+                  this.setState({
+                      showPig: false,
+                   })
+                }
             })
             Helper.getFollowers(this.state.uid, (f) => {
                this.setState({
@@ -108,21 +125,21 @@ export default class Profile extends Component {
                  follows: f,
                })
              })
-            that.showButton()
        })
      } catch(error){
        alert("error: " + error)
      }
    }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   ///////////////////////////////////////// Follow /////////////////////////////////////////////////////////////
+/////////////////////////////////////////// Follow /////////////////////////////////////////////////////////////
        follow(){
          var that = this.state;
          var tthat = this;
-         let checkRepeat = getDatabase().ref('users/'+that.uidCurrentUser+'/follows/').orderByChild("uid").equalTo(that.uid);
+         let checkRepeat = getDatabase().ref('users/'+that.uid+'/follows/').orderByChild("uid").equalTo(that.uid);
          checkRepeat.once('value', function(snapshot) {
            if(snapshot.exists() == false){
-               getDatabase().ref().child('users/'+that.uidCurrentUser+'/follows/').push({
+               getDatabase().ref().child('users/'+that.uid+'/follows/').push({
                  uid: that.uid,
                  nickname: that.nickname,
                  name: that.userName,
@@ -133,12 +150,12 @@ export default class Profile extends Component {
            }
          })//checkRepeat.once
        }
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   ///////////////////////////////////////// Add Followers ///////////////////////////////////////////////////////
+//////////////////////////////////////////// Add Followers ///////////////////////////////////////////////////////
        addFollowers(){
          var that = this.state;
-         let checkRepeat = getDatabase().ref('users/'+that.uidCurrentUser);
+         let checkRepeat = getDatabase().ref('users/'+that.uid);
          checkRepeat.once('value', function(snapshot) {
                getDatabase().ref().child('users/'+that.uid+'/followers/').push({
                  uid: that.uidCurrentUser,
@@ -149,13 +166,13 @@ export default class Profile extends Component {
                });
          })
        }
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   ///////////////////////////////////////// Unfollow /////////////////////////////////////////////////////////////
+//////////////////////////////////////////// Unfollow /////////////////////////////////////////////////////////////
        unfollow(){
          var that = this.state;
          var tthat = this;
-         let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
+         let ref = getDatabase().ref('/users/'+that.uid+'/follows/')
          followList = (ref.orderByChild("uid").equalTo(that.uid))
          followList.on('value', (snap) => {
              snap.forEach((child) => {
@@ -164,20 +181,20 @@ export default class Profile extends Component {
              tthat.removeFollowers()
          })
        }
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   ///////////////////////////////////////// Remove Followers //////////////////////////////////////////////////////
+//////////////////////////////////////////// Remove Followers //////////////////////////////////////////////////////
        removeFollowers(){
          var that = this.state;
          let ref = getDatabase().ref('/users/'+that.uid+'/followers/')
-         followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
+         followersList = (ref.orderByChild("uid").equalTo(that.uid))
          followersList.on('value', (snap) => {
              snap.forEach((child) => {
                  ref.child(child.key).remove();
              });
          })
        }
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
 
@@ -229,12 +246,13 @@ export default class Profile extends Component {
                 <CardItem>
                   <Left>
                     <View style={styles.column}>
-                        <CameraComponent />
+                        <CameraProfileComponent />
                           <View style={styles.center}>
                               <Text style={styles.nick}>{this.state.nickname}</Text>
                           </View>
                         </View>
                         <View style={styles.column}>
+                          <Text style={styles.fullname}>{this.state.userName} {this.state.lastName}</Text>
                           <View style={styles.row}>
                               <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
                                   <Text style={styles.number}> { this.state.follows.length } </Text>
@@ -244,10 +262,6 @@ export default class Profile extends Component {
                                   <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
                                   <Text style={styles.follow}> {"Seguidores"} </Text>
                               </View>
-                                  {/*{this.state.userName && this.state.lastName ?
-                                    <Text>{this.state.userName} {this.state.lastName}</Text>
-                                    : null
-                                  } */}
                           </View>
                     </View>
                  </Left>
@@ -264,10 +278,33 @@ export default class Profile extends Component {
 
                 </CardItem>
               </Card>
+                  <Card>
+                        {listTable}
+                  </Card>
               <Card>
-                    {listTable}
+                    <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
+
+                       <Text style={styles.message}>{"Yo aparezco cuando no tienes diarios"}</Text>
+                       <Text style={styles.message}>{"Tocame para crear uno"}</Text>
+                       <TouchableOpacity onPress={()=>navigate('newDiary')}>
+                         <Image
+                            style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
+                            source={require('./ProfilePig.jpg')} />
+                      </TouchableOpacity>
+                    </HideableView>
                </Card>
           </Content>
+              <View>
+           <Fab
+             active='false'
+             direction="up"
+             containerStyle={{ }}
+             style={{  backgroundColor:'#41BEB6'}}
+             position="bottomRight"
+             onPress={()=> navigate('newDiary')}>
+             <Icon color='white' name="library-books" />
+           </Fab>
+         </View>
           </Container>
     );
   }
@@ -296,8 +333,15 @@ const styles = StyleSheet.create({
   },
   nick: {
     fontStyle: 'italic',
-    fontSize: 16,
+    fontSize: 18,
     color: '#000000',
+  },
+  fullname: {
+    fontStyle: 'italic',
+    fontSize: 20,
+    color: '#000000',
+    paddingLeft: 45,
+    paddingRight: 10,
   },
   diary: {
     fontStyle: 'italic',
@@ -309,6 +353,14 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     textAlign: 'justify',
     fontSize: 14,
+    textDecorationStyle: 'solid',
+    color: '#000000',
+    paddingLeft: 20,
+  },
+  message: {
+    fontStyle: 'italic',
+    textAlign: 'justify',
+    fontSize: 18,
     textDecorationStyle: 'solid',
     color: '#000000',
     paddingLeft: 20,
@@ -326,5 +378,9 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontSize: 25,
     color: '#000000',
+  },
+  redCard: {
+    padding: 20,
+    backgroundColor: '#000000',
   }
 });
