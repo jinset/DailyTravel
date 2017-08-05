@@ -66,6 +66,7 @@ let strings = new LocalizedStrings({
    checkEmail: "Check your e-mail",
    unknowEmail: "The email does not exists",
    somethingGoesWrong: "Something goes wrong",
+   people: "People",
  },
  es:{
    home:"Inicio",
@@ -132,6 +133,7 @@ let strings = new LocalizedStrings({
    checkEmail: "Revisar su correo electrónico",
    unknowEmail: "Correo electrónico no existe",
    somethingGoesWrong: "Algo malo sucedio ",
+   people: "Personas ",
  }
 });
 

@@ -172,11 +172,7 @@ openImagePicker(){
       diaryUsers=this.state.diaryUsers;
       var tthat = this;
       diaryUsers.forEach(function(elemento) {
-          if(elemento.id!=this.state.idOwner){
-            tthat.addDiaryUsers(elemento.id,false);
-          }else{
-            tthat.addDiaryUsers(elemento.id,true);
-          }
+          tthat.addDiaryUsers(elemento.id,true);
       });
   });
     this.createImage()
@@ -236,7 +232,7 @@ openImagePicker(){
     title: strings.createDiary,
     headerStyle: {height: 50 },
     headerTitleStyle : {color:'#808080',fontSize:17},
-  }
+     }
   render() {  const { navigate } = this.props.navigation;
 
     let listTable = this.state.users.map((u,i) => {
@@ -286,27 +282,31 @@ openImagePicker(){
             <View>
               <List>
               <ListItem itemDivider>
-               <Text>Invitados</Text>
+               <Text>{strings.guest}</Text>
              </ListItem>
                   {listTable2}
                   <ListItem itemDivider>
-               <Text>Amigos</Text>
+               <Text>{strings.friends}</Text>
              </ListItem>
              {listTable}
               </List>
             </View>
           </PopupDialog>
-          <Content  style={{zIndex: -1}}>
-
+          <Content  style={{zIndex: -1, backgroundColor:'white'}}>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
             <Thumbnail
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
               source={{uri: this.state.url}} />
             </TouchableHighlight>
-            <Card >
-              <CardItem  style={{padding:10}}>
-                <Right style={{flex:  1, flexDirection: 'row'}}>
-                  <Button rounded  transparent onPress={() => {
+            
+            <Form style={{padding:10}}>
+              <Left>
+                <Label>{strings.privacy }</Label>
+                <Switch value={ this.state.privacy }
+                  onValueChange={this.privacyChange.bind( this ) }/>
+              </Left>
+                <Right style={{flex:  1, flexDirection: 'row', padding: 10}}>
+                  <Button rounded bordered dark onPress={() => {
                     this.popupDialog.show();
                   }}>
                     <Icon name='group-add' />
@@ -315,16 +315,6 @@ openImagePicker(){
                      {listavatars}
                   </List>
                 </Right>
-              </CardItem>
-            </Card>
-            <Form style={{padding:10, backgroundColor:'white'}}>
-
-
-              <Right>
-                <Label>{strings.privacy }</Label>
-                <Switch value={ this.state.privacy }
-                  onValueChange={this.privacyChange.bind( this ) }/>
-              </Right>
 
               <Label>{strings.name }</Label>
               <AutogrowInput style={{ fontSize: 18}}  maxLength={30}
@@ -337,13 +327,13 @@ openImagePicker(){
               <Label>{strings.culture }</Label>
               <AutogrowInput style={{ fontSize: 18,minHeight:Dimensions.get('window').height/6}}  maxLength={150}
                 onChangeText={(text) => this.setState({culture:text})} />
+               
             </Form>
           </Content>
         <Button full dark style= {{backgroundColor: '#41BEB6'}}
          onPress={() => this.add()} >
          <Text>{strings.save }</Text>
         </Button>
-
         </Container>
     );
   }

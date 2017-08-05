@@ -15,7 +15,6 @@ import DatePicker from 'react-native-datepicker';
 import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
-import ViewPager from 'react-native-viewpager';
 
 export default class Daily extends Component{
 
