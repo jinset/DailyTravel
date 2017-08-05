@@ -105,18 +105,12 @@ export const DailyTravelTabs = TabNavigator({
   {
     tabBarOptions: {
       style: {
-        backgroundColor: '#E3904E',
+        backgroundColor: '#41BEB6',
       },
       tabStyle: {
         height: 50,
       },
     },
-  },
-  swipeEnabled: false,
-  tabBarPosition: 'bottom',
-  showIcon: true,
-  lazyLoad: true,
-
 });
 
 export const DailyTravelInitiate = StackNavigator({
