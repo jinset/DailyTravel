@@ -68,66 +68,96 @@ let ref='';
    async componentDidMount(){
      var that = this
      //usuarios en diario
-        var usersd = [];
-     let ref = getDatabase().ref("/userDiary")
-    list = (ref.orderByChild("idDiary").equalTo(key))
-    list.on('value', (snap) => {
-        snap.forEach((child) => {
-          if(child.val().status===true){
-            usersd.push({
-              id: child.key,
-            });
-          }
-        });
-        });
         var diarys = [];
-           ref = getDatabase().ref("/users")
+     let   ref = getDatabase().ref("/users")
      userList = (ref.orderByChild("nickname"))
      var that = this
      userList.on('value', (snap) => {
          var users = [];
-         var diaryUsers = [];
          AsyncStorage.getItem("user").then((value) => {
+
+                var diaryUsers = [];
+                  snap.forEach((child) => {
+                      let checkRepeat = getDatabase().ref('userDiary/').orderByChild("idUser").equalTo(child.key);
+                      checkRepeat.once('value', function(snapshot) {
+                          if(snapshot.exists() == true){
+                           if(child.key != value){
+                              diaryUsers.push({
+                                id: child.key,
+                                nickname: child.val().nickname,
+                                name: child.val().name,
+                                lastName: child.val().lastName,
+                                url: child.val().url,
+                                invited: child.val().invitationStus,
+                              });//users.push
+                            } //if nick diff from current
+                            else{
+                               diaryUsers.push({
+                                 id: child.key,
+                                 nickname: strings.me,
+                                 url: child.val().url,
+                                 invited: child.val().invitationStus,
+                               });//users.push¡
+
+                            }
+                          }
+                          that.setState({
+                              diaryUsers: diaryUsers,
+                          })//setState
+
+                      })//checkRepeat.once
+                  });//snap.forEach
+
            snap.forEach((child) => {
                let checkRepeat = getDatabase().ref('users/'+that.state.idOwner+'/follows/').orderByChild("uid").equalTo(child.key);
                checkRepeat.once('value', function(snapshot) {
                    var f = false
                    if(snapshot.exists() == true){
-                    usersd.forEach((user)=>{
-                     //If user es owner
-
-                     if(child.key == user.id){
-                       diaryUsers.push({
-                         id: child.key,
-                         nickname: child.val().nickname,
-                         name: child.val().name,
-                         lastName: child.val().lastName,
-                         url: child.val().url,
-                         invited: user.invited,
-                       });
-                     }
-                    });
-                     if(child.key != value){
-                       users.push({
-                         id: child.key,
-                         nickname: child.val().nickname,
-                         name: child.val().name,
-                         lastName: child.val().lastName,
-                         url: child.val().url,
-                         invited: f,
-                       });//users.push
-                     } //if nick diff from current
-                   }
-
+                           users.push({
+                             id: child.key,
+                             nickname: child.val().nickname,
+                             name: child.val().name,
+                             lastName: child.val().lastName,
+                             url: child.val().url,
+                             invited: child.val().invitationStus,
+                           });//users.push
+                      }
                    that.setState({
                        users: users,
-                       diaryUsers: diaryUsers,
                        uidCurrentUser: value,
                    })//setState
                })//checkRepeat.once
            });//snap.forEach
-        })//AsyncStorage
-   })//userList.on
+})//AsyncStorage
+})//userList.on
+    //alert(diaryUsers.length)
+  }
+  getUserDiaries(){
+    var diaryUsers = [];
+
+    AsyncStorage.getItem("user").then((value) => {
+      snap.forEach((child) => {
+          let checkRepeat = getDatabase().ref('userDiary/').orderByChild("idDiary").equalTo(key);
+          checkRepeat.once('value', function(snapshot) {
+              if(snapshot.exists() == true){
+               if(child.key != value){
+                  diaryUsers.push({
+                    id: child.key,
+                    nickname: child.val().nickname,
+                    name: child.val().name,
+                    lastName: child.val().lastName,
+                    url: child.val().url,
+                    invited: child.val().invitationStus,
+                  });//users.push
+                } //if nick diff from current
+              }
+
+              that.setState({
+                  diaryUsers: diaryUsers,
+              })//setState
+          })//checkRepeat.once
+      });//snap.forEach
+   })//AsyncStorage
   }
 ///////////////////////////////////////////////////////OBTIENE IMAGEN////////////////////////////////////////////////////////////////
    async componentwillMount(){
@@ -328,7 +358,7 @@ let ref='';
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
               source={{uri: this.state.url}} />
             </TouchableHighlight>
-            
+
             <Form style={{padding:10}}>
               <Left>
                 <Label>{strings.privacy }</Label>

@@ -35,11 +35,20 @@ import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
+//Import de Mapa
+import DiaryMap from './diaryMap/diaryMap.js'
+
+//Import Icons
 import { Icon } from 'react-native-elements';
 
 export const DTHome = StackNavigator({
   //Home
     home: { screen: Home },
+});
+
+export const DTDiaryMap = StackNavigator({
+  //Home
+    diaryMap: { screen: DiaryMap },
 });
 
 export const DTProfile = StackNavigator({
@@ -90,6 +99,10 @@ export const DailyTravelTabs = TabNavigator({
       navigationOptions:{
         tabBarLabel: strings.home,
       }},
+    diaryMapTab: { screen: DTDiaryMap,
+      navigationOptions:{
+        tabBarLabel: strings.map,
+    }},
     friendsTab: { screen: DTFriends,
       navigationOptions:{
         tabBarLabel: strings.friends,

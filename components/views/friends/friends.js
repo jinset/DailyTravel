@@ -32,7 +32,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 export default class Profile extends Component {
 
   static navigationOptions = {
-    title: "Friends",
+    title: strings.friends,
     headerStyle: {height: 50 },
     headerTitleStyle : {color:'#9A9DA4',fontSize:17},
     header: null,
@@ -46,7 +46,6 @@ export default class Profile extends Component {
          inputSearch: '',
          users: [],
          follows: [],
-         btnText: 'Seguir',
          txt: '',
        }
     }
@@ -166,7 +165,7 @@ getFollows(){
       this.search(that.txt)
       MessageBarManager.registerMessageBar(this.refs.alert);
       MessageBarManager.showAlert({
-        title: 'Ahora sigues a: ' + that.users[i].nickname,
+        title: strings.nowYouFollow + that.users[i].nickname,
         message: that.users[i].name + " " + that.users[i].lastName ,
         avatar: that.users[i].url,
         alertType: 'info',
@@ -205,7 +204,7 @@ getFollows(){
       this.search(that.txt)
       MessageBarManager.registerMessageBar(this.refs.alert);
       MessageBarManager.showAlert({
-        title: 'Dejaste de seguir a: ' + that.users[i].nickname,
+        title: strings.nowYouUnfollow + that.users[i].nickname,
         message: that.users[i].name + " " + that.users[i].lastName ,
          avatar: that.users[i].url,
          alertType: 'info',
@@ -224,21 +223,23 @@ getFollows(){
                     <ListItem>
                         <TouchableOpacity onPress={() => navigate('visitProfile', {uid:u.id})} style={styles.row}>
                           <Thumbnail
+                            style={{padding: 25}}
                             small
                             source={{uri: u.url}}
                           />
-                        <Text style={styles.nick}>{u.nickname}</Text>
-                        <Text style={styles.name}>{u.name} {u.lastName}</Text>
+                        <View syle={styles.column}>
+                          <Text style={styles.nick} style={{padding: 10}}>{u.nickname}</Text>
+                        </View>
                         </TouchableOpacity>
                         <HideableView visible={u.foll} removeWhenHidden={true} duration={100}>
-                            <Button light onPress={() => this.follow(i)}>
-                              <Text>{"Seguir"}</Text>
+                            <Button light onPress={() => this.follow(i)} style={{padding: 100}}>
+                              <Text>{strings.follow}</Text>
                               <Icon name='add-circle-outline' />
                             </Button>
                         </HideableView>
                         <HideableView visible={!u.foll} removeWhenHidden={true} duration={100}>
-                            <Button light onPress={() => this.unfollow(i)}>
-                              <Text>{"Dejar de Seguir"}</Text>
+                            <Button light onPress={() => this.unfollow(i)} style={{padding: 100}}>
+                              <Text>{strings.unfollow}</Text>
                               <Icon name='remove-circle-outline' />
                             </Button>
                         </HideableView>
@@ -252,14 +253,14 @@ getFollows(){
                     <Header style={{backgroundColor: 'white'}} searchBar rounded>
                           <Item>
                             <Icon name="search" />
-                            <Input placeholder="Search"
+                            <Input placeholder={strings.search}
                                    maxLength = {20}
                                    onChangeText={(text) => this.search(text)}
                             />
                             <Icon name="people" />
                           </Item>
                           <Button transparent>
-                            <Text>Search</Text>
+                            <Text>{strings.search}</Text>
                           </Button>
                     </Header>
                     <Body>
@@ -312,13 +313,13 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontSize: 16,
     color: '#000000',
-    padding: 10,
+    padding: 1,
   },
   name: {
     fontStyle: 'italic',
     fontSize: 14,
     color: '#000000',
-    padding: 10,
+    padding: 1,
   },
   diary: {
     fontStyle: 'italic',

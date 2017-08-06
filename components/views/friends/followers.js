@@ -33,7 +33,7 @@ export default class Followers extends Component {
 
 ////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
   static navigationOptions = {
-    title: "Followers",
+    title: strings.followers,
     headerStyle: {height: 50 },
     headerTitleStyle : {color:'#9A9DA4',fontSize:17},
   }
@@ -154,7 +154,7 @@ export default class Followers extends Component {
       this.showButton()
       MessageBarManager.registerMessageBar(this.refs.alert);
       MessageBarManager.showAlert({
-        title: 'Ahora sigues a: ' + params.followers[i].nickname,
+        title: strings.nowYouFollow +" "+ params.followers[i].nickname,
         message: params.followers[i].name + " " + params.followers[i].lastName ,
         avatar: params.followers[i].url,
         alertType: 'info',
@@ -201,7 +201,7 @@ export default class Followers extends Component {
       this.showButton()
       MessageBarManager.registerMessageBar(this.refs.alert);
       MessageBarManager.showAlert({
-        title: 'Dejaste de seguir a: ' + params.followers[i].nickname,
+        title: strings.nowYouUnfollow +" "+ params.followers[i].nickname,
         message: params.followers[i].name + " " + params.followers[i].lastName ,
          avatar: params.followers[i].url,
          alertType: 'info',
@@ -229,18 +229,18 @@ export default class Followers extends Component {
                         </TouchableOpacity>
                             <HideableView visible={that.follList[i]} removeWhenHidden={true} duration={100}>
                                 <Button light onPress={() => this.follow(i)}>
-                                  <Text>{"Seguir"}</Text>
+                                  <Text>{strings.follow}</Text>
                                   <Icon name='add-circle-outline' />
                                 </Button>
                             </HideableView>
                             <HideableView visible={that.unfollList[i]} removeWhenHidden={true} duration={100}>
                                 <Button light onPress={() => this.unfollow(i)}>
-                                  <Text>{"Dejar de Seguir"}</Text>
+                                  <Text>{strings.unfollow}</Text>
                                   <Icon name='remove-circle-outline' />
                                 </Button>
                             </HideableView>
                             <HideableView visible={that.isMe[i]} removeWhenHidden={true} duration={100}>
-                                  <Text>Tú</Text>
+                                  <Text>{strings.you}</Text>
                                   <Icon name='face' />
                             </HideableView>
                     </ListItem>

@@ -1,5 +1,5 @@
 import { TouchableHighlight, Alert ,Dimensions,Platform,Image,AsyncStorage,ListView,
-TouchableOpacity, } from 'react-native';
+TouchableOpacity,ScrollView } from 'react-native';
 import React, {Component} from 'react';
 import { Container, Content, Form,List,Toast,ListItem,Radio, Item, Input,View, Label, Button ,Text,Body , Right, Switch, Card,
    CardItem, Thumbnail, Left  } from 'native-base';
@@ -237,6 +237,7 @@ openImagePicker(){
 
     let listTable = this.state.users.map((u,i) => {
       return (
+        <TouchableHighlight  onPress={() => this.addGuest(i)}>
           <ListItem avatar>
             <Left>
               <Thumbnail small source={{uri: u.url}}   />
@@ -249,10 +250,12 @@ openImagePicker(){
             <Radio selected={u.invited} onPress={() => this.addGuest(i)} />
           </Right>
           </ListItem>
+          </TouchableHighlight>
             )
       });
       let listTable2 = this.state.diaryUsers.map((u,i) => {
         return (
+          <TouchableHighlight onPress={() => this.removeGuest(i)}>
             <ListItem avatar>
               <Left>
                 <Thumbnail small source={{uri: u.url}}   />
@@ -265,6 +268,7 @@ openImagePicker(){
               <Radio selected={u.invited} onPress={() => this.removeGuest(i)} />
             </Right>
             </ListItem>
+            </TouchableHighlight>
               )
         });
         let listavatars = this.state.diaryUsers.map((u,i) => {
@@ -279,16 +283,20 @@ openImagePicker(){
           <PopupDialog
               ref={(popupDialog) => { this.popupDialog = popupDialog; }}
             >
-            <View>
+            <View >
               <List>
               <ListItem itemDivider>
                <Text>{strings.guest}</Text>
              </ListItem>
+             <ScrollView>
                   {listTable2}
-                  <ListItem itemDivider>
+              </ScrollView>
+              <ListItem itemDivider>
                <Text>{strings.friends}</Text>
              </ListItem>
-             {listTable}
+             <ScrollView>
+                {listTable}
+             </ScrollView>
               </List>
             </View>
           </PopupDialog>
@@ -298,7 +306,7 @@ openImagePicker(){
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
               source={{uri: this.state.url}} />
             </TouchableHighlight>
-            
+
             <Form style={{padding:10}}>
               <Left>
                 <Label>{strings.privacy }</Label>
@@ -327,7 +335,7 @@ openImagePicker(){
               <Label>{strings.culture }</Label>
               <AutogrowInput style={{ fontSize: 18,minHeight:Dimensions.get('window').height/6}}  maxLength={150}
                 onChangeText={(text) => this.setState({culture:text})} />
-               
+
             </Form>
           </Content>
         <Button full dark style= {{backgroundColor: '#41BEB6'}}
