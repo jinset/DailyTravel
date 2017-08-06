@@ -130,8 +130,8 @@ export default class EditProfile extends Component {
                           }else // If requires-recent-login
                             if(error.code === 'auth/invalid-email'){
                               MessageBarManager.showAlert({
-                                  title: "Correo",
-                                  message: "Correo mal redactado",
+                                  title: strings.email,
+                                  message: strings.wrongPassEmail,
                                   alertType: 'info',
                                   position: 'bottom',
                                   duration: 4000,
@@ -145,7 +145,7 @@ export default class EditProfile extends Component {
             })// checkNick.once
          }// else blanckinputs
      } catch(error){
-       alert("Error desconocido"+error.code)
+       alert(strings.somethingGoesWrong +" "+ error.code)
      }
    }// save()
 
@@ -169,7 +169,7 @@ export default class EditProfile extends Component {
                      <Left >
                          <View style={styles.privateInfo}>
                          <Text>
-                             {'Información pública'}
+                             {strings.publicInformation}
                          </Text>
                          </View>
                      </Left>
@@ -219,7 +219,7 @@ export default class EditProfile extends Component {
                            renderHeader={() => <View style={styles.center}>
                                                    <View style={styles.row}>
                                                     <Text>
-                                                        {'Cerrar Sesión'}
+                                                        {strings.signOff}
                                                     </Text>
                                                     <Icon active name='keyboard-arrow-down' />
                                                     </View>

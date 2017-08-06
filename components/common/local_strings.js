@@ -30,6 +30,7 @@ let strings = new LocalizedStrings({
    cancel:"Cancel",
    follow:"Follow",
    unfollow:"Unfollow",
+   following: "Following",
    followers:"Followers",
    username:"Username",
    password:"Password",
@@ -66,6 +67,13 @@ let strings = new LocalizedStrings({
    checkEmail: "Check your e-mail",
    unknowEmail: "The email does not exists",
    somethingGoesWrong: "Something goes wrong",
+   nowYouFollow: "Now you follow ",
+   nowYouUnfollow: "Now you unfollow ",
+   publicInformation: "Public information",
+   signOff: "Sign off",
+   you: "You",
+   iAppearWhen: "I appear when you don't have diaries",
+   touchMeToCreate: "Touch me to create one",
  },
  es:{
    home:"Inicio",
@@ -96,6 +104,7 @@ let strings = new LocalizedStrings({
    cancel:"Cancelar",
    follow:"Seguir",
    unfollow:"Dejar de seguir",
+   following: "Seguidos",
    followers:"Seguidores",
    username:"Usuario",
    password:"Contraseña",
@@ -132,6 +141,13 @@ let strings = new LocalizedStrings({
    checkEmail: "Revisar su correo electrónico",
    unknowEmail: "Correo electrónico no existe",
    somethingGoesWrong: "Algo malo sucedio ",
+   nowYouFollow: "Ahora sigues a ",
+   nowYouUnfollow: "Dejaste de seguir a ",
+   publicInformation: "Información pública",
+   signOff: "Cerrar sesión",
+   you: "Tú",
+   iAppearWhen: "Yo aparezco cuando no tienes diarios",
+   touchMeToCreate: "Tocame para crear uno",
  }
 });
 

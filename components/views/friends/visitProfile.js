@@ -121,7 +121,7 @@ export default class EditProfile extends Component {
             that.showButton()
        })
      } catch(error){
-       alert("error: " + error)
+       alert(strings.somethingGoesWrong +" "+ error)
      }
    }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ export default class EditProfile extends Component {
       this.showButton.bind(this)
       MessageBarManager.registerMessageBar(this.refs.alert);
       MessageBarManager.showAlert({
-        title: 'Ahora sigues a: ' + that.nickname,
+        title: strings.nowYouFollow +" "+ that.nickname,
         message: that.userName + " " + that.lastName ,
         avatar: that.url,
         alertType: 'info',
@@ -217,7 +217,7 @@ export default class EditProfile extends Component {
       this.showButton.bind(this)
       MessageBarManager.registerMessageBar(this.refs.alert);
       MessageBarManager.showAlert({
-        title: 'Dejaste de seguir a: ' + that.nickname,
+        title: strings.nowYouUnfollow +" "+ that.nickname,
         message: that.userName + " " + that.lastName ,
          avatar: that.url,
          alertType: 'info',
@@ -315,22 +315,22 @@ showButton(){
                                 <View style={styles.row}>
                                     <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
                                         <Text style={styles.number}> { this.state.follows.length } </Text>
-                                        <Text style={styles.follow}> {"Seguidos"} </Text>
+                                        <Text style={styles.follow}> {strings.following} </Text>
                                     </TouchableOpacity>
                                     <View style={styles.column, styles.center}>
                                         <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
-                                        <Text style={styles.follow}> {"Seguidores"} </Text>
+                                        <Text style={styles.follow}> {strings.followers} </Text>
                                     </View>
                                 </View>
                         <HideableView visible={this.state.foll} removeWhenHidden={true} duration={100}>
                                 <Button light onPress={() => this.follow()} style={{width: (Dimensions.get('window').width)/1.8}}>
-                                    <Text style={styles.center}>{"Seguir"}</Text>
+                                    <Text style={styles.center}>{strings.follow}</Text>
                                     <Icon name='add-circle-outline' />
                                 </Button>
                         </HideableView>
                         <HideableView visible={this.state.unfoll} removeWhenHidden={true} duration={100}>
                             <Button light onPress={() => this.unfollow()} style={{width: (Dimensions.get('window').width)/1.8}}>
-                                <Text style={styles.center}>Dejar de seguir</Text>
+                                <Text style={styles.center}>{strings.unfollow}</Text>
                                 <Icon name='remove-circle-outline' />
                             </Button>
                         </HideableView>
