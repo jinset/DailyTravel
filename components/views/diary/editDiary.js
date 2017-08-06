@@ -1,4 +1,4 @@
-import { TouchableHighlight, Alert ,Dimensions,Platform,Image } from 'react-native';
+import { TouchableHighlight, Alert ,AsyncStorage,Dimensions,Platform,Image } from 'react-native';
 import React, {Component} from 'react';
 import { Container, Content, Form,List,Toast,ListItem,Radio,View, Item, Input, Label, Button ,Text,Body , Right, Switch, Card,
    CardItem, Thumbnail, Left  } from 'native-base';
@@ -66,64 +66,71 @@ let ref='';
 
 ////////////////////////////////////////////OBTIENE USUARIO LOGGEADO//////////////////////////
    async componentDidMount(){
-     try{
-       AsyncStorage.getItem("user").then((value) => {
-          this.setState({
-            idOwner:value,
-          })
-        })
-     } catch(error){
-       alert("error: " + error)
-     }
-     //usuarios
-     let ref = getDatabase().ref("/users")
+     var that = this
+     //usuarios en diario
+        var usersd = [];
+     let ref = getDatabase().ref("/userDiary")
+    list = (ref.orderByChild("idDiary").equalTo(key))
+    list.on('value', (snap) => {
+        snap.forEach((child) => {
+          if(child.val().status===true){
+            usersd.push({
+              id: child.key,
+            });
+          }
+        });
+        });
+        var diarys = [];
+           ref = getDatabase().ref("/users")
      userList = (ref.orderByChild("nickname"))
      var that = this
      userList.on('value', (snap) => {
          var users = [];
          var diaryUsers = [];
          AsyncStorage.getItem("user").then((value) => {
-                   snap.forEach((child) => {
-                       let checkRepeat = getDatabase().ref('users/'+value+'/follows/').orderByChild("uid").equalTo(child.key);
-                       checkRepeat.once('value', function(snapshot) {
-                           var f = false
-                           if(snapshot.exists() == true){
-                             if(child.key != value){
-                               users.push({
-                                 id: child.key,
-                                 nickname: child.val().nickname,
-                                 name: child.val().name,
-                                 lastName: child.val().lastName,
-                                 url: child.val().url,
-                                 invited: f,
-                               });//users.push
-                             } //if nick diff from current
-                           }
-                           //If user es owner
-                           if(child.key == value){
-                             diaryUsers.push({
-                               id: child.key,
-                               nickname: strings.me,
-                               name: child.val().name,
-                               lastName: child.val().lastName,
-                               url: child.val().url,
-                               invited: !f,
-                             });
-                           }
+           snap.forEach((child) => {
+               let checkRepeat = getDatabase().ref('users/'+that.state.idOwner+'/follows/').orderByChild("uid").equalTo(child.key);
+               checkRepeat.once('value', function(snapshot) {
+                   var f = false
+                   if(snapshot.exists() == true){
+                    usersd.forEach((user)=>{
+                     //If user es owner
 
-       alert("sirve: " + users)
-                           that.setState({
-                               users: users,
-                               diaryUsers:diaryUsers,
-                               uidCurrentUser: value,
-                           })//setState
-                       })//checkRepeat.once
-                   });//snap.forEach
+                     if(child.key == user.id){
+                       diaryUsers.push({
+                         id: child.key,
+                         nickname: child.val().nickname,
+                         name: child.val().name,
+                         lastName: child.val().lastName,
+                         url: child.val().url,
+                         invited: user.invited,
+                       });
+                     }
+                    });
+                     if(child.key != value){
+                       users.push({
+                         id: child.key,
+                         nickname: child.val().nickname,
+                         name: child.val().name,
+                         lastName: child.val().lastName,
+                         url: child.val().url,
+                         invited: f,
+                       });//users.push
+                     } //if nick diff from current
+                   }
+
+                   that.setState({
+                       users: users,
+                       diaryUsers: diaryUsers,
+                       uidCurrentUser: value,
+                   })//setState
+               })//checkRepeat.once
+           });//snap.forEach
         })//AsyncStorage
    })//userList.on
   }
 ///////////////////////////////////////////////////////OBTIENE IMAGEN////////////////////////////////////////////////////////////////
-   async componentDidMount(){
+   async componentwillMount(){
      try{
        HelperDiary.getImageUrl(key, (url) => {
          this.setState({
@@ -299,52 +306,46 @@ let ref='';
           });
     return (
         <Container>
-          <PopupDialog
+           <PopupDialog
               ref={(popupDialog) => { this.popupDialog = popupDialog; }}
             >
             <View>
               <List>
               <ListItem itemDivider>
-               <Text>Invitados</Text>
+               <Text>{strings.guest}</Text>
              </ListItem>
                   {listTable2}
                   <ListItem itemDivider>
-               <Text>Amigos</Text>
+               <Text>{strings.friends}</Text>
              </ListItem>
              {listTable}
               </List>
             </View>
           </PopupDialog>
-          <Content  style={{zIndex: -1}}>
-        <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
-        <Thumbnail
-          style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
-           source={{uri: this.state.imagePath}}/>
-          </TouchableHighlight>
-
-          <Card >
-            <CardItem  style={{padding:10}}>
-              <Right style={{flex:  1, flexDirection: 'row'}}>
-                <Button rounded  transparent onPress={() => {
+          <Content  style={{zIndex: -1, backgroundColor:'white'}}>
+            <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
+            <Thumbnail
+              style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
+              source={{uri: this.state.url}} />
+            </TouchableHighlight>
+            
+            <Form style={{padding:10}}>
+              <Left>
+                <Label>{strings.privacy }</Label>
+                <Switch value={ this.state.privacy }
+                  onValueChange={this.privacyChange.bind( this ) }/>
+              </Left>
+                <Right style={{flex:  1, flexDirection: 'row', padding: 10}}>
+                  <Button rounded bordered dark onPress={() => {
                     this.popupDialog.show();
                   }}>
                     <Icon name='group-add' />
-                </Button>
-                <List  style={{flex:  1, flexDirection: 'row'}}>
-                  <ListItem avatar>
-                    <Thumbnail small source={{ uri: 'https://scontent.fsyq1-1.fna.fbcdn.net/v/t1.0-1/p160x160/16708363_1540542605957763_7227193132559657605_n.jpg?oh=9306caebcffc90ec0aab2042804f1704&oe=59F65BB3' }} />
-                  </ListItem>
-                </List>
-              </Right>
-            </CardItem>
-          </Card>
+                  </Button>
+                  <List  style={{flex:  1, flexDirection: 'row'}}>
+                     {listavatars}
+                  </List>
+                </Right>
 
-          <Form   style={{padding:10, backgroundColor:'white'}}>
-          <Right>
-            <Label>{strings.privacy }</Label>
-            <Switch value={ this.state.privacy }
-              onValueChange={this.privacyChange.bind( this ) }/>
-          </Right>
 
           <Label>{strings.name }</Label>
           <AutogrowInput style={{ fontSize: 18}}  maxLength={30}
