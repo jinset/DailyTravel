@@ -103,7 +103,7 @@ export default class Profile extends Component {
             })
             Helper.getDairysByUser(this.state.uid, (d) => {
               this.setState({
-                  diarys: d,
+                  diarys: d.reverse(),
                })
                 if(d.length === 0){
                     this.setState({

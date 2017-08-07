@@ -32,10 +32,23 @@ import MapView from 'react-native-maps';
 export default class DiaryMap extends Component {
 
 /////////////////////////////////////// Constructor ///////////////////////////////////////////////////////////
-   constructor(props) {
-       super(props);
-
+   constructor() {
+       super();
+       this.state = {
+         region: {
+           latitude: null,
+           longitude: null,
+           latitudeDelta: null,
+           longitudeDelta: null,
+         }
+       }
     }
+    /*
+    latitude: 10.00253,
+    longitude: -84.14021,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+    */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
@@ -46,10 +59,48 @@ export default class DiaryMap extends Component {
       }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
-    async componentDidMount(){
+/////////////////////////////////////// CalcDelta ///////////////////////////////////////////////////////////
+  calcDelta(lat, lon, accuracy){
+    const oneDegreeOfLongitudInMeters = 111.32;
+    const circumference = (40075 / 360)
 
-   }
+    const latDelta = accuracy * (1 / (Math.cos(lat) * circumference))
+    const lonDelta = (accuracy / oneDegreeOfLongitudInMeters)
+
+    this.setState({
+      region: {
+        latitude: lat,
+        longitude: lon,
+        latitudeDelta: latDelta,
+        longitudeDelta: lonDelta,
+      }
+    })
+  }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
+    async componentWillMount(){
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          alert("Latitud: "+ position.coords.latitude +"     "+
+                "Longitud: "+position.coords.longitude)
+          const lat = position.coords.latitude
+          const lon = position.coords.longitude
+          const accuracy = position.coords.accuracy
+          this.calcDelta(lat, lon, accuracy)
+        }, (error) => alert(error.message),
+        {enableHighAccuracy: true, timeout: 10000}
+      )
+      navigator.geolocation.watchPosition(
+        (position) => {
+          alert(position)
+          const lat = position.coords.latitude
+          const lon = position.coords.longitude
+          const accuracy = position.coords.accuracy
+          this.calcDelta(lat, lon, accuracy)
+        }, (error) => alert(error.message),
+        {enableHighAccuracy: true, timeout: 10000})
+    }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
@@ -59,16 +110,11 @@ export default class DiaryMap extends Component {
     return (
           <Container>
                   <View style={styles.container}>
-                  <MapView style={styles.map}
-                      initialRegion={{
-                        latitude: 37.78825,
-                        longitude: -122.4324,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                      }}
-                  />
-                  </View>
-              <View>
+                  {this.state.region.latitude ?
+                        <MapView style={styles.map}
+                        initialRegion={this.state.region}
+                        showsUserLocation = {true}
+                  /> : null}
                  <Fab
                    active='false'
                    direction="up"

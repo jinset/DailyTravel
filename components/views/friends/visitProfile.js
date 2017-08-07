@@ -105,7 +105,7 @@ export default class EditProfile extends Component {
             })
             Helper.getDairysByUser(this.state.uid, (d) => {
              this.setState({
-                 diarys: d,
+                 diarys: d.reverse(),
               })
             })
            Helper.getFollowers(this.state.uid, (f) => {
