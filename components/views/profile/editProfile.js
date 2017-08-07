@@ -12,10 +12,11 @@ import {
   Dimensions,
   StyleSheet,
   AsyncStorage,
+  TouchableOpacity,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Segment, Item, Toast, Input, Label, Button, Text,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
+import { Container, Content, Form, Segment, Item, Toast, Separator, Input, Label, Button, Text,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
@@ -26,15 +27,15 @@ import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
-import Accordion from 'react-native-accordion';
+import PixAccordion from 'react-native-pixfactory-accordion';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 export default class EditProfile extends Component {
   static navigationOptions = {
     title: strings.profile,
-    headerStyle: {backgroundColor: '#70041b', height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
   }
    constructor(props) {
        super(props);
@@ -129,8 +130,8 @@ export default class EditProfile extends Component {
                           }else // If requires-recent-login
                             if(error.code === 'auth/invalid-email'){
                               MessageBarManager.showAlert({
-                                  title: "Correo",
-                                  message: "Correo mal redactado",
+                                  title: strings.email,
+                                  message: strings.wrongPassEmail,
                                   alertType: 'info',
                                   position: 'bottom',
                                   duration: 4000,
@@ -144,7 +145,7 @@ export default class EditProfile extends Component {
             })// checkNick.once
          }// else blanckinputs
      } catch(error){
-       alert("Error desconocido"+error.code)
+       alert(strings.somethingGoesWrong +" "+ error.code)
      }
    }// save()
 
@@ -161,109 +162,105 @@ export default class EditProfile extends Component {
           <Container>
             <Content>
               <Form>
-               <View style={styles.centerCamera}>
-                    <CameraComponent />
-                    <Text>{strings.changePerfilPhoto}</Text>
-               </View>
-               <Left >
-                   <View style={styles.center}>
-                   <Text>
-                       {'Cerrar Sesión'}
-                   </Text>
+                   <View style={styles.centerCamera}>
+                        <CameraComponent />
+                        <Text>{strings.changePerfilPhoto}</Text>
                    </View>
-               </Left>
-               {/*<Accordion
-                   header={'Cerrar sesión'}
-                   content={
+                     <Left >
+                         <View style={styles.privateInfo}>
+                         <Text>
+                             {strings.publicInformation}
+                         </Text>
+                         </View>
+                     </Left>
+                   <Card>
+                        <Card>
+                                <Item >
+                                    <Icon active name='loyalty' />
+                                    <Input placeholder={params.nickname}
+                                           onChangeText={(text) => this.setState({inputNickname: text})}
+                                           maxLength = {20} />
+                                </Item>
+                                <Item >
+                                    <Icon active name='person' />
+                                    <Input placeholder={params.userName}
+                                           onChangeText={(text) => this.setState({inputName: text})}
+                                           maxLength = {20} />
+                                </Item>
+                                <Item >
+                                    <Icon active name='person' />
+                                    <Input placeholder={params.lastName}
+                                           onChangeText={(text) => this.setState({inputLastName: text})}
+                                           maxLength = {20}/>
+                                </Item>
+                                <Item>
+                                      <DatePicker
+                                        iconComponent={ <Icon active name='cake' /> }
+                                        style={{width: 20}}
+                                        date={params.birthday}
+                                        mode="date"
+                                        hideText={true}
+                                        placeholder="select date"
+                                        format="MM/DD/YYYY"
+                                        minDate="01/01/1920"
+                                        maxDate="01/01/2010"
+                                        confirmBtnText="Confirm"
+                                        cancelBtnText="Cancel"
+                                        customStyles={{
 
-                   }
-                   easing="easeOutCubic"
-                 />*/}
-                 <Card>
-                     <Item >
-                         <Right>
-                             <Icon large name='exit-to-app'
-                                   style={styles.centerIcon}
-                                   onPress={this.logout.bind(this)}
-                                   color={'white'} />
-                         </Right>
-                     </Item>
-                 </Card>
-                 <Left >
-                     <View style={styles.privateInfo}>
-                     <Text>
-                         {'Información pública'}
-                     </Text>
-                     </View>
-                 </Left>
-               <Card>
-                <Card>
-                        <Item >
-                            <Icon active name='loyalty' />
-                            <Input placeholder={params.nickname}
-                                   onChangeText={(text) => this.setState({inputNickname: text})}
-                                   maxLength = {20} />
-                        </Item>
-                        <Item >
-                            <Icon active name='person' />
-                            <Input placeholder={params.userName}
-                                   onChangeText={(text) => this.setState({inputName: text})}
-                                   maxLength = {20} />
-                        </Item>
-                        <Item >
-                            <Icon active name='person' />
-                            <Input placeholder={params.lastName}
-                                   onChangeText={(text) => this.setState({inputLastName: text})}
-                                   maxLength = {20}/>
-                        </Item>
-                        <Item>
-                              <DatePicker
-                                iconComponent={ <Icon active name='cake' /> }
-                                style={{width: 20}}
-                                date={params.birthday}
-                                mode="date"
-                                hideText={true}
-                                placeholder="select date"
-                                format="MM/DD/YYYY"
-                                minDate="01/01/1920"
-                                maxDate="01/01/2010"
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
-                                customStyles={{
+                                        }}
+                                        onDateChange={(date) => {this.setState({inputBirthDay: date})}}
+                                      />
+                                    <Label>{"   " + this.state.inputBirthDay}</Label>
+                                  </Item>
+                        </Card>
+                        <Separator></Separator>
+                        <PixAccordion
+                           renderHeader={() => <View style={styles.center}>
+                                                   <View style={styles.row}>
+                                                    <Text>
+                                                        {strings.signOff}
+                                                    </Text>
+                                                    <Icon active name='keyboard-arrow-down' />
+                                                    </View>
+                                                  </View>
+                                         }
+                           easing="bounce"
+                         >
+                                         <Icon large name='exit-to-app'
+                                               style={styles.centerIcon}
+                                               onPress={this.logout.bind(this)}
+                                               color={'white'} />
+                         </PixAccordion>
+                        <Separator></Separator>
+                        <Left >
+                            <View style={styles.privateInfo}>
+                            <Text>
+                                {strings.privateInformation}
+                            </Text>
+                            </View>
+                        </Left>
+                        <Card>
+                                <Item>
+                                    <Icon active name='mail' />
+                                    <Input placeholder={params.email}
+                                      autoCorrect = {false}
+                                      keyboardType = {'email-address'}
+                                      onChangeText={(text) => this.setState({inputEmail: text})}/>
+                                </Item>
+                                <Item >
+                                    <Input placeholder={strings.changePassword}
+                                           secureTextEntry={true}
+                                           maxLength={20} />
+                                    <Icon active name='keyboard-arrow-down' />
+                                </Item>
+                        </Card>
 
-                                }}
-                                onDateChange={(date) => {this.setState({inputBirthDay: date})}}
-                              />
-                            <Label>{"   " + this.state.inputBirthDay}</Label>
-                          </Item>
-                </Card>
-                <Left >
-                    <View style={styles.privateInfo}>
-                    <Text>
-                        {strings.privateInformation}
-                    </Text>
-                    </View>
-                </Left>
-                <Card>
-                        <Item>
-                            <Icon active name='mail' />
-                            <Input placeholder={params.email}
-                              autoCorrect = {false}
-                              keyboardType = {'email-address'}
-                              onChangeText={(text) => this.setState({inputEmail: text})}/>
-                        </Item>
-                        <Item >
-                            <Input placeholder={strings.changePassword}
-                                   secureTextEntry={true}
-                                   maxLength={20} />
-                            <Icon active name='keyboard-arrow-down' />
-                        </Item>
-                </Card>
-                    <Button full light style= {{backgroundColor: '#D3D0CB'}}
-                            onPress={this.save.bind(this)}>
-                        <Text>{strings.save}</Text>
-                    </Button>
-                </Card>
+                            <Button full dark style= {{backgroundColor: '#41BEB6'}}
+                                    onPress={this.save.bind(this)}>
+                                <Text>{strings.save}</Text>
+                            </Button>
+                    </Card>
               </Form>
             </Content>
             <MessageBarAlert ref="alert"/>
@@ -292,7 +289,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    padding: 21,
     backgroundColor: '#70041b',
   },
   title: {

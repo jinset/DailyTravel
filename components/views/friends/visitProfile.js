@@ -26,6 +26,8 @@ import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 let diarys = [{id: null, name: null, description: null, url: null}]
 let follows = [{id: null, nickname: null, name: null, lastName: null, url: null}]
@@ -47,6 +49,7 @@ export default class EditProfile extends Component {
            url: '',
            birthday: '',
            foll: '',
+           unfoll: '',
            diarys: diarys,
            followers: followers,
            follows: follows,
@@ -102,7 +105,7 @@ export default class EditProfile extends Component {
             })
             Helper.getDairysByUser(this.state.uid, (d) => {
              this.setState({
-                 diarys: d,
+                 diarys: d.reverse(),
               })
             })
            Helper.getFollowers(this.state.uid, (f) => {
@@ -118,7 +121,7 @@ export default class EditProfile extends Component {
             that.showButton()
        })
      } catch(error){
-       alert("error: " + error)
+       alert(strings.somethingGoesWrong +" "+ error)
      }
    }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,8 +129,8 @@ export default class EditProfile extends Component {
 /////////////////////////// Navigation Options ///////////////////////////////////////////////////////////////
     static navigationOptions = {
       title: strings.profile,
-      headerStyle: {backgroundColor: '#70041b',height: 50 },
-      headerTitleStyle : {color:'white', fontWeight: 'ligth', alignSelf: 'center'},
+      headerStyle: {height: 50 },
+      headerTitleStyle : {color:'#9A9DA4',fontSize:17},
     }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -164,6 +167,21 @@ export default class EditProfile extends Component {
               url: snapshot.child("url").val(),
             });
       })
+      this.setState({
+        foll: !this.state.foll,
+        unfoll: !this.state.unfoll
+      })
+      this.showButton.bind(this)
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: strings.nowYouFollow +" "+ that.nickname,
+        message: that.userName + " " + that.lastName ,
+        avatar: that.url,
+        alertType: 'info',
+        position: 'bottom',
+        duration: 6000,
+        stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -173,7 +191,7 @@ export default class EditProfile extends Component {
       var tthat = this;
       let ref = getDatabase().ref('/users/'+that.uidCurrentUser+'/follows/')
       followList = (ref.orderByChild("uid").equalTo(that.uid))
-      followList.on('value', (snap) => {
+      followList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
@@ -187,11 +205,26 @@ export default class EditProfile extends Component {
       var that = this.state;
       let ref = getDatabase().ref('/users/'+that.uid+'/followers/')
       followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
-      followersList.on('value', (snap) => {
+      followersList.once('value', (snap) => {
           snap.forEach((child) => {
               ref.child(child.key).remove();
           });
       })
+      this.setState({
+        foll: !this.state.foll,
+        unfoll: !this.state.unfoll
+      })
+      this.showButton.bind(this)
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      MessageBarManager.showAlert({
+        title: strings.nowYouUnfollow +" "+ that.nickname,
+        message: that.userName + " " + that.lastName ,
+         avatar: that.url,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 6000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -206,9 +239,17 @@ showButton(){
                     if(snapshot.exists() == false){
                         f = true
                     }
-                    tthat.setState({
-                      foll: f,
-                    })//setState
+                    if(value == that.uid){
+                      tthat.setState({
+                        foll: false,
+                        unfoll: false,
+                      })//setState
+                    }else{
+                      tthat.setState({
+                        foll: f,
+                        unfoll: !f,
+                      })//setState
+                    }
                 })//checkRepeat.once
   })//AsyncStorage
 }
@@ -224,14 +265,12 @@ showButton(){
                 <ScrollView>
                     <CardItem key={i}>
                       <Body>
-
                           <View style={styles.row}>
-
                               <Thumbnail
                                 small
                                 source={{uri: this.state.url}}
                               />
-                              <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                              <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('fDairyView', {diaryKey:d.id})}>
                                 <View style={styles.center}>
                                     <Text style={styles.diary}>{"    " +d.name} </Text>
                                 </View>
@@ -240,7 +279,7 @@ showButton(){
                                   <Icon active name='more-vert' />
                               </Right>
                           </View>
-                          <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                          <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('fDairyView', {diaryKey:d.id})}>
                             <Left>
                                 <Image
                                   source={{uri: d.url}}
@@ -248,9 +287,7 @@ showButton(){
                                 />
                                 <Text style={styles.description}> {d.description} </Text>
                            </Left>
-
                          </TouchableHighlight>
-
                         </Body>
                     </CardItem>
                     <Separator></Separator>
@@ -266,7 +303,7 @@ showButton(){
                   <Left>
                     <View style={styles.column}>
                         <Thumbnail
-                          style={{width: 150, height: 200, borderStyle: 'solid', borderWidth: 2, borderColor: '#70041b', }}
+                          style={{width: 150, height: 200, borderStyle: 'solid', borderWidth: 2, borderColor: '#41BEB6', }}
                           source={{uri: this.state.url}}
                         />
                         <View style={styles.center}>
@@ -274,32 +311,26 @@ showButton(){
                         </View>
                     </View>
                     <View style={styles.column}>
-
+                        <Text style={styles.fullname}>{this.state.userName} {this.state.lastName}</Text>
                                 <View style={styles.row}>
                                     <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
                                         <Text style={styles.number}> { this.state.follows.length } </Text>
-                                        <Text style={styles.follow}> {"Seguidos"} </Text>
+                                        <Text style={styles.follow}> {strings.following} </Text>
                                     </TouchableOpacity>
                                     <View style={styles.column, styles.center}>
                                         <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
-                                        <Text style={styles.follow}> {"Seguidores"} </Text>
+                                        <Text style={styles.follow}> {strings.followers} </Text>
                                     </View>
-                                        {/*{this.state.userName && this.state.lastName ?
-                                          <Text>{this.state.userName} {this.state.lastName}</Text>
-                                          : null
-                                        } */}
                                 </View>
-                        <HideableView visible={this.state.isMe} removeWhenHidden={true} duration={100} style={styles.center}>
-                        </HideableView>
                         <HideableView visible={this.state.foll} removeWhenHidden={true} duration={100}>
                                 <Button light onPress={() => this.follow()} style={{width: (Dimensions.get('window').width)/1.8}}>
-                                    <Text style={styles.center}>{"Seguir"}</Text>
+                                    <Text style={styles.center}>{strings.follow}</Text>
                                     <Icon name='add-circle-outline' />
                                 </Button>
                         </HideableView>
-                        <HideableView visible={!this.state.foll} removeWhenHidden={true} duration={100}>
+                        <HideableView visible={this.state.unfoll} removeWhenHidden={true} duration={100}>
                             <Button light onPress={() => this.unfollow()} style={{width: (Dimensions.get('window').width)/1.8}}>
-                                <Text style={styles.center}>Dejar de seguir</Text>
+                                <Text style={styles.center}>{strings.unfollow}</Text>
                                 <Icon name='remove-circle-outline' />
                             </Button>
                         </HideableView>
@@ -311,6 +342,7 @@ showButton(){
                     {listTable}
                </Card>
           </Content>
+          <MessageBarAlert ref="alert"/>
           </Container>
     );
   }
@@ -339,8 +371,15 @@ const styles = StyleSheet.create({
   },
   nick: {
     fontStyle: 'italic',
-    fontSize: 16,
+    fontSize: 18,
     color: '#000000',
+  },
+  fullname: {
+    fontStyle: 'italic',
+    fontSize: 20,
+    color: '#000000',
+    paddingLeft: 45,
+    paddingRight: 10,
   },
   diary: {
     fontStyle: 'italic',

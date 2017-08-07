@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppRegistry } from 'react-native';
 import { StackNavigator, TabNavigator } from 'react-navigation';
+import strings from '../common/local_strings';
 
 //Import FooterNav
 import FooterNav from '../common/footerNav';
@@ -34,16 +35,33 @@ import EditDiary from './diary/editDiary';
 import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
+//Import de Mapa
+import DiaryMap from './diaryMap/diaryMap.js'
+
+//Import Icons
+import { Icon } from 'react-native-elements';
 
 export const DTHome = StackNavigator({
   //Home
     home: { screen: Home },
 });
 
+export const DTDiaryMap = StackNavigator({
+  //Home
+    diaryMap: { screen: DiaryMap },
+});
+
 export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
     editProfile: {screen: EditProfile},
+      newDiary: { screen: NewDiary },
+      editDiary: { screen: EditDiary },
+        DairyView: { screen: DairyView },
+        //Daily
+          listDaily: { screen: ListDaily },
+          createDaily: { screen: CreateDaily },
+          editDaily: { screen: EditDaily },
 });
 
 export const DTFriends = StackNavigator({
@@ -52,12 +70,13 @@ export const DTFriends = StackNavigator({
     visitProfile: {screen: VisitProfile},
     follows: {screen: Follows},
     followers: {screen: Followers},
+    fprofile: { screen: Profile },
+    fDairyView: { screen: DairyView },
 });
 
 export const DTNewDiary = StackNavigator({
   //Acceso rapidopara crear diario
     newDiary: { screen: NewDiary },
-      profile: { screen: Profile },
     editDiary: { screen: EditDiary },
       DairyView: { screen: DairyView },
       //Daily
@@ -76,31 +95,31 @@ DTNewDiary.navigationOptions = {
 }
 
 export const DailyTravelTabs = TabNavigator({
-        homeTab: { screen: DTHome,
-        navigationOptions:{
-          tabBarLabel: 'Home',
-        }},
-        createDiaryTab: {screen: DTNewDiary,
-          navigationOptions:{
-            tabBarLabel: 'Diary',
-          }},
-        friendsTab: { screen: DTFriends,
-            navigationOptions:{
-              tabBarLabel: 'Friends',
-          }},
-        profileTab: { screen: DTProfile,
-          navigationOptions:{
-            tabBarLabel: 'Profile',
-          }},
+    homeTab: { screen: DTHome,
+      navigationOptions:{
+        tabBarLabel: strings.home,
+      }},
+    diaryMapTab: { screen: DTDiaryMap,
+      navigationOptions:{
+        tabBarLabel: "Map",
+    }},
+    friendsTab: { screen: DTFriends,
+      navigationOptions:{
+        tabBarLabel: strings.friends,
+      }},
+    profileTab: { screen: DTProfile,
+      navigationOptions:{
+        tabBarLabel: strings.profile,
+      }},
 
     },
   {
     tabBarOptions: {
       style: {
-       backgroundColor: '#70041b',
+        backgroundColor: '#41BEB6',
       },
       tabStyle: {
-        width: 90,
+        height: 50,
       },
     },
     tabBarPosition: 'bottom',

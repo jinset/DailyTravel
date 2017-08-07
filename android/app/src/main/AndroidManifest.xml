@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RNFB_ANDROID_PERMISSION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -19,6 +20,8 @@
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
+      <meta-data android:name="com.google.android.geo.API_KEY"
+      android:value="AIzaSyC5Gwd94S_sN4zu_yBhN6ipw9kKeXFKjqM"/>
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"

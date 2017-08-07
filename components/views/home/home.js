@@ -8,8 +8,9 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left,Right, Body, Spinner} from 'native-base';
+import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Left,Right, Body, Spinner,View,Fab,Drawer} from 'native-base';
 import { ListItem } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import { createNotification } from '../../common/notification';
@@ -212,6 +213,7 @@ async load() {
 
 
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <Container>
          <Content>
@@ -228,6 +230,17 @@ async load() {
            </HideableView>
          </Content>
 
+         <View>
+           <Fab
+             active='false'
+             direction="up"
+             containerStyle={{ }}
+             style={{  backgroundColor:'#41BEB6'}}
+             position="bottomRight"
+             onPress={()=> navigate('newDiary')}>
+             <Icon color='white' name="library-books" />
+           </Fab>
+         </View>
        </Container>
     );
   }
