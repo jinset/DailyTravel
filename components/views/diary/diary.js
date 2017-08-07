@@ -1,4 +1,4 @@
-import { Alert,Image, Dimensions } from 'react-native';
+import { Alert,Image, Dimensions,AsyncStorage } from 'react-native';
 import React, {Component} from 'react';
 import { Container, Content,  Toast, Button,Text,Body, Right,View,List,ListItem,
  Card, CardItem, Thumbnail, Left, Tab, Tabs } from 'native-base';
@@ -28,10 +28,11 @@ static navigationOptions = ({ navigation }) => ({
       idOwne: '',
       name: '',
       description: '',
+      diaryUsers: [],
         };
   }
   ////////////////////////////////////////////////OBTIENE DATOS DEL DIARIO////////////////////////////////////////////////////////////////
-     async componentDidMount(){
+     async componentWillMount(){
 
            try{
              const { params } = this.props.navigation.state;
@@ -60,7 +61,54 @@ static navigationOptions = ({ navigation }) => ({
                    })*/}
                   this.props.navigation.goBack()
                }
-     }
+     }async componentDidMount(){
+       const { params } = this.props.navigation.state;
+       var that = this
+       //usuarios en diario
+          var diarys = [];
+       let   ref = getDatabase().ref("/users")
+       userList = (ref.orderByChild("nickname"))
+       var that = this
+       userList.on('value', (snap) => {
+           var users = [];
+           AsyncStorage.getItem("user").then((value) => {
+
+                  var diaryUsers = [];
+                    snap.forEach((child) => {
+                        let checkRepeat = getDatabase().ref('userDiary/').orderByChild("idUser").equalTo(child.key);
+                        checkRepeat.once('value', function(snapshot) {
+                            if(snapshot.exists() == true){
+                              if(child.key != value){
+                                 diaryUsers.push({
+                                   id: child.key,
+                                   nickname: child.val().nickname,
+                                   name: child.val().name,
+                                   lastName: child.val().lastName,
+                                   url: child.val().url,
+                                   invited: child.val().invitationStus,
+                                 });//users.push
+                               } //if nick diff from current
+                               else{
+                                  diaryUsers.push({
+                                    id: child.key,
+                                    nickname: strings.me,
+                                    url: child.val().url,
+                                    invited: child.val().invitationStus,
+                                  });//users.push¡
+
+                               }
+
+                            }
+                            that.setState({
+                                diaryUsers: diaryUsers,
+                            })//setState
+
+                        })//checkRepeat.once
+                    });//snap.forEach
+  })//AsyncStorage
+  })//userList.on
+      //alert(diaryUsers.length)
+    }
      deleteDiary(diaryId){
        HelperDiary.deleteDiary(diaryId)
        const { navigate } = this.props.navigation;
@@ -69,19 +117,25 @@ static navigationOptions = ({ navigation }) => ({
   render() {
         const { navigate } = this.props.navigation;
         const { params } = this.props.navigation.state;
+
+        let listavatars = this.state.diaryUsers.map((u,i) => {
+          return (
+              <ListItem avatar>
+                  <Thumbnail small source={{uri: u.url}}   />
+              </ListItem>
+                )
+          });
     return (
       <Container>
-        <Content>
+        <Content style={{zIndex: -1, backgroundColor:'white'}}>
           <Image source={{uri: this.state.url}}
             style={{height: 100, width: Dimensions.get('window').width}}/>
           <Card >
           <CardItem  style={{padding:10}}>
             <Left>
-              <List  style={{flex:  1, flexDirection: 'row'}}>
-                <ListItem avatar>
-                  <Thumbnail small source={{ uri: 'https://scontent.fsyq1-1.fna.fbcdn.net/v/t1.0-1/p160x160/16708363_1540542605957763_7227193132559657605_n.jpg?oh=9306caebcffc90ec0aab2042804f1704&oe=59F65BB3' }} />
-                </ListItem>
-              </List>
+            <List  style={{flex:  1, flexDirection: 'row'}}>
+               {listavatars}
+            </List>
             </Left>
           </CardItem>
           </Card>
