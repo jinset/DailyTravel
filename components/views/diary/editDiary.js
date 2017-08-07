@@ -78,7 +78,7 @@ let ref='';
 
                 var diaryUsers = [];
                   snap.forEach((child) => {
-                      let checkRepeat = getDatabase().ref('userDiary/').orderByChild("idUser").equalTo(child.key);
+                      let checkRepeat = getDatabase().ref('userDiary/').orderByChild("userDiary").equalTo(child.key+'-'+key);
                       checkRepeat.once('value', function(snapshot) {
                           if(snapshot.exists() == true){
                            if(child.key != value){

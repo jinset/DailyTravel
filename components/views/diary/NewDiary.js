@@ -143,13 +143,14 @@ openImagePicker(){
          }
      }
    }
-   addDiaryUsers(userId,userstatus){
+   addDiaryUsers(elemento){
      var myRef = getDatabase().ref().push();
           getDatabase().ref().child('userDiary/').push({
-          idUser:userId,
+          idUser:elemento.id,
           idDiary: this.state.key,
-          invitationStus:userstatus,
+          invitationStus:true,
           status:this.state.status,
+          userDiary:elemento.id+'-'+ this.state.key,
       }).catch(function(error) {
           alert(error);
      });
@@ -172,7 +173,7 @@ openImagePicker(){
       diaryUsers=this.state.diaryUsers;
       var tthat = this;
       diaryUsers.forEach(function(elemento) {
-          tthat.addDiaryUsers(elemento.id,true);
+          tthat.addDiaryUsers(elemento);
       });
   });
     this.createImage()
