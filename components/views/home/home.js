@@ -14,7 +14,7 @@ import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import { createNotification } from '../../common/notification';
 import HideableView from 'react-native-hideable-view';
-import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
+//import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 
  export default class Home extends Component {
 
@@ -98,6 +98,7 @@ import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 
   async componentWillMount() {
     try {
+      alert("llamaaaa");
       let homeArray = [];
       var arrayFollows = [];
       var idUser = "";
@@ -178,11 +179,11 @@ async load() {
         <Left>
         <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.idOwner})}>
           <Thumbnail source={{uri: item.photoUser}}/>
-          </TouchableHighlight>
           <Body>
             <Text>{item.userNick}</Text>
             <Text note>April 15, 2016</Text>
           </Body>
+          </TouchableHighlight>
         </Left>
         <Right>
             <Icon active name='more-vert' />
@@ -215,6 +216,7 @@ async load() {
       <Container>
          <Content>
            <ListView
+             onStartReached={this.load.bind(this)}
              dataSource={this.state.dataSource}
              renderRow={this._renderItem.bind(this)}
              enableEmptySections={true}
