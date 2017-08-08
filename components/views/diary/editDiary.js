@@ -329,9 +329,10 @@ let ref='';
         });
         let listavatars = this.state.diaryUsers.map((u,i) => {
           return (
-              <ListItem avatar>
-                  <Thumbnail small source={{uri: u.url}}   />
-              </ListItem>
+            <ListItem avatar style={{flex: 1, flexDirection: 'column'}}>
+                <Thumbnail small source={{uri: u.url}}   />
+                <Text note style={{fontSize:10}}>{u.nickname}</Text>
+            </ListItem>
                 )
           });
     return (
@@ -371,7 +372,7 @@ let ref='';
                   }}>
                     <Icon name='group-add' />
                   </Button>
-                  <List  style={{flex:  1, flexDirection: 'row'}}>
+                    <List  style={{flex:  1, flexDirection: 'row', marginTop:5}}>
                      {listavatars}
                   </List>
                 </Right>

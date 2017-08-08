@@ -9,7 +9,7 @@ import DailyList from '../daily/listDaily.js';
 import HelperDiary from './helperDiary';
 import * as firebase from 'firebase';
 
-var idOwner, name, description, culture, url
+var idOwner, name, description, culture, url, key
 
 export default class DiaryView extends Component {
   /////////////////////////////////////////NAVIGATE OPTIONS/////////////////////////////////////
@@ -37,6 +37,7 @@ static navigationOptions = ({ navigation }) => ({
            try{
              const { params } = this.props.navigation.state;
                let ref = "/diary/"+ params.diaryKey
+               key=params.diaryKey;
                firebase.database().ref(ref).on('value', (snap) => {
                  if(snap.val()){
                     this.setState({
@@ -75,7 +76,7 @@ static navigationOptions = ({ navigation }) => ({
 
                   var diaryUsers = [];
                     snap.forEach((child) => {
-                      let checkRepeat = getDatabase().ref('userDiary/').orderByChild("userDiary").equalTo(child.key+'-'+key);
+                        let checkRepeat = getDatabase().ref('userDiary/').orderByChild("userDiary").equalTo(child.key+'-'+key);
                         checkRepeat.once('value', function(snapshot) {
                             if(snapshot.exists() == true){
                               if(child.key != value){
@@ -120,8 +121,9 @@ static navigationOptions = ({ navigation }) => ({
 
         let listavatars = this.state.diaryUsers.map((u,i) => {
           return (
-              <ListItem avatar>
+              <ListItem avatar style={{flex: 1, flexDirection: 'column'}}>
                   <Thumbnail small source={{uri: u.url}}   />
+                  <Text note style={{fontSize:10}}>{u.nickname}</Text>
               </ListItem>
                 )
           });
@@ -130,15 +132,10 @@ static navigationOptions = ({ navigation }) => ({
         <Content style={{zIndex: -1, backgroundColor:'white'}}>
           <Image source={{uri: this.state.url}}
             style={{height: 100, width: Dimensions.get('window').width}}/>
-          <Card >
-          <CardItem  style={{padding:10}}>
-            <Left>
-            <List  style={{flex:  1, flexDirection: 'row'}}>
+
+            <List  style={{flex:  1, flexDirection: 'row', marginTop:5}}>
                {listavatars}
             </List>
-            </Left>
-          </CardItem>
-          </Card>
           <Card  >
             <CardItem>
               <Text style={{fontWeight: 'bold',fontSize: 18, width:260}}>{this.state.name}</Text>

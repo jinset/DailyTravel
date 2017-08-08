@@ -165,6 +165,7 @@ openImagePicker(){
        privacy:this.state.privacy,
        url:this.state.url,
        status:this.state.status,
+       date:new Date().toLocaleDateString(),
    }).then((snap) =>{
     this.setState({
       key: snap.key,
@@ -274,9 +275,10 @@ openImagePicker(){
         });
         let listavatars = this.state.diaryUsers.map((u,i) => {
           return (
-              <ListItem avatar>
-                  <Thumbnail small source={{uri: u.url}}   />
-              </ListItem>
+            <ListItem avatar style={{flex: 1, flexDirection: 'column'}}>
+                <Thumbnail small source={{uri: u.url}}   />
+                <Text note style={{fontSize:10}}>{u.nickname}</Text>
+            </ListItem>
                 )
           });
     return (
@@ -320,7 +322,7 @@ openImagePicker(){
                   }}>
                     <Icon name='group-add' />
                   </Button>
-                  <List  style={{flex:  1, flexDirection: 'row'}}>
+                    <List  style={{flex:  1, flexDirection: 'row', marginTop:5}}>
                      {listavatars}
                   </List>
                 </Right>
