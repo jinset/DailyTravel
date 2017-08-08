@@ -38,7 +38,6 @@ export default class ListDaily extends Component{
     dataRef.on('value', (snap) => {
       var dailies = [];
       snap.forEach((child) => {
-
         dailies.push({
           _key: child.key,
           name: child.val().name,

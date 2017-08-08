@@ -27,6 +27,8 @@ import Followers from './friends/followers.js'
 import CreateDaily from './daily/createDaily';
 import EditDaily from './daily/editDaily';
 import ListDaily from './daily/listDaily';
+import Daily from './daily/daily';
+import Gallery from './daily/gallery';
 
 //Import de vistas Diary
 import DairyView from './diary/diary';
@@ -47,7 +49,7 @@ export const DTHome = StackNavigator({
 });
 
 export const DTDiaryMap = StackNavigator({
-  //Home
+  //Map
     diaryMap: { screen: DiaryMap },
 });
 
@@ -62,6 +64,8 @@ export const DTProfile = StackNavigator({
           listDaily: { screen: ListDaily },
           createDaily: { screen: CreateDaily },
           editDaily: { screen: EditDaily },
+          daily: { screen: Daily },
+          gallery: { screen: Gallery },
 });
 
 export const DTFriends = StackNavigator({
@@ -122,6 +126,7 @@ export const DailyTravelTabs = TabNavigator({
         height: 50,
       },
     },
+    swipeEnabled: false,
     tabBarPosition: 'bottom',
     showIcon: true,
     lazyLoad: true,
