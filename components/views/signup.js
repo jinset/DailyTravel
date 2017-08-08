@@ -27,8 +27,8 @@ export default class Signup extends Component {
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
     headerTitle: strings.signup,
-    headerStyle: {backgroundColor: '#70041b',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
   };
 
   constructor(props) {
@@ -199,9 +199,9 @@ export default class Signup extends Component {
                     />
                     </ListItem>
              </Form>
-               <Button  full dark style= {{backgroundColor: '#41BEB6'}}
+               <Button full dark style= {{backgroundColor: '#41BEB6'}}
                 onPress = {this.add.bind(this)} >
-                  <Text >{strings.createNewAccount}</Text>
+                  <Text style={{color:'white'}}>{strings.createNewAccount}</Text>
                </Button>
               </Content>
               <MessageBarAlert ref="alert" />

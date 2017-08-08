@@ -103,7 +103,7 @@ export default class Profile extends Component {
             })
             Helper.getDairysByUser(this.state.uid, (d) => {
               this.setState({
-                  diarys: d,
+                  diarys: d.reverse(),
                })
                 if(d.length === 0){
                     this.setState({
@@ -256,11 +256,11 @@ export default class Profile extends Component {
                           <View style={styles.row}>
                               <TouchableOpacity onPress={() => navigate('follows', {follows:this.state.follows})} style={styles.column, styles.center}>
                                   <Text style={styles.number}> { this.state.follows.length } </Text>
-                                  <Text style={styles.follow}> {"Seguidos"} </Text>
+                                  <Text style={styles.follow}> {strings.following} </Text>
                               </TouchableOpacity>
                               <View style={styles.column, styles.center}>
                                   <Text onPress={() => navigate('followers', {followers:this.state.followers})} style={styles.number}> { this.state.followers.length } </Text>
-                                  <Text style={styles.follow}> {"Seguidores"} </Text>
+                                  <Text style={styles.follow}> {strings.followers} </Text>
                               </View>
                           </View>
                     </View>
@@ -284,8 +284,8 @@ export default class Profile extends Component {
               <Card>
                     <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
 
-                       <Text style={styles.message}>{"Yo aparezco cuando no tienes diarios"}</Text>
-                       <Text style={styles.message}>{"Tocame para crear uno"}</Text>
+                       <Text style={styles.message}>{strings.iAppearWhen}</Text>
+                       <Text style={styles.message}>{strings.touchMeToCreate}</Text>
                        <TouchableOpacity onPress={()=>navigate('newDiary')}>
                          <Image
                             style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
