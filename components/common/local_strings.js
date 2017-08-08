@@ -74,6 +74,7 @@ let strings = new LocalizedStrings({
    you: "You",
    iAppearWhen: "I appear when you don't have diaries",
    touchMeToCreate: "Touch me to create one",
+   map: "Map",
  },
  es:{
    home:"Inicio",
@@ -110,7 +111,7 @@ let strings = new LocalizedStrings({
    password:"Contraseña",
    termsConditions:"Terminos y condiciones",
    accept:"Aceptar",
-   email:"Correo Electrónico",
+   email:"Correo electrónico",
    wrongPassEmail: "Contraseña o correo electrónico incorrectos",
    changePassword: "Cambiar contraseña",
    privateInformation: "Información Privada",
@@ -148,6 +149,7 @@ let strings = new LocalizedStrings({
    you: "Tú",
    iAppearWhen: "Yo aparezco cuando no tienes diarios",
    touchMeToCreate: "Tocame para crear uno",
+   map: "Mapa",
  }
 });
 

@@ -101,7 +101,7 @@ export const DailyTravelTabs = TabNavigator({
       }},
     diaryMapTab: { screen: DTDiaryMap,
       navigationOptions:{
-        tabBarLabel: "Map",
+        tabBarLabel: strings.map,
     }},
     friendsTab: { screen: DTFriends,
       navigationOptions:{
