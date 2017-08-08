@@ -28,6 +28,7 @@ import CreateDaily from './daily/createDaily';
 import EditDaily from './daily/editDaily';
 import ListDaily from './daily/listDaily';
 import Daily from './daily/daily';
+import Gallery from './daily/gallery';
 
 //Import de vistas Diary
 import DairyView from './diary/diary';
@@ -39,8 +40,8 @@ import {getAuth} from '../common/database';
 import { Icon } from 'react-native-elements';
 
 export const DTHome = StackNavigator({
-//Home
-home: { screen: Home },
+  //Home
+    home: { screen: Home },
 });
 
 export const DTProfile = StackNavigator({
@@ -54,6 +55,8 @@ export const DTProfile = StackNavigator({
           listDaily: { screen: ListDaily },
           createDaily: { screen: CreateDaily },
           editDaily: { screen: EditDaily },
+          daily: { screen: Daily },
+          gallery: { screen: Gallery },
 });
 
 export const DTFriends = StackNavigator({
@@ -75,16 +78,15 @@ export const DTNewDiary = StackNavigator({
         listDaily: { screen: ListDaily },
         createDaily: { screen: CreateDaily },
         editDaily: { screen: EditDaily },
-        daily: { screen:  Daily},
 });
 export const DTNewDaily = StackNavigator({
-listDaily: { screen: ListDaily },
-createDaily: { screen: CreateDaily },
-editDaily: { screen: EditDaily },
+        listDaily: { screen: ListDaily },
+        createDaily: { screen: CreateDaily },
+        editDaily: { screen: EditDaily },
 });
 
 DTNewDiary.navigationOptions = {
-title : 'profile'
+  title : 'profile'
 }
 
 export const DailyTravelTabs = TabNavigator({
@@ -111,12 +113,10 @@ export const DailyTravelTabs = TabNavigator({
         height: 50,
       },
     },
-  },
-  swipeEnabled: false,
-  tabBarPosition: 'bottom',
-  showIcon: true,
-  lazyLoad: true,
-
+    swipeEnabled: false,
+    tabBarPosition: 'bottom',
+    showIcon: true,
+    lazyLoad: true,
 });
 
 export const DailyTravelInitiate = StackNavigator({
@@ -133,9 +133,9 @@ export const DailyTravelInitiate = StackNavigator({
 //
 //
 //
-// //Diary
-// diaryView: { screen: DairyView },
-// newDiary: { screen: NewDiary },
+//   //Diary
+//     diaryView: { screen: DairyView },
+//     newDiary: { screen: NewDiary },
 //
-// footerNav: { screen: FooterNav },
+//     footerNav: { screen: FooterNav },
 // });

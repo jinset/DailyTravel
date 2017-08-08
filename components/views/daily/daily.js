@@ -15,7 +15,7 @@ import DatePicker from 'react-native-datepicker';
 import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
-import ViewPager from 'react-native-viewpager';
+import DialogBox from 'react-native-dialogbox';
 
 export default class Daily extends Component{
 
@@ -28,16 +28,16 @@ export default class Daily extends Component{
       date: null,
       experience: null,
       tips: null,
-      dataSource: new ViewPager.DataSource({
-        pageHasChanged: (p1, p2) => p1 !== p2,
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
       })
     };
   }
 
   static navigationOptions = ({ navigation }) => ({
       title: strings.daily,
-      headerStyle: {backgroundColor: '#70041b', height: 50 },
-      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+      headerStyle: {height: 50 },
+      headerTitleStyle : {color:'#9A9DA4',fontSize:17},
     });
 
     async getPhotos(idDiary, idDaily) {
@@ -77,6 +77,7 @@ export default class Daily extends Component{
       });
 
       let photos = await this.getPhotos(idDiary, idDaily);
+
       console.log("termina");
       console.log(photos);
         this.setState({
@@ -102,35 +103,50 @@ export default class Daily extends Component{
     goBack();
   }
 
-  // _renderItem(item: Object){
-  //   console.log(item);
-  //   return(
-  //     <View key={1}>
-  //       <Image source={{uri:data.url}} />
-  //     </View>
-  //   );
-  // }
+  deleteOption(dailyId, diaryId){
+    this.dialogbox.confirm({
+      title: strings.confirm,
+      content: strings.confirmPopUp,
+      ok: {
+          text: strings.yes,
+          callback: () => {
+              this.deleteDaily(dailyId, diaryId);
+            },
+          },
+          cancel: {
+            text: strings.no,
+            callback: () => {
+
+            },
+          },
+    });
+  }
 
   render() {
-    var that = this.state;
-    var tthat = this;
     const { navigate } = this.props.navigation;
     return(
-      <Container>
-          <Card>
+      <Container >
 
-            <CardItem style={{alignItems: 'center'}}>
+      <DialogBox ref={dialogbox => { this.dialogbox = dialogbox }}/>
+      <Content  style={{zIndex: -1}}>
+          <Card>
+            <CardItem style={{alignItems: 'center', paddingLeft: 10, paddingRight: 10}}>
               <Button transparent small
-                onPress={() => this.deleteDaily(this.state.idDaily, this.state.idDiary)}>
-                <Icon active name='delete' />
+                onPress={() => navigate('gallery', {idDaily:this.state.idDaily, idDiary:this.state.idDiary})}>
+                <Icon active name='collections' />
               </Button>
 
               <Button transparent small
                 onPress={()=> navigate('editDaily', {idDaily:this.state.idDaily, idDiary:this.state.idDiary})}>
                 <Icon active name='mode-edit' />
               </Button>
-            </CardItem>
 
+              <Button transparent small
+                onPress={() => this.deleteOption(this.state.idDaily, this.state.idDiary)}>
+                <Icon active name='delete' />
+              </Button>
+
+            </CardItem>
             <CardItem>
               <Body>
                 <Label>{strings.name}</Label>
@@ -158,14 +174,8 @@ export default class Daily extends Component{
                 <Text>{this.state.tips}</Text>
               </Body>
             </CardItem>
-            </Card>
-
-            {/*<Card>
-                <ViewPager
-                  dataSource={that.dataSource}
-                  renderPage={tthat._renderItem.bind(tthat)}
-                />
-            </Card>*/}
+          </Card>
+          </Content>
 
       </Container>
     );

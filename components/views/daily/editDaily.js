@@ -99,6 +99,8 @@ export default class EditDaily extends Component{
           dataSource: this.state.dataSource.cloneWithRows(images),
           imageArray: imageArray
         })
+        console.log(this.state.dataSource)
+        console.log(imageArray)
       }
     )
   }
@@ -109,15 +111,18 @@ export default class EditDaily extends Component{
     try{
       this.state.imageArray ?
        this.state.imageArray.map(image =>{
+         console.log(this.state.imageArray)
+         console.log(image)
          uploadImage(image, this.state.imageName)
-           .then((responseData) => {
-             alert(responseData);
-             //Helper.setImageUrl(this.state.uid, responseData)
+           .then(function(responseData){
+             console.log(responseData)
              getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/photos/").push({
                url: responseData,
              });
              getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/url").set(responseData);
-           })
+           }, function(responseData){
+             alert(responseData);
+           });
          })
        : null
      } catch(error){
@@ -179,13 +184,18 @@ export default class EditDaily extends Component{
 
               <TouchableOpacity style={{margin: 20}}
                 onPress={this.openImagePicker.bind(this)}>
-                <Icon name="photo"/>
+                <Icon name="add-a-photo"/>
               </TouchableOpacity>
+            </Item>
 
-              <Thumbnail
-                square
-                source={{uri: this.state.imagePath}}
-              />
+            <Item>
+              <ScrollView horizontal={true} >
+                <ListView
+                  horizontal={true}
+                  dataSource={this.state.dataSource}
+                  renderRow={this.renderImages.bind(this)}
+                />
+              </ScrollView>
             </Item>
 
               <Label>{strings.experiences}</Label>
@@ -194,16 +204,6 @@ export default class EditDaily extends Component{
                 value = {this.state.experience}
                 onChangeText={(text) => this.setState({experience:text})}
               />
-
-              <Item>
-                <ScrollView horizontal={true} >
-                  <ListView
-                    horizontal={true}
-                    dataSource={this.state.dataSource}
-                    renderRow={this.renderImages.bind(this)}
-                  />
-                </ScrollView>
-              </Item>
 
               <Label>{strings.tips }</Label>
               <AutogrowInput

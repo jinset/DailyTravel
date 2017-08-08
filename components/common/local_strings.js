@@ -57,6 +57,7 @@ let strings = new LocalizedStrings({
    touchToRestart: "Touch this message if you wish to log out",
    createDiary:"Create diary",
    editDiary:"Edit diary",
+   gallery: "Gallery",
    me:"Me",
    myDiaries:"Diaries",
    loading: "Loading...",
@@ -66,6 +67,10 @@ let strings = new LocalizedStrings({
    checkEmail: "Check your e-mail",
    unknowEmail: "The email does not exists",
    somethingGoesWrong: "Something goes wrong",
+   confirmPopUp: "¿Do you wish to delete?",
+   yes: "Yes",
+   no: "No",
+   confirm: "Confirm",
  },
  es:{
    home:"Inicio",
@@ -123,6 +128,7 @@ let strings = new LocalizedStrings({
    touchToRestart: "Toque este mensaje si desea cerrar sesión",
    createDiary:"Crear diario",
    editDiary:"Modificar diario",
+   gallery: "Galería",
    me:"Yo",
    myDiaries:"Diarios",
    loading: "Cargando...",
@@ -132,6 +138,10 @@ let strings = new LocalizedStrings({
    checkEmail: "Revisar su correo electrónico",
    unknowEmail: "Correo electrónico no existe",
    somethingGoesWrong: "Algo malo sucedio ",
+   confirmPopUp: "¿Deseas eliminar?",
+   yes: "Sí",
+   no: "No",
+   confirm: "Confirmación",
  }
 });
 
