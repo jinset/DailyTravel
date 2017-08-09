@@ -213,9 +213,9 @@ export default class Profile extends Component {
                                 source={{uri: this.state.imagePath}}
                               />
                               <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
-                                <View style={styles.center}>
-                                    <Text style={styles.diary}>{"    " +d.name} </Text>
-                                </View>
+                                  <View style={styles.center}>
+                                      <Text style={styles.diary}>{"    " +d.name} </Text>
+                                  </View>
                               </TouchableHighlight>
                               <Right>
                                   <Icon active name='more-vert' />

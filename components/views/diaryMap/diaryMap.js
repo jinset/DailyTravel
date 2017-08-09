@@ -29,14 +29,14 @@ import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
 import MapView from 'react-native-maps';
 
-var APIKey = 'AIzaSyC5Gwd94S_sN4zu_yBhN6ipw9kKeXFKjqM'
+var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs"
 
 export default class DiaryMap extends Component {
 
   /////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
       static navigationOptions = {
         header: null,
-        }
+      }
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Constructor ///////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ export default class DiaryMap extends Component {
 /////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
     async componentWillMount(){
         this.doCurrent()
-        this.doWatch()
+        //this.doWatch()
         this.getPlaces()
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,19 +88,19 @@ getUrl(lat, long, radius, type){
   const location = `location=${lat},${long}&radius=${radius}`;
   const typeData = `&types=${type}`;
   const key = `&key=${APIKey}`;
-  //alert(url + " " + location + " " + typeData + " " + key)
   return `${url}${location}${typeData}${key}`;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Get Places ////////////////////////////////////////////////////////////////
   getPlaces(){
-    const url = this.getUrl(37.422, -122.084, 50000, 'establishment')
+    const url = this.getUrl(11.240355, -74.211023, 500, 'food')
+    //alert(url)
     fetch(url)
       .then((data) => data.json())
       .then((res) => {
         const places = [];
-        //alert(res.results.length)
+        alert(res.results.length)
         res.results.map((element, i) => {
           places.push(element.geometry.location.lat)
         })
@@ -138,6 +138,7 @@ getUrl(lat, long, radius, type){
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////// Get Initial State ////////////////////////////////////////////////////////////
     /*getInitialState() {
       return {
         region: new MapView.AnimatedRegion({
