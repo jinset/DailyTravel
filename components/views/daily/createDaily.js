@@ -106,20 +106,24 @@ export default class CreateDaily extends Component{
    ref.endAt().limitToLast(1).on('child_added', function(snapshot) {
     idDaily = snapshot.key
   });
-
+  let count = 0;
    try{
      this.state.imageArray ?
-      this.state.imageArray.map(image =>{
-        uploadImage(image, this.state.imageName)
-          .then((responseData) => {
-            alert(responseData);
-            //Helper.setImageUrl(this.state.uid, responseData)
-            getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/photos/").push({
-              url: responseData,
-            });
-            getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/url").set(responseData);
-          })
-        })
+     this.state.imageArray.map(image =>{
+       count = count + 1;
+       console.log(this.state.imageArray)
+       console.log(image)
+       uploadImage(image, this.state.imageName+count)
+         .then(function(responseData){
+           console.log(responseData)
+           getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/photos/").push({
+             url: responseData,
+           });
+           getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/url").set(responseData);
+         }, function(responseData){
+           alert(responseData);
+         });
+       })
       : null
     } catch(error){
       alert(error)
