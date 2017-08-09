@@ -1,5 +1,5 @@
 import { TouchableHighlight, Alert ,Dimensions,Platform,Image,AsyncStorage,ListView,
-TouchableOpacity, } from 'react-native';
+TouchableOpacity,ScrollView } from 'react-native';
 import React, {Component} from 'react';
 import { Container, Content, Form,List,Toast,ListItem,Radio, Item, Input,View, Label, Button ,Text,Body , Right, Switch, Card,
    CardItem, Thumbnail, Left  } from 'native-base';
@@ -143,13 +143,14 @@ openImagePicker(){
          }
      }
    }
-   addDiaryUsers(userId,userstatus){
+   addDiaryUsers(elemento){
      var myRef = getDatabase().ref().push();
           getDatabase().ref().child('userDiary/').push({
-          idUser:userId,
+          idUser:elemento.id,
           idDiary: this.state.key,
-          invitationStus:userstatus,
+          invitationStus:true,
           status:this.state.status,
+          userDiary:elemento.id+'-'+ this.state.key,
       }).catch(function(error) {
           alert(error);
      });
@@ -164,6 +165,7 @@ openImagePicker(){
        privacy:this.state.privacy,
        url:this.state.url,
        status:this.state.status,
+       date:new Date().toLocaleDateString(),
    }).then((snap) =>{
     this.setState({
       key: snap.key,
@@ -172,11 +174,7 @@ openImagePicker(){
       diaryUsers=this.state.diaryUsers;
       var tthat = this;
       diaryUsers.forEach(function(elemento) {
-          if(elemento.id!=this.state.idOwner){
-            tthat.addDiaryUsers(elemento.id,false);
-          }else{
-            tthat.addDiaryUsers(elemento.id,true);
-          }
+          tthat.addDiaryUsers(elemento);
       });
   });
     this.createImage()
@@ -236,11 +234,12 @@ openImagePicker(){
     title: strings.createDiary,
     headerStyle: {height: 50 },
     headerTitleStyle : {color:'#808080',fontSize:17},
-  }
+     }
   render() {  const { navigate } = this.props.navigation;
 
     let listTable = this.state.users.map((u,i) => {
       return (
+        <TouchableHighlight  onPress={() => this.addGuest(i)}>
           <ListItem avatar>
             <Left>
               <Thumbnail small source={{uri: u.url}}   />
@@ -253,10 +252,12 @@ openImagePicker(){
             <Radio selected={u.invited} onPress={() => this.addGuest(i)} />
           </Right>
           </ListItem>
+          </TouchableHighlight>
             )
       });
       let listTable2 = this.state.diaryUsers.map((u,i) => {
         return (
+          <TouchableHighlight onPress={() => this.removeGuest(i)}>
             <ListItem avatar>
               <Left>
                 <Thumbnail small source={{uri: u.url}}   />
@@ -269,13 +270,15 @@ openImagePicker(){
               <Radio selected={u.invited} onPress={() => this.removeGuest(i)} />
             </Right>
             </ListItem>
+            </TouchableHighlight>
               )
         });
         let listavatars = this.state.diaryUsers.map((u,i) => {
           return (
-              <ListItem avatar>
-                  <Thumbnail small source={{uri: u.url}}   />
-              </ListItem>
+            <ListItem avatar style={{flex: 1, flexDirection: 'column'}}>
+                <Thumbnail small source={{uri: u.url}}   />
+                <Text note style={{fontSize:10}}>{u.nickname}</Text>
+            </ListItem>
                 )
           });
     return (
@@ -283,48 +286,46 @@ openImagePicker(){
           <PopupDialog
               ref={(popupDialog) => { this.popupDialog = popupDialog; }}
             >
-            <View>
+            <View >
               <List>
               <ListItem itemDivider>
-               <Text>Invitados</Text>
+               <Text>{strings.guest}</Text>
              </ListItem>
+             <ScrollView>
                   {listTable2}
-                  <ListItem itemDivider>
-               <Text>Amigos</Text>
+              </ScrollView>
+              <ListItem itemDivider>
+               <Text>{strings.friends}</Text>
              </ListItem>
-             {listTable}
+             <ScrollView>
+                {listTable}
+             </ScrollView>
               </List>
             </View>
           </PopupDialog>
-          <Content  style={{zIndex: -1}}>
-
+          <Content  style={{zIndex: -1, backgroundColor:'white'}}>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
             <Thumbnail
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
               source={{uri: this.state.url}} />
             </TouchableHighlight>
-            <Card >
-              <CardItem  style={{padding:10}}>
-                <Right style={{flex:  1, flexDirection: 'row'}}>
-                  <Button rounded  transparent onPress={() => {
+
+            <Form style={{padding:10}}>
+              <Left>
+                <Label>{strings.privacy }</Label>
+                <Switch value={ this.state.privacy }
+                  onValueChange={this.privacyChange.bind( this ) }/>
+              </Left>
+                <Right style={{flex:  1, flexDirection: 'row', padding: 10}}>
+                  <Button rounded bordered dark onPress={() => {
                     this.popupDialog.show();
                   }}>
                     <Icon name='group-add' />
                   </Button>
-                  <List  style={{flex:  1, flexDirection: 'row'}}>
+                    <List  style={{flex:  1, flexDirection: 'row', marginTop:5}}>
                      {listavatars}
                   </List>
                 </Right>
-              </CardItem>
-            </Card>
-            <Form style={{padding:10, backgroundColor:'white'}}>
-
-
-              <Right>
-                <Label>{strings.privacy }</Label>
-                <Switch value={ this.state.privacy }
-                  onValueChange={this.privacyChange.bind( this ) }/>
-              </Right>
 
               <Label>{strings.name }</Label>
               <AutogrowInput style={{ fontSize: 18}}  maxLength={30}
@@ -337,13 +338,13 @@ openImagePicker(){
               <Label>{strings.culture }</Label>
               <AutogrowInput style={{ fontSize: 18,minHeight:Dimensions.get('window').height/6}}  maxLength={150}
                 onChangeText={(text) => this.setState({culture:text})} />
+
             </Form>
           </Content>
         <Button full dark style= {{backgroundColor: '#41BEB6'}}
          onPress={() => this.add()} >
          <Text>{strings.save }</Text>
         </Button>
-
         </Container>
     );
   }

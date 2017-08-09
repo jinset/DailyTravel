@@ -78,36 +78,40 @@ export default class DiaryMap extends Component {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
-    async componentWillMount(){
-      const oneDegreeOfLongitudInMeters = 111.32;
-      const circumference = (40075 / 360);
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-                this.setState({
-                          region: {
-                              latitude: position.coords.latitude,
-                              longitude: position.coords.longitude,
-                              latitudeDelta: 0.0462,
-                              longitudeDelta: 0.0462,
-                          },
-                      });
-        }, (error) => alert(error.message),
-        {enableHighAccuracy: false, timeout: 25000}
-      )
-      navigator.geolocation.watchPosition(
-        (position) => {
-          this.setState({
-                    region: {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        latitudeDelta: 0.0462,
-                        longitudeDelta: 0.0462,
-                    },
-                });
-        }, (error) => alert(error.message),
-        {enableHighAccuracy: false, timeout: 25000})
-    }
+async componentWillMount(){
+const oneDegreeOfLongitudInMeters = 111.32;
+const circumference = (40075 / 360);
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      this.setState({
+        region: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: 0.0462,
+          longitudeDelta: 0.0462,
+        },
+      });
+    },
+    (error) => alert(error.message),
+      {enableHighAccuracy: false, timeout: 25000}
+  )
+  navigator.geolocation.watchPosition(
+    (position) => {
+      this.setState({
+        region: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: 0.0462,
+          longitudeDelta: 0.0462,
+        },
+      });
+    }, (error) => alert(error.message),
+    {
+      enableHighAccuracy: false, timeout: 25000
+    })
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {

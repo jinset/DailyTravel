@@ -71,6 +71,7 @@ export default class GetPassword extends Component {
                    value = {this.state.email}/>
               </Item>
               <Button block info onPress = {this.getPassword.bind(this)} style={{marginTop:15,backgroundColor: '#41BEB6'}}>
+
                  <Text style={{color:'white'}}>{strings.changePassword}</Text>
               </Button>
              </Form>
