@@ -108,12 +108,14 @@ export default class EditDaily extends Component{
   saveImage(){
     let idDiary = this.state.idDiary;
     let idDaily = this.state.idDaily;
+    let count = 0;
     try{
       this.state.imageArray ?
        this.state.imageArray.map(image =>{
+         count = count + 1;
          console.log(this.state.imageArray)
          console.log(image)
-         uploadImage(image, this.state.imageName)
+         uploadImage(image, this.state.imageName+count)
            .then(function(responseData){
              console.log(responseData)
              getDatabase().ref().child('/diary/'+idDiary+"/daily/"+idDaily+"/photos/").push({
