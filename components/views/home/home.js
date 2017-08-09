@@ -32,16 +32,16 @@ import HideableView from 'react-native-hideable-view';
      };
    }
 
-
-    static navigationOptions = {
-        title: strings.home,
-        header: null,
-    }
+   static navigationOptions = {
+     title: strings.home,
+     headerStyle: {height: 50 },
+     headerTitleStyle : {color:'#9A9DA4',fontSize:17},
+     }
 
 
     _onRefresh() {
        this.setState({refreshing: true});
-       fetchData().then(() => {
+       this.load().then(() => {
          console.log("Aqui si funciona");
          this.setState({refreshing: false});
        });
@@ -248,6 +248,7 @@ import HideableView from 'react-native-hideable-view';
              renderRow={this._renderItem.bind(this)}
              enableEmptySections={true}
              onEndReached={this.load.bind(this)}
+             scrollRenderAheadDistance={1600}
              >
            </ListView>
            <HideableView visible={this.state.showSpinner} removeWhenHidden={true} >
