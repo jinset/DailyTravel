@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Form, Segment, Item, Separator, Input, Label, Button,Fab,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
+import { Container, Content, Header, Form, Segment, Item, Separator, Input, Label, Button,Fab,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import baseStyles from '../../style/baseStyles.js';
 import { getDatabase } from '../../common/database';
@@ -29,7 +29,15 @@ import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
 import MapView from 'react-native-maps';
 
+var APIKey = 'AIzaSyC5Gwd94S_sN4zu_yBhN6ipw9kKeXFKjqM'
+
 export default class DiaryMap extends Component {
+
+  /////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
+      static navigationOptions = {
+        header: null,
+        }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Constructor ///////////////////////////////////////////////////////////
    constructor() {
@@ -40,23 +48,12 @@ export default class DiaryMap extends Component {
            longitude: null,
            latitudeDelta: null,
            longitudeDelta: null,
-         }
+         },
+         lat: null,
+         lon: null,
        }
     }
-    /*
-    latitude: 10.00253,
-    longitude: -84.14021,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-    */
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
-    static navigationOptions = {
-      title: "Mapa",
-      headerStyle: {height: 50 },
-      headerTitleStyle : {color:'#9A9DA4',fontSize:17},
-      }
+    /*latitude: 10.00253, longitude: -84.14021,*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// CalcDelta ///////////////////////////////////////////////////////////
@@ -66,24 +63,57 @@ export default class DiaryMap extends Component {
 
     const latDelta = accuracy * (1 / (Math.cos(lat) * circumference))
     const lonDelta = (accuracy / oneDegreeOfLongitudInMeters)
-
     this.setState({
       region: {
         latitude: lat,
         longitude: lon,
         latitudeDelta: latDelta,
         longitudeDelta: lonDelta,
-      }
+      },
     })
   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
     async componentWillMount(){
+        this.doCurrent()
+        this.doWatch()
+        this.getPlaces()
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////// Get Url ////////////////////////////////////////////////////////////////
+getUrl(lat, long, radius, type){
+  const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
+  const location = `location=${lat},${long}&radius=${radius}`;
+  const typeData = `&types=${type}`;
+  const key = `&key=${APIKey}`;
+  //alert(url + " " + location + " " + typeData + " " + key)
+  return `${url}${location}${typeData}${key}`;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////// Get Places ////////////////////////////////////////////////////////////////
+  getPlaces(){
+    const url = this.getUrl(37.422, -122.084, 50000, 'establishment')
+    fetch(url)
+      .then((data) => data.json())
+      .then((res) => {
+        const places = [];
+        alert(res.results.length)
+        res.results.map((element, i) => {
+          places.push(element.geometry.location.lat)
+        })
+      })
+  }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////// Do Current ////////////////////////////////////////////////////
+    doCurrent(){
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          alert("Latitud: "+ position.coords.latitude +"     "+
-                "Longitud: "+position.coords.longitude)
+          /*alert("Latitud: "+ position.coords.latitude +"     "+
+                "Longitud: "+position.coords.longitude)*/
           const lat = position.coords.latitude
           const lon = position.coords.longitude
           const accuracy = position.coords.accuracy
@@ -91,16 +121,33 @@ export default class DiaryMap extends Component {
         }, (error) => alert(error.message),
         {enableHighAccuracy: true, timeout: 10000}
       )
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////// Do Watch /////////////////////////////////////////////////////////////////
+    doWatch(){
       navigator.geolocation.watchPosition(
         (position) => {
-          alert(position)
           const lat = position.coords.latitude
           const lon = position.coords.longitude
           const accuracy = position.coords.accuracy
           this.calcDelta(lat, lon, accuracy)
         }, (error) => alert(error.message),
-        {enableHighAccuracy: true, timeout: 10000})
+        {enableHighAccuracy: true, timeout: 10000}
+      )
     }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*getInitialState() {
+      return {
+        region: new MapView.AnimatedRegion({
+          latitude: 10.00253,
+          longitude: -84.14021,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }),
+      };
+    }*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
@@ -109,20 +156,47 @@ export default class DiaryMap extends Component {
 
     return (
           <Container>
+            <Header style={{backgroundColor: 'white'}} searchBar rounded>
+                 <Item>
+                   <Icon name="search" />
+                   <Input placeholder={strings.search}
+                          maxLength = {20}
+                          onChangeText={(text) => this.search(text)}
+                   />
+                 <Icon name="place" />
+                 </Item>
+                 <Button transparent>
+                   <Text>{strings.search}</Text>
+                 </Button>
+            </Header>
                   <View style={styles.container}>
-                  {this.state.region.latitude ?
-                        <MapView style={styles.map}
+                    <MapView style={styles.map}
+                        provider={MapView.PROVIDER_GOOGLE}
                         initialRegion={this.state.region}
                         showsUserLocation = {true}
-                  /> : null}
+                        showsMyLocationButton = {true}
+                        showsCompass = {true}>
+                        <MapView.Marker coordinate={this.state.region}>
+                            <Icon large color='black' name="face" />
+                        </MapView.Marker>
+                    </MapView>
+                 <Fab
+                   active='false'
+                   direction="up"
+                   containerStyle={{ }}
+                   style={{  backgroundColor:'#41BEB6'}}
+                   position="bottomLeft"
+                   onPress={()=> navigate('newDiary')}>
+                   <Icon color='white' name="library-books" />
+                 </Fab>
                  <Fab
                    active='false'
                    direction="up"
                    containerStyle={{ }}
                    style={{  backgroundColor:'#41BEB6'}}
                    position="bottomRight"
-                   onPress={()=> navigate('newDiary')}>
-                   <Icon color='white' name="library-books" />
+                   onPress={()=> alert("Dirigir a mi posicion actual") }>
+                   <Icon color='white' name="face" />
                  </Fab>
               </View>
           </Container>
