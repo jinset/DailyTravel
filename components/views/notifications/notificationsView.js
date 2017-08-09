@@ -5,7 +5,6 @@ import {
   TouchableHighlight,
   Dimensions,
   AsyncStorage,
-  RefreshControl,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
@@ -16,6 +15,8 @@ import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import { createNotification } from '../../common/notification';
 import HideableView from 'react-native-hideable-view';
+//import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
+
  export default class Home extends Component {
 
    constructor(props) {
@@ -27,25 +28,14 @@ import HideableView from 'react-native-hideable-view';
        }),
        showSpinner:true,
        idUser: "",
-       currentPageIndex : 1,
-       refreshing: false,
+       currentPageIndex : 1
      };
    }
-
-
     static navigationOptions = {
         title: strings.home,
         header: null,
     }
 
-
-    _onRefresh() {
-       this.setState({refreshing: true});
-       fetchData().then(() => {
-         console.log("Aqui si funciona");
-         this.setState({refreshing: false});
-       });
-     }
   async getLogin(idUser) {
       return new Promise((resolve, reject) => {
         var ref = getDatabase().ref("users/" + idUser);
@@ -87,75 +77,29 @@ import HideableView from 'react-native-hideable-view';
       Obtiene el usuario y arma un objeto con el usuario + diario donde retorna ese objeto
      */
     async getUser(dataUser) {
-      try {
-        return new Promise((resolve, reject) => {
-          console.log(dataUser);
-          var diaries = [];
-          var ref = getDatabase().ref("users/" + dataUser.idOwner);
-          ref.once("value", (snapshot) => {
-            var val = snapshot.val();
-            diaries = {
-              _key: dataUser._key,
-              name: dataUser.name,
-              description: dataUser.description,
-              url: dataUser.url,
-              idOwner: dataUser.idOwner,
-              userNick: val.nickname,
-              photoUser: val.url
-            }
-            resolve(diaries);
-          })
-        });
-      } catch (e) {
-        console.log(e);
-      } finally {
-
-      }
-
+      return new Promise((resolve, reject) => {
+        var diaries = [];
+        var ref = getDatabase().ref("users/" + dataUser.idOwner);
+        ref.once("value", (snapshot) => {
+          var val = snapshot.val();
+          diaries = {
+            _key: dataUser._key,
+            name: dataUser.name,
+            description: dataUser.description,
+            url: dataUser.url,
+            idOwner: dataUser.idOwner,
+            userNick: val.nickname,
+            photoUser: val.url
+          }
+          resolve(diaries);
+        })
+      });
     };
 
-    async load() {
-      try {
-        /*Muestra el loading*/
-        this.setState({
-           showSpinner: true
-         });
 
-        var arrayFollows = [];
-        let homeArray = [];
-        var current = this.state.currentPageIndex;
-        current = current +1;
-        this.setState({
-          currentPageIndex: current
-        });
-
-         var user = await this.getLogin(this.state.idUser);
-         arrayFollows.push(this.state.idUser);
-         for (var i in user.follows) {
-            arrayFollows.push(user.follows[i].uid);
-         }
-
-        let array = await this.getDiaries(current , arrayFollows);
-        for (var i in array) {
-          await this.getUser(array[i]).then(data => {
-            homeArray.push(data)
-          });
-        }
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(homeArray)
-        });
-        /*Desaparece el loading*/
-        this.setState({
-           showSpinner: false
-         });
-      } catch (error) {
-        console.log(error.message);
-      }
-
-    }
-
-  async componentDidMount() {
+  async componentWillMount() {
     try {
+      alert("llamaaaa");
       let homeArray = [];
       var arrayFollows = [];
       var idUser = "";
@@ -168,11 +112,10 @@ import HideableView from 'react-native-hideable-view';
      for (var i in user.follows) {
         arrayFollows.push(user.follows[i].uid);
      }
-
       let array = await this.getDiaries(this.state.currentPageIndex,arrayFollows);
       for (var i in array) {
         await this.getUser(array[i]).then(data => {
-          homeArray.push(data);
+          homeArray.push(data)
         });
       }
       /*Carga el home en el dataSource*/
@@ -189,7 +132,45 @@ import HideableView from 'react-native-hideable-view';
 
   }
 
+async load() {
+  try {
+    /*Muestra el loading*/
+    this.setState({
+       showSpinner: true
+     });
 
+    var arrayFollows = [];
+    let homeArray = [];
+    var current = this.state.currentPageIndex;
+    current = current +1;
+    this.setState({
+      currentPageIndex: current
+    });
+
+     var user = await this.getLogin(this.state.idUser);
+     arrayFollows.push(this.state.idUser);
+     for (var i in user.follows) {
+        arrayFollows.push(user.follows[i].uid);
+     }
+
+    let array = await this.getDiaries(current , arrayFollows);
+    for (var i in array) {
+      await this.getUser(array[i]).then(data => {
+        homeArray.push(data)
+      });
+    }
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(homeArray)
+    });
+    /*Desaparece el loading*/
+    this.setState({
+       showSpinner: false
+     });
+  } catch (error) {
+    console.log(error.message);
+  }
+
+}
 
   _renderItem(item) {
     const { navigate } = this.props.navigation;
@@ -199,12 +180,11 @@ import HideableView from 'react-native-hideable-view';
         <Left>
         <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.idOwner})}>
           <Thumbnail source={{uri: item.photoUser}}/>
-          </TouchableHighlight>
           <Body>
-          <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.idOwner})}>
             <Text>{item.userNick}</Text>
-            </TouchableHighlight>
+            <Text note>April 15, 2016</Text>
           </Body>
+          </TouchableHighlight>
         </Left>
         <Right>
             <Icon active name='more-vert' />
@@ -238,12 +218,7 @@ import HideableView from 'react-native-hideable-view';
       <Container>
          <Content>
            <ListView
-           refreshControl={
-             <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }
+             onStartReached={this.load.bind(this)}
              dataSource={this.state.dataSource}
              renderRow={this._renderItem.bind(this)}
              enableEmptySections={true}

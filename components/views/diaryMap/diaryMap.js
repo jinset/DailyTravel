@@ -60,11 +60,10 @@ export default class DiaryMap extends Component {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// CalcDelta ///////////////////////////////////////////////////////////
-  calcDelta(lat, lon, accuracy){
-    const oneDegreeOfLongitudInMeters = 111.32;
-    const circumference = (40075 / 360)
+/*  calcDelta(lat, lon, accuracy){
 
-    const latDelta = accuracy * (1 / (Math.cos(lat) * circumference))
+
+    const latDelta =
     const lonDelta = (accuracy / oneDegreeOfLongitudInMeters)
 
     this.setState({
@@ -75,31 +74,39 @@ export default class DiaryMap extends Component {
         longitudeDelta: lonDelta,
       }
     })
-  }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  }   */
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
     async componentWillMount(){
+      const oneDegreeOfLongitudInMeters = 111.32;
+      const circumference = (40075 / 360);
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          alert("Latitud: "+ position.coords.latitude +"     "+
-                "Longitud: "+position.coords.longitude)
-          const lat = position.coords.latitude
-          const lon = position.coords.longitude
-          const accuracy = position.coords.accuracy
-          this.calcDelta(lat, lon, accuracy)
+                this.setState({
+                          region: {
+                              latitude: position.coords.latitude,
+                              longitude: position.coords.longitude,
+                              latitudeDelta: 0.0462,
+                              longitudeDelta: 0.0462,
+                          },
+                      });
         }, (error) => alert(error.message),
-        {enableHighAccuracy: true, timeout: 10000}
+        {enableHighAccuracy: false, timeout: 25000}
       )
       navigator.geolocation.watchPosition(
         (position) => {
-          alert(position)
-          const lat = position.coords.latitude
-          const lon = position.coords.longitude
-          const accuracy = position.coords.accuracy
-          this.calcDelta(lat, lon, accuracy)
+          this.setState({
+                    region: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        latitudeDelta: 0.0462,
+                        longitudeDelta: 0.0462,
+                    },
+                });
         }, (error) => alert(error.message),
-        {enableHighAccuracy: true, timeout: 10000})
+        {enableHighAccuracy: false, timeout: 25000})
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

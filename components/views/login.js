@@ -80,9 +80,7 @@ export default class Login extends Component {
                   value = {this.state.password}
                   secureTextEntry = {true}/>
               </Item>
-              <Button block dark onPress = {this.login.bind(this)} style={{marginTop:15,backgroundColor: '#41BEB6'}}>
-                 <Text >{strings.loging}</Text>
-              </Button>
+
               <Body>
                 <Button transparent light onPress={() => navigate('getPassword')}  style={{marginTop:15, flexDirection: 'column',
                   justifyContent: 'center',
@@ -90,16 +88,17 @@ export default class Login extends Component {
                   <Text style={{textAlign: 'center', fontSize:15}}>{strings.forgetpass}</Text>
                 </Button>
               </Body>
-
-             </Form>
-
-               <Body style={{marginTop:35}}>
-                <Button transparent light onPress={() => navigate('signup')}  style={{flexDirection: 'column',
+                <Button block dark onPress = {this.login.bind(this)} style={{marginTop:15,backgroundColor: '#41BEB6'}}>
+                   <Text >{strings.loging}</Text>
+                </Button>
+              <Body>  
+                <Button transparent light onPress={() => navigate('signup')}  style={{marginTop:15,flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center'}}>
-                  <Text style={{textAlign: 'center', fontSize:20}}>{strings.signup}</Text>
+                  <Text style={{textAlign: 'center', fontSize:15}}>{strings.signup}</Text>
                 </Button>
-               </Body>
+              </Body>
+             </Form>
              </Content>
              <MessageBarAlert ref="alert" />
            </Container>

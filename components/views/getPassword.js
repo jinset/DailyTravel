@@ -17,8 +17,9 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 export default class GetPassword extends Component {
 
   static navigationOptions = {
-    header: null,
-    title: 'Welcome',
+    headerTitle: strings.forgetpass,
+    headerStyle: {backgroundColor: '#41BEB6',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   };
 
   constructor(props) {
@@ -69,7 +70,7 @@ export default class GetPassword extends Component {
                    onChangeText = {(text) => this.setState({email: text})}
                    value = {this.state.email}/>
               </Item>
-              <Button block info onPress = {this.getPassword.bind(this)} style={{marginTop:15,backgroundColor: '#70041b'}}>
+              <Button block info onPress = {this.getPassword.bind(this)} style={{marginTop:15,backgroundColor: '#41BEB6'}}>
                  <Text style={{color:'white'}}>{strings.changePassword}</Text>
               </Button>
              </Form>
