@@ -69,7 +69,7 @@ export default class GetPassword extends Component {
                    onChangeText = {(text) => this.setState({email: text})}
                    value = {this.state.email}/>
               </Item>
-              <Button block info onPress = {this.getPassword.bind(this)} style={{marginTop:15,backgroundColor: '#70041b'}}>
+              <Button block dark   onPress = {this.getPassword.bind(this)} style={{marginTop:15,backgroundColor: '#41BEB6'}}>
                  <Text style={{color:'white'}}>{strings.changePassword}</Text>
               </Button>
              </Form>

@@ -58,6 +58,7 @@ let strings = new LocalizedStrings({
    touchToRestart: "Touch this message if you wish to log out",
    createDiary:"Create diary",
    editDiary:"Edit diary",
+   gallery: "Gallery",
    me:"Me",
    myDiaries:"Diaries",
    loading: "Loading...",
@@ -74,6 +75,11 @@ let strings = new LocalizedStrings({
    you: "You",
    iAppearWhen: "I appear when you don't have diaries",
    touchMeToCreate: "Touch me to create one",
+   map: "Map",
+   confirmPopUp: "¿Do you wish to delete?",
+   yes: "Yes",
+   no: "No",
+   confirm: "Confirm",
  },
  es:{
    home:"Inicio",
@@ -110,7 +116,7 @@ let strings = new LocalizedStrings({
    password:"Contraseña",
    termsConditions:"Terminos y condiciones",
    accept:"Aceptar",
-   email:"Correo Electrónico",
+   email:"Correo electrónico",
    wrongPassEmail: "Contraseña o correo electrónico incorrectos",
    changePassword: "Cambiar contraseña",
    privateInformation: "Información Privada",
@@ -132,6 +138,7 @@ let strings = new LocalizedStrings({
    touchToRestart: "Toque este mensaje si desea cerrar sesión",
    createDiary:"Crear diario",
    editDiary:"Modificar diario",
+   gallery: "Galería",
    me:"Yo",
    myDiaries:"Diarios",
    loading: "Cargando...",
@@ -148,6 +155,11 @@ let strings = new LocalizedStrings({
    you: "Tú",
    iAppearWhen: "Yo aparezco cuando no tienes diarios",
    touchMeToCreate: "Tocame para crear uno",
+   map: "Mapa",
+   confirmPopUp: "¿Deseas eliminar?",
+   yes: "Sí",
+   no: "No",
+   confirm: "Confirmación",
  }
 });
 

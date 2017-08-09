@@ -179,13 +179,8 @@ export default class CreateDaily extends Component{
 
                 <TouchableOpacity style={{margin: 20}}
                   onPress={this.openImagePicker.bind(this)}>
-                  <Icon name="photo"/>
+                  <Icon name="add-a-photo"/>
                 </TouchableOpacity>
-
-                {/*<Thumbnail
-                  square
-                  source={{uri: this.state.images}}
-                />*/}
               </Item>
 
               <Item>

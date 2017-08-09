@@ -183,7 +183,7 @@ async load() {
           </TouchableHighlight>
           <Body>
             <Text>{item.userNick}</Text>
-            <Text note>April 15, 2016</Text>
+            <Text note>Agosto 08, 2017</Text>
           </Body>
         </Left>
         <Right>

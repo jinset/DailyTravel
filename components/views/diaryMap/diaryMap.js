@@ -100,7 +100,7 @@ getUrl(lat, long, radius, type){
       .then((data) => data.json())
       .then((res) => {
         const places = [];
-        alert(res.results.length)
+        //alert(res.results.length)
         res.results.map((element, i) => {
           places.push(element.geometry.location.lat)
         })
