@@ -177,7 +177,7 @@ getUrl(lat, long, radius, type){
                     <MapView style={styles.map}
                         provider={MapView.PROVIDER_GOOGLE}
                         initialRegion={this.state.region}
-                        onRegionChange={this.doWatch}
+                        onRegionChange={this.doWatch()}
                         showsUserLocation = {true}
                         showsMyLocationButton = {true}
                         showsCompass = {true}>
