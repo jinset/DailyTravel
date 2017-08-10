@@ -100,9 +100,10 @@ getUrl(lat, long, radius, type){
       .then((data) => data.json())
       .then((res) => {
         const places = [];
-        alert(res.results.length)
+        //alert(res.results[0])
         res.results.map((element, i) => {
-          places.push(element.geometry.location.lat)
+          places.push(element.name)
+          //alert(places[i])
         })
       })
   }
@@ -157,23 +158,26 @@ getUrl(lat, long, radius, type){
 
     return (
           <Container>
-            <Header style={{backgroundColor: 'white'}} searchBar rounded>
-                 <Item>
-                   <Icon name="search" />
-                   <Input placeholder={strings.search}
-                          maxLength = {20}
-                          onChangeText={(text) => this.search(text)}
-                   />
-                 <Icon name="place" />
-                 </Item>
-                 <Button transparent>
-                   <Text>{strings.search}</Text>
-                 </Button>
-            </Header>
+                  <View style={styles.search}>
+                      <Header style={{backgroundColor: 'white'}} searchBar rounded>
+                          <Item>
+                            <Icon name="search" />
+                            <Input placeholder={strings.search}
+                                   maxLength = {20}
+                                   onChangeText={(text) => this.search(text)}
+                            />
+                          <Icon name="place" />
+                          </Item>
+                          <Button transparent>
+                            <Text>{strings.search}</Text>
+                          </Button>
+                      </Header>
+                  </View>
                   <View style={styles.container}>
                     <MapView style={styles.map}
                         provider={MapView.PROVIDER_GOOGLE}
                         initialRegion={this.state.region}
+                        onRegionChange={this.doWatch}
                         showsUserLocation = {true}
                         showsMyLocationButton = {true}
                         showsCompass = {true}>
@@ -196,7 +200,7 @@ getUrl(lat, long, radius, type){
                    containerStyle={{ }}
                    style={{  backgroundColor:'#41BEB6'}}
                    position="bottomRight"
-                   onPress={()=> alert("Dirigir a mi posicion actual") }>
+                   onPress={()=> alert(this.state.region.latitude) }>
                    <Icon color='white' name="face" />
                  </Fab>
               </View>
@@ -217,9 +221,17 @@ const styles = StyleSheet.create({
   },
   map: {
     position: 'absolute',
+    top: 30,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  search: {
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
+    justifyContent: 'flex-start',
   },
 });
