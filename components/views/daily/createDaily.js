@@ -18,11 +18,10 @@ import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
 import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
-import AutogrowInput from 'react-native-autogrow-input';
+import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import firebase from 'firebase';
-
-
-
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 import MultiImage from 'react-native-multi-image-selector'
 
 import RNFetchBlob from 'react-native-fetch-blob';
@@ -63,9 +62,9 @@ export default class CreateDaily extends Component{
   constructor(props){
     super(props);
     this.state = {
-      name: null,
-      experience: null,
-      tips: null,
+      name: '',
+      experience: '',
+      tips: '',
       date: new Date().toLocaleDateString(),
       imageName: new Date().toString(),
       status: true,
@@ -131,18 +130,30 @@ export default class CreateDaily extends Component{
  }
 
   addDaily(){
-    const { goBack } = this.props.navigation;
-    const { params } = this.props.navigation.state;
-    let idDiary = params.diaryKey;
-    getDatabase().ref().child('/diary/'+idDiary+"/daily/").push({
-      name: this.state.name,
-      date: this.state.date,
-      experience: this.state.experience,
-      tips: this.state.tips,
-      status: this.state.status,
-    });
-    this.saveImage()
-    goBack();
+    MessageBarManager.registerMessageBar(this.refs.alert);
+    var that = this.state;
+    if (that.name == '') {
+      MessageBarManager.showAlert({
+         message: strings.blankinputs,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 4000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
+    }else{
+      const { goBack } = this.props.navigation;
+      const { params } = this.props.navigation.state;
+      let idDiary = params.diaryKey;
+      getDatabase().ref().child('/diary/'+idDiary+"/daily/").push({
+        name: this.state.name,
+        date: this.state.date,
+        experience: this.state.experience,
+        tips: this.state.tips,
+        status: this.state.status,
+      });
+      this.saveImage()
+      goBack();
+    }
   }
 
   renderImages(image){
@@ -155,16 +166,14 @@ export default class CreateDaily extends Component{
     return(
       <Container>
         <Content>
-        <Form>
-
-            <Item stackedLabel>
+          <Form style={{padding:10}}>
               <Label>{strings.name }</Label>
               <Input
+                style={{fontSize: 18}}
+                maxLength={40}
                 onChangeText={(text) => this.setState({name:text})}
               />
-            </Item >
-
-            <Item>
+              <Item>
                 <DatePicker
                     iconComponent={<Icon active name='date-range' style={{position: 'absolute', left: 5, top: 5, marginLeft: 0}}/>}
                     style={{width: 150, margin:10}}
@@ -177,8 +186,8 @@ export default class CreateDaily extends Component{
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
                     customStyles={{
-                     }}
-                   onDateChange={(date) => {this.setState({date: date})}}
+                      }}
+                    onDateChange={(date) => {this.setState({date: date})}}
                 />
 
                 <TouchableOpacity style={{margin: 20}}
@@ -187,28 +196,28 @@ export default class CreateDaily extends Component{
                 </TouchableOpacity>
               </Item>
 
-              <Item>
-                <ScrollView horizontal={true} >
-                  <ListView
-                    horizontal={true}
-                    dataSource={this.state.dataSource}
-                    renderRow={this.renderImages.bind(this)}
-                  />
-                </ScrollView>
-              </Item>
+              <ScrollView horizontal={true}>
+                <ListView
+                  horizontal={true}
+                  dataSource={this.state.dataSource}
+                  renderRow={this.renderImages.bind(this)}
+                />
+              </ScrollView>
 
 
               <Label>{strings.experiences}</Label>
-              <AutogrowInput
-                style={{minHeight:Dimensions.get('window').height/7, fontSize: 18}}
+              <AutoGrowingTextInput
+                style={{fontSize: 18}}
+                maxHeight={150}
+                minHeight={45}
                 onChangeText={(text) => this.setState({experience:text})}
               />
 
-
-
               <Label>{strings.tips }</Label>
-              <AutogrowInput
-                style={{minHeight:Dimensions.get('window').height/7, fontSize: 18}}
+              <AutoGrowingTextInput
+                style={{fontSize: 18}}
+                maxHeight={150}
+                minHeight={45}
                 onChangeText={(text) => this.setState({tips:text})}
               />
 
@@ -216,10 +225,10 @@ export default class CreateDaily extends Component{
         </Content>
 
         <Button full dark style= {{backgroundColor: '#41BEB6'}}
-              onPress={this.addDaily.bind(this)}>
-              <Text>{strings.save}</Text>
-          </Button>
-
+          onPress={this.addDaily.bind(this)}>
+          <Text>{strings.save}</Text>
+        </Button>
+        <MessageBarAlert ref="alert" />
       </Container>
     );
   }
