@@ -33,11 +33,11 @@ var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs"
 
 export default class DiaryMap extends Component {
 
-  /////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
+/////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
       static navigationOptions = {
         header: null,
       }
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Constructor ///////////////////////////////////////////////////////////
    constructor() {
@@ -46,66 +46,33 @@ export default class DiaryMap extends Component {
          region: {
            latitude: null,
            longitude: null,
-           latitudeDelta: null,
-           longitudeDelta: null,
+           latitudeDelta: 0.0922,
+           longitudeDelta: 0.0421,
          },
-         lat: null,
-         lon: null,
+         type: 'food',
+         radius: 500,
+         places: [],
        }
     }
     /*latitude: 10.00253, longitude: -84.14021,*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////// CalcDelta ///////////////////////////////////////////////////////////
-  calcDelta(lat, lon, accuracy){
-    const oneDegreeOfLongitudInMeters = 111.32;
-    const circumference = (40075 / 360)
+/////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
+    async componentWillMount(){
+        this.doCurrent()
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const latDelta = accuracy * (1 / (Math.cos(lat) * circumference))
-    const lonDelta = (accuracy / oneDegreeOfLongitudInMeters)
+///////////////////////////////////// Set Region //////////////////////////////////////////////////////////////
+  setRegion(lat, lon){
     this.setState({
       region: {
         latitude: lat,
         longitude: lon,
-        latitudeDelta: latDelta,
-        longitudeDelta: lonDelta,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
       },
     })
-  }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
-    async componentWillMount(){
-        this.doCurrent()
-        //this.doWatch()
-        this.getPlaces()
-    }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////// Get Url ////////////////////////////////////////////////////////////////
-getUrl(lat, long, radius, type){
-  const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
-  const location = `location=${lat},${long}&radius=${radius}`;
-  const typeData = `&types=${type}`;
-  const key = `&key=${APIKey}`;
-  return `${url}${location}${typeData}${key}`;
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////// Get Places ////////////////////////////////////////////////////////////////
-  getPlaces(){
-    const url = this.getUrl(11.240355, -74.211023, 500, 'food')
-    //alert(url)
-    fetch(url)
-      .then((data) => data.json())
-      .then((res) => {
-        const places = [];
-        //alert(res.results[0])
-        res.results.map((element, i) => {
-          places.push(element.name)
-          //alert(places[i])
-        })
-      })
   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -113,12 +80,10 @@ getUrl(lat, long, radius, type){
     doCurrent(){
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          /*alert("Latitud: "+ position.coords.latitude +"     "+
-                "Longitud: "+position.coords.longitude)*/
           const lat = position.coords.latitude
           const lon = position.coords.longitude
-          const accuracy = position.coords.accuracy
-          this.calcDelta(lat, lon, accuracy)
+          this.setRegion(lat, lon)
+          this.getPlaces()
         }, (error) => alert(error.message),
         {enableHighAccuracy: true, timeout: 10000}
       )
@@ -131,31 +96,52 @@ getUrl(lat, long, radius, type){
         (position) => {
           const lat = position.coords.latitude
           const lon = position.coords.longitude
-          const accuracy = position.coords.accuracy
-          this.calcDelta(lat, lon, accuracy)
+          this.setRegion(lat, lon)
         }, (error) => alert(error.message),
         {enableHighAccuracy: true, timeout: 10000}
       )
     }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////// Get Initial State ////////////////////////////////////////////////////////////
-    /*getInitialState() {
-      return {
-        region: new MapView.AnimatedRegion({
-          latitude: 10.00253,
-          longitude: -84.14021,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }),
-      };
-    }*/
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////// Get Url /////////////////////////////////////////////////////////////////////
+getUrl(lat, long, radius, type){
+  const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
+  const location = `location=${lat},${long}&radius=${radius}`;
+  const typeData = `&types=${type}`;
+  const key = `&key=${APIKey}`;
+  return `${url}${location}${typeData}${key}`;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////// Get Places ////////////////////////////////////////////////////////////////////
+  getPlaces(){
+    const url = this.getUrl(this.state.region.latitude, this.state.region.longitude, this.state.radius, this.state.type)
+    fetch(url)
+      .then((data) => data.json())
+      .then((res) => {
+        this.setState({
+          places: res.results.slice(0)
+        })
+      })
+  }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////// Search ////////////////////////////////////////////////////////////////////
+   search(text){
+     results = [];
+     if(text.length > 2){
+       let a = this.state.places.map((p, i) => {
+         if(p.name.substring(0,text.length) == text){
+           results.push(p.name)
+           alert(results[i])
+         }
+       })
+      }
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
-
     const { navigate } = this.props.navigation;
-
     return (
           <Container>
                   <View style={styles.search}>
@@ -177,9 +163,9 @@ getUrl(lat, long, radius, type){
                     <MapView style={styles.map}
                         provider={MapView.PROVIDER_GOOGLE}
                         initialRegion={this.state.region}
-                        onRegionChange={this.doWatch}
+                        onRegionChange={this.doWatch()}
                         showsUserLocation = {true}
-                        showsMyLocationButton = {true}
+                        showsMyLocationButton = {false}
                         showsCompass = {true}>
                         <MapView.Marker coordinate={this.state.region}>
                             <Icon large color='black' name="face" />
@@ -235,3 +221,48 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
 });
+
+//////////////////////////////// Get Initial State ////////////////////////////////////////////////////////////
+    /*getInitialState() {
+      return {
+        region: new MapView.AnimatedRegion({
+          latitude: 10.00253,
+          longitude: -84.14021,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }),
+      };
+    }*/
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////// FOR MOBILE ////////////////////////////////
+/*async componentWillMount(){
+      const oneDegreeOfLongitudInMeters = 111.32;
+      const circumference = (40075 / 360);
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+                this.setState({
+                          region: {
+                              latitude: position.coords.latitude,
+                              longitude: position.coords.longitude,
+                              latitudeDelta: 0.0462,
+                              longitudeDelta: 0.0462,
+                          },
+                      });
+        }, (error) => alert(error.message),
+        {enableHighAccuracy: false, timeout: 25000}
+      )
+      navigator.geolocation.watchPosition(
+        (position) => {
+          this.setState({
+                    region: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        latitudeDelta: 0.0462,
+                        longitudeDelta: 0.0462,
+                    },
+                });
+        }, (error) => alert(error.message),
+        {enableHighAccuracy: false, timeout: 25000})
+    }*/
