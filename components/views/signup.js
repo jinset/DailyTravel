@@ -26,9 +26,9 @@ import { Icon } from 'react-native-elements';
 export default class Signup extends Component {
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
-    headerTitle: strings.signup,
-    headerStyle: {height: 50 },
-    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
+    headerTitle: strings.createNewAccount,
+    headerStyle: {backgroundColor: '#41BEB6',height: 50 },
+    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
   };
 
   constructor(props) {
