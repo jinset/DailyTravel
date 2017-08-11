@@ -3,8 +3,8 @@ package com.dailytravel;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.airbnb.android.react.maps.MapsPackage;
 import me.nereo.multi_image_selector.MultiImagePackage;
+import com.airbnb.android.react.maps.MapsPackage;
 //import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.imagepicker.ImagePickerPackage;
@@ -31,7 +31,6 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new MapsPackage(),
             new MultiImagePackage(),
-//            new PickerPackage(),
             new RNFetchBlobPackage(),
             new ImagePickerPackage(),
           new ReactNativeLocalizationPackage()
