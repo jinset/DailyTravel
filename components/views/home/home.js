@@ -41,7 +41,6 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
    static navigationOptions = {
      title: strings.home,
-     header: null,
      headerStyle: {height: 50 },
      headerTitleStyle : {color:'#9A9DA4',fontSize:17},
      }
