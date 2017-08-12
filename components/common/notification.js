@@ -7,12 +7,12 @@ type: tipo de Notificacion
 date: fecha en que se mando
  */
 
-export const createNotification = (userIdSent, userIdGet,userGet,type,date) => {
-  getDatabase().ref('notifications/' + userSendId).push({
+export const createNotification = (userIdSent, userIdGet , type, date) => {
+  console.log(userIdSent, userIdGet , type, date);
+  getDatabase().ref('notifications/' + userIdSent).push({
     status: false,
     type: type,
     userIdGet: userIdGet,
-    userGet: userGet,
     date: date
   });
 }

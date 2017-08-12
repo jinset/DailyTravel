@@ -26,6 +26,9 @@ import * as firebase from 'firebase';
 import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
+import Moment from 'moment';
+import { createNotification } from '../../common/notification';
+
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
@@ -54,6 +57,7 @@ export default class EditProfile extends Component {
            followers: followers,
            follows: follows,
            isMe: false,
+           date: new Date().toLocaleDateString(),
          }
       }
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,6 +170,8 @@ export default class EditProfile extends Component {
               lastName: snapshot.child("lastName").val(),
               url: snapshot.child("url").val(),
             });
+            createNotification(that.uid, that.uidCurrentUser, "follow", Moment(new Date()).format("YYYY-MM-DD"));
+
       })
       this.setState({
         foll: !this.state.foll,

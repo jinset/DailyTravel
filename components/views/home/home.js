@@ -49,7 +49,6 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     _onRefresh() {
        this.setState({refreshing: true});
        this.loadRefreshing().then(() => {
-         console.log("Aqui si funciona");
          this.setState({refreshing: false});
        });
      }
@@ -241,7 +240,6 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
   async componentDidMount() {
     NetInfo.isConnected.fetch().done(isConnected => {
         if (isConnected === true) {
-
           this.loadHome();
         }else{
           this.loadHome();
@@ -277,8 +275,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
   _renderItem(item) {
     const { navigate } = this.props.navigation;
     return (
-      <View style={{flex: 0, backgroundColor:'white', margin:10}} key={item._key} >
-        <View>
+      <View style={{backgroundColor:'white', marginTop:5, marginButton:5}} key={item._key} >
+        <View >
           <ListItem>
             <Left>
               <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.idOwner})}>
@@ -294,14 +292,14 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
               <Icon active name='more-vert' />
             </Right>
           </ListItem>
-          <View>
+          <View style={{ backgroundColor:'white', margin:10}}>
             <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item._key})}>
               <Thumbnail square source={{uri: item.url}} style={{height: Dimensions.get('window').height/2, width: Dimensions.get('window').width}}/>
             </TouchableHighlight>
             <Text style={{marginTop:10, marginButton:10}}>{item.name}</Text>
           </View>
-          <View>
-            <Text style={{marginTop:10, marginButton:10}}>{item.description}</Text>
+          <View style={{backgroundColor:'white', margin:10}}>
+            <Text>{item.description}</Text>
           </View>
         </View>
       </View>
@@ -313,7 +311,6 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     const { navigate } = this.props.navigation;
     return (
       <Container>
-
       <HideableView visible={this.state.showSpinnerTop} removeWhenHidden={true} >
          <Spinner color='#41BEB6' />
       </HideableView>

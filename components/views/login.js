@@ -10,6 +10,7 @@ import { Container, Content,Form, Item, Input, Label, Button, Icon, Spinner, Bod
 import React, {Component} from 'react';
 import {getAuth} from '../common/database';
 import strings from '../common/local_strings.js';
+import HideableView from 'react-native-hideable-view';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
@@ -33,16 +34,15 @@ export default class Login extends Component {
 
   login() {
     const { navigate } = this.props.navigation;
-    //this.setState({ showSpinner: true });
+    // this.setState({ showSpinner: true });
     try {
       MessageBarManager.registerMessageBar(this.refs.alert);
       getAuth().signInWithEmailAndPassword(this.state.email,
         this.state.password).then(function(firebaseUser) {
           AsyncStorage.setItem("user", firebaseUser.uid);
           navigate('dtTabs');
-
       }).catch(function(error) {
-        //this.setState({ showSpinner: false });
+        // this.setState({ showSpinner: false });
         MessageBarManager.showAlert({
            message: strings.wrongPassEmail,
            alertType: 'info',
@@ -52,6 +52,7 @@ export default class Login extends Component {
         });
       });
     } catch (e) {
+      // this.setState({ showSpinner: false });
       console.log(e);
     }
 
@@ -62,8 +63,9 @@ export default class Login extends Component {
     return (
       <Container style={{flex: 1,marginTop:90}}>
              <Content padder>
-             { this.state.showSpinner ? <Spinner /> : null }
-
+             <HideableView visible={this.state.showSpinner} removeWhenHidden={true} style={{backgroundColor:'transparent'}}>
+                <Spinner color='#41BEB6' />
+             </HideableView>
              <Form>
               <Item floatingLabel>
                   <Label>{strings.email}</Label>

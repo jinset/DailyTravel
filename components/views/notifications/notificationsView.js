@@ -5,11 +5,13 @@ import {
   TouchableHighlight,
   Dimensions,
   AsyncStorage,
+  RefreshControl,
+  NetInfo,
+  StyleSheet
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import {  Container, Content, Card, CardItem, Thumbnail,  Button, Left,Right, Body, Spinner,View,Fab, List, Text, SwipeRow} from 'native-base';
-import { ListItem } from 'react-native-elements';
+import {  Container, Content, Card, CardItem, Thumbnail,  Button, Left,Right, Body, Spinner,View,Fab, List, Text, SwipeRow, ListItem} from 'native-base';
 import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
@@ -27,9 +29,12 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
        dataSource: new ListView.DataSource({
          rowHasChanged: (row1, row2) => row1 !== row2,
        }),
-       showSpinner:true,
+       showSpinner:false,
+       showSpinnerTop:false,
        idUser: "",
-       currentPageIndex : 1
+       currentPageIndex : 1,
+       refreshing: false,
+       isConnected: true,
      };
    }
 
@@ -38,6 +43,15 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
         headerStyle: {height: 50 },
         headerTitleStyle : {color:'#9A9DA4',fontSize:17},
     }
+    _onRefresh() {
+       this.setState({refreshing: true});
+       this.loadRefreshing().then(() => {
+         this.setState({refreshing: false});
+       });
+     }
+     accept(){
+       alert("un popup pa aceptar");
+     }
     /*
       Obtiene los diarios que su privacidad esten en falsos
      */
@@ -49,12 +63,11 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
           var notifications = [];
           snap.forEach((child) => {
             notifications.push({
-            _key: child.key
-            // status: child.val().status,
-            // type: child.val().type,
-            // userIdGet: child.val().userIdGet,
-            // userGet: child.val().userGet,
-            // date: child.val().date
+            _key: child.key,
+            status: child.val().status,
+            type: child.val().type,
+            userIdGet: child.val().userIdGet,
+            date: child.val().date
             })
           });
           resolve(notifications.reverse())
@@ -62,54 +75,130 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
       })
     }
 
-  async componentWillMount() {
-    try {
+    async getUser(dataUser) {
+      try {
+        return new Promise((resolve, reject) => {
+          console.log(dataUser);
+          var users = [];
+          var ref = getDatabase().ref("users/" + dataUser.userIdGet);
+          ref.once("value", (snapshot) => {
+            var val = snapshot.val();
+            users = {
+              _key: dataUser.key,
+              status: dataUser.status,
+              type: dataUser.type,
+              userIdGet: dataUser.userIdGet,
+              date: dataUser.date,
+              userNick: val.nickname,
+              photoUser: val.url
+            }
+            resolve(users);
+          })
+        });
+      } catch (e) {
+        console.log(e);
+      } finally {
+
+      }
+
+    };
+    async loadNotifications() {
+      try {
+        let notificationsArray = [];
+        this.setState({
+           showSpinnerTop: true
+         });
+        var idUser = "";
+        await AsyncStorage.getItem("user").then((value) => {
+          this.state.idUser = value;
+          idUser = value;
+        })
+        let array = await this.getNotifications(idUser,this.state.currentPageIndex );
+        for (var i in array) {
+          await this.getUser(array[i]).then(data => {
+            notificationsArray.push(data)
+          });
+        }
+        /*Carga el home en el dataSource*/
       this.setState({
-         showSpinner: true
-       });
-      var idUser = "";
-      await AsyncStorage.getItem("user").then((value) => {
-        this.state.idUser = value;
-        idUser = value;
-      })
-      console.log(
-        "vamos al Array"
-      );
-      let array = await this.getNotifications(idUser,this.state.currentPageIndex );
-      console.log(
-        "Termina el Array"
-      );
-      /*Carga el home en el dataSource*/
-    this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(array)
-      });
-      /*Desaparece el loading*/
-     this.setState({
-        showSpinner: false
-      });
-    } catch (error) {
-      console.log(error.message);
+          dataSource: this.state.dataSource.cloneWithRows(notificationsArray)
+        });
+        /*Desaparece el loading*/
+       this.setState({
+          showSpinnerTop: false
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+
     }
+    async loadRefreshing() {
+      try {
+        let notificationsArray = [];
+         var current = this.state.currentPageIndex;
+         current = current +1;
+         this.setState({
+           currentPageIndex: current
+         });
+        let array = await this.getNotifications(this.state.idUser,current );
+        for (var i in array) {
+          await this.getUser(array[i]).then(data => {
+            notificationsArray.push(data)
+          });
+        }
+      this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(notificationsArray)
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+
+    }
+  async componentWillMount() {
+    NetInfo.isConnected.fetch().done(isConnected => {
+        if (isConnected === true) {
+          this.loadNotifications();
+        }else{
+          this.loadNotifications();
+            MessageBarManager.registerMessageBar(this.refs.alert);
+            MessageBarManager.showAlert({
+              title: "error",
+              message: strings.noInternet,
+              alertType: 'info',
+              position: 'bottom',
+              duration: 10000,
+              stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+            });
+        }
+    });
 
   }
 
   _renderItem(item) {
     const { navigate } = this.props.navigation;
     return (
-              <List key={item._key}>
-                    <ListItem avatar>
-                      <Left>
-                        <Thumbnail source={{uri: item.userGet.url}} />
-                      </Left>
-                      <Body>
-                        <Text>{item.userGet.nickname}</Text>
-                        <Text note>Doing what you like will always keep you happy . .</Text>
-                      </Body>
-                      <Right>
-                        <Text note>{item.date}</Text>
-                      </Right>
-                    </ListItem>
-              </List>
+      <View key={item._key}>
+      <ListItem>
+        <Left>
+          <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.userIdGet})}>
+            <Thumbnail source={{uri: item.photoUser}} />
+          </TouchableHighlight>
+        <Body>
+        <View>
+        {(() => {
+          switch (item.type) {
+            case "follow": return <Text>La persona {item.userNick} te ha seguido</Text>;
+            case "invitation":  return <TouchableHighlight onPress={() => this.accept()}>
+              <Text>La persona {item.userNick} te ha enviado una invitacion</Text>
+            </TouchableHighlight>;
+          }
+        })()}
+        </View>
+          <Text note>{item.date}</Text>
+        </Body>
+        </Left>
+      </ListItem>
+      </View>
     );
   }
 
@@ -118,16 +207,26 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     const { navigate } = this.props.navigation;
     return (
       <Container>
-         <Content>
+        <HideableView visible={this.state.showSpinnerTop} removeWhenHidden={true} >
+          <Spinner />
+        </HideableView>
+         <Content contentContainerStyle={{flex: 1}}>
            <ListView
+           refreshControl={
+             <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+                tintColor="#41BEB6"
+                colors={['#41BEB6',"#9A9DA4"]}
+                progressBackgroundColor="#FCFAFA"
+              />
+            }
              dataSource={this.state.dataSource}
              renderRow={this._renderItem.bind(this)}
              enableEmptySections={true}
              >
            </ListView>
-           <HideableView visible={this.state.showSpinner} removeWhenHidden={true} >
-              <Spinner />
-           </HideableView>
+
          </Content>
 
          <View>
@@ -141,6 +240,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
              <Icon color='white' name="library-books" />
            </Fab>
          </View>
+         <MessageBarAlert ref="alert"/>
+
        </Container>
     );
   }

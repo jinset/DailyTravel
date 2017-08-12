@@ -29,6 +29,9 @@ import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
 import ModalDropdown from 'react-native-modal-dropdown';
+import { createNotification } from '../../common/notification';
+import Moment from 'moment';
+
 
 let diarys = [{id: null, name: null, description: null, url: null}]
 let follows = [{id: null, nickname: null, name: null, lastName: null, url: null}]
@@ -52,6 +55,7 @@ export default class Profile extends Component {
          followers: followers,
          follows: follows,
          showPig: false,
+         date: new Date().toLocaleDateString(),
        }
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
