@@ -29,7 +29,14 @@ import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
 import MapView from 'react-native-maps';
 
-var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs"
+var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs";
+
+var colors = [{type: 'restaurant', icon: 'restaurant', bg: '#41BEB6', color: 'white', selected: true},
+              {type: 'establishment', icon: 'location-city', bg: 'white', color: '#808080', selected: false},
+              {type: 'cafe', icon: 'free-breakfast', bg: 'white', color: '#808080', selected: false},
+              {type: 'food', icon: 'local-pizza', bg: 'white', color: '#808080', selected: false},
+              {type: 'bar', icon: 'local-bar', bg: 'white', color: '#808080', selected: false}
+            ]
 
 export default class DiaryMap extends Component {
 
@@ -52,6 +59,9 @@ export default class DiaryMap extends Component {
          type: 'food',
          radius: 500,
          places: [],
+         active: false,
+         arrow: 'keyboard-arrow-down',
+         colors: colors,
        }
     }
     /*latitude: 10.00253, longitude: -84.14021,*/
@@ -85,7 +95,9 @@ export default class DiaryMap extends Component {
           this.setRegion(lat, lon)
           this.getPlaces()
         }, (error) => alert(error.message),
-        {enableHighAccuracy: false, timeout: 10000}
+        {enableHighAccuracy: true, timeout: 25000}
+        /* Mobile
+        {enableHighAccuracy: false, timeout: 25000}*/
       )
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +110,9 @@ export default class DiaryMap extends Component {
           const lon = position.coords.longitude
           this.setRegion(lat, lon)
         }, (error) => alert(error.message),
-        {enableHighAccuracy: false, timeout: 10000}
+        {enableHighAccuracy: true, timeout: 25000}
+        /* Mobile
+        {enableHighAccuracy: false, timeout: 25000}*/
       )
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,29 +144,53 @@ getUrl(lat, long, radius, type){
    search(text){
      results = [];
      if(text.length > 2){
-       let a = this.state.places.map((p, i) => {
-         if(p.name.substring(0,text.length) == text){
-           results.push(p.name)
-           alert(results[i])
+       this.state.places.map((p, i) => {
+         if(p.name.toLowerCase().match(text)){
+              results.push(p.name)
          }
        })
       }
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////// Select Type ////////////////////////////////////////////////////////////////////
+  selectType(i){
+    for(j=0; j<colors.length; j++){
+      if(i == j){
+        colors[j].bg = '#41BEB6';
+        colors[j].color = 'white';
+        colors[j].selected = true;
+        this.setState({ colors: colors})
+      }else{
+        colors[j].bg = 'white';
+        colors[j].color = '#808080';
+        colors[j].selected = false;
+      }
+    }
+    var type = colors[i].type;
+    this.setState({type: type})
+  }
+
   render() {
     const { navigate } = this.props.navigation;
+
+    listFabs = this.state.colors.map((c, i) => {
+                  return (
+                    <Button onPress={() => { this.selectType(i)}} style={{ backgroundColor: c.bg }}>
+                        <Icon color={c.color} name={c.icon} />
+                    </Button>
+                  )
+              })
     return (
           <Container>
                   <View style={styles.search}>
-                      <Header style={{backgroundColor: 'white'}} searchBar rounded>
+                      <Header style={{backgroundColor: 'white', position: 'absolute'}} searchBar rounded>
                           <Item>
                             <Icon name="search" />
-                            <Input placeholder={strings.search}
+                            <Input placeholder={strings.search + ' by ' + this.state.type}
                                    maxLength = {20}
                                    onChangeText={(text) => this.search(text)}
                             />
-                          <Icon name="place" />
                           </Item>
                           <Button transparent>
                             <Text>{strings.search}</Text>
@@ -168,14 +206,32 @@ getUrl(lat, long, radius, type){
                         showsMyLocationButton = {false}
                         showsCompass = {true}>
                         <MapView.Marker coordinate={this.state.region}>
-                            <Icon large color='black' name="face" />
+                            <Icon large color='black' name="face"/>
                         </MapView.Marker>
                     </MapView>
+                    <Fab
+                      active={this.state.active}
+                      direction="down"
+                      containerStyle={{ }}
+                      style={{backgroundColor:'#41BEB6', zIndex: 2, top:6}}
+                      position="topRight"
+                      onPress={() => {
+                                        this.setState({active: !this.state.active})
+                                        if(this.state.arrow == 'keyboard-arrow-up'){
+                                          this.setState({arrow: 'keyboard-arrow-down'})
+                                        }else{
+                                          this.setState({arrow: 'keyboard-arrow-up'})
+                                        }
+                                      }
+                                }>
+                      <Icon color='white' name={this.state.arrow}/>
+                      {listFabs}
+                    </Fab>
                  <Fab
                    active='false'
                    direction="up"
                    containerStyle={{ }}
-                   style={{  backgroundColor:'#41BEB6'}}
+                   style={{backgroundColor:'#41BEB6'}}
                    position="bottomLeft"
                    onPress={()=> navigate('newDiary')}>
                    <Icon color='white' name="library-books" />
@@ -187,7 +243,7 @@ getUrl(lat, long, radius, type){
                    style={{  backgroundColor:'#41BEB6'}}
                    position="bottomRight"
                    onPress={()=> alert(this.state.region.latitude) }>
-                   <Icon color='white' name="face" />
+                   <Icon color='white' name="my-location" />
                  </Fab>
               </View>
           </Container>
@@ -234,35 +290,3 @@ const styles = StyleSheet.create({
       };
     }*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////// FOR MOBILE ////////////////////////////////
-/*async componentWillMount(){
-      const oneDegreeOfLongitudInMeters = 111.32;
-      const circumference = (40075 / 360);
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-                this.setState({
-                          region: {
-                              latitude: position.coords.latitude,
-                              longitude: position.coords.longitude,
-                              latitudeDelta: 0.0462,
-                              longitudeDelta: 0.0462,
-                          },
-                      });
-        }, (error) => alert(error.message),
-        {enableHighAccuracy: false, timeout: 25000}
-      )
-      navigator.geolocation.watchPosition(
-        (position) => {
-          this.setState({
-                    region: {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        latitudeDelta: 0.0462,
-                        longitudeDelta: 0.0462,
-                    },
-                });
-        }, (error) => alert(error.message),
-        {enableHighAccuracy: false, timeout: 25000})
-    }*/
