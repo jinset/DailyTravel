@@ -87,6 +87,7 @@ let strings = new LocalizedStrings({
    noInternet: "Internet connection not found",
    iAppearWhenHome: "I appear when you don't follow no one",
    touchMeToCreateHome: "Touch me to follow new friends",
+   changePhoto: "Change photo ",
  },
  es:{
    home:"Inicio",
@@ -174,6 +175,7 @@ let strings = new LocalizedStrings({
    touchMeToCreateHome: "Tocame para buscar y seguir amigos",
    howDeleteImage: "Mantenga presionado una imagen para eliminar",
    imageDeleted: "Imagen borrada",
+   changePhoto: "Cambiar foto ",
  },
  zh:{
    home:"首頁",

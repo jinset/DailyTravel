@@ -8,6 +8,9 @@ import { getDatabase } from '../../common/database';
 import DailyList from '../daily/listDaily.js';
 import HelperDiary from './helperDiary';
 import * as firebase from 'firebase';
+import DialogBox from 'react-native-dialogbox';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 var idOwner, name, description, culture, url, key
 
@@ -62,7 +65,23 @@ static navigationOptions = ({ navigation }) => ({
                    })*/}
                   this.props.navigation.goBack()
                }
-     }async componentDidMount(){
+     }
+     async componentDidMount(){
+
+       MessageBarManager.registerMessageBar(this.refs.alert);
+       MessageBarManager.registerMessageBar(this.refs.imageDeleted);
+       MessageBarManager.showAlert({
+          message: strings.howDeleteImage,
+          alertType: 'info',
+          position: 'bottom',
+          durationToShow: 600,
+          durationToHide: 600,
+          viewLeftInset: 50,
+          viewRightInset: 50,
+          animationType: 'SlideFromTop',
+          duration: 3500,
+          stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+       });
        const { params } = this.props.navigation.state;
        var that = this
        //usuarios en diario
@@ -110,6 +129,25 @@ static navigationOptions = ({ navigation }) => ({
   })//userList.on
       //alert(diaryUsers.length)
     }
+
+      deleteOption( diaryId){
+        this.dialogbox.confirm({
+          title: strings.confirm,
+          content: strings.confirmPopUp,
+          ok: {
+              text: strings.yes,
+              callback: () => {
+                  this.deleteDiary(diaryId);
+                },
+              },
+              cancel: {
+                text: strings.no,
+                callback: () => {
+
+                },
+              },
+        });
+      }
      deleteDiary(diaryId){
        HelperDiary.deleteDiary(diaryId)
        const { navigate } = this.props.navigation;
@@ -137,17 +175,22 @@ static navigationOptions = ({ navigation }) => ({
                {listavatars}
             </List>
           <Card  >
-            <CardItem>
-              <Text style={{fontWeight: 'bold',fontSize: 18, width:260}}>{this.state.name}</Text>
+            <CardItem style={{ flexDirection: 'row'}}>
+            <View style={{ flex:  5, alignSelf:'flex-start'}}>
+              <Text style={{ fontWeight: 'bold',fontSize: 18}}>{this.state.name}</Text>
+              </View>
 
-              <Button transparent small
-                      onPress={() => this.deleteDiary(params.diaryKey)}>
+
+              <View style={{ flex:  1,flexDirection: 'row', alignSelf:'flex-end'}} >
+              <Button transparent small style={{marginTop:-2, paddingLeft:2}}
+                      onPress={() => this.deleteOption(params.diaryKey)}>
                   <Icon active name='delete' />
                 </Button>
-              <Button transparent small
+              <Button transparent small style={{marginTop:-2, paddingLeft:2}}
                       onPress={()=> navigate('editDiary', {diaryKey:params.diaryKey})}>
                   <Icon active name='mode-edit' />
                 </Button>
+                </View>
             </CardItem>
             <CardItem>
               <Body>
@@ -161,12 +204,14 @@ static navigationOptions = ({ navigation }) => ({
             </CardItem>
           </Card>
         </Content>
-        <View>
+        <View  style={{zIndex: -1}}>
           <Button light full
             onPress={()=> navigate('listDaily', {diaryKey:params.diaryKey})}>
               <Text>{strings.daily}</Text>
           </Button>
         </View>
+
+          <DialogBox ref={dialogbox => { this.dialogbox = dialogbox }}/>
       </Container>
     );
   }

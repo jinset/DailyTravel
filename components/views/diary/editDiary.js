@@ -359,6 +359,7 @@ let ref='';
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
               source={{uri: this.state.url}} />
             </TouchableHighlight>
+              <Text style={{alignSelf:'center'}}>{strings.changePhoto}</Text>
 
             <Form style={{padding:10}}>
               <Left>

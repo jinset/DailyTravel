@@ -15,6 +15,8 @@ import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import PopupDialog, { DialogTitle } from 'react-native-popup-dialog';
 import HelperDiary from './helperDiary';
+import Modal from 'react-native-modalbox';
+
 const Blob = RNFetchBlob.polyfill.Blob
 const fs = RNFetchBlob.fs
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
@@ -41,6 +43,10 @@ var usuario ='';
       btnText: 'Seguir',
       txt: '',
       uidCurrentUser:'',
+      isOpen: false,
+     isDisabled: false,
+     swipeToClose: true,
+sliderValue: 0.3
     }
   }
 
@@ -186,22 +192,26 @@ openImagePicker(){
     addGuest(i){
       var diaryUsers =[];
       diaryUsers=this.state.diaryUsers;
-      diaryUsers.push({
-        id:this.state.users[i].id,
-        nickname: this.state.users[i].nickname,
-        name: this.state.users[i].name,
-        lastName: this.state.users[i].lastName,
-        url: this.state.users[i].url,
-        invited: !this.state.users[i].invited,
-      });//users.push
+      if(diaryUsers.length<=3){
+        diaryUsers.push({
+          id:this.state.users[i].id,
+          nickname: this.state.users[i].nickname,
+          name: this.state.users[i].name,
+          lastName: this.state.users[i].lastName,
+          url: this.state.users[i].url,
+          invited: !this.state.users[i].invited,
+        });//users.push
 
-      var users = [];
-      users=this.state.users;
-      users.splice(i, 1);
-      this.setState({
-          users: users,
-          diaryUsers:diaryUsers,
-      })//users.push
+        var users = [];
+        users=this.state.users;
+        users.splice(i, 1);
+        this.setState({
+            users: users,
+            diaryUsers:diaryUsers,
+        })//users.push
+      }else{
+        alert("Solo se puede invitar a 3 personas")
+      }
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////// removeGuest /////////////////////////////////////////////////////////////
@@ -229,6 +239,18 @@ openImagePicker(){
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  onClose() {
+    console.log('Modal just closed');
+  }
+
+  onOpen() {
+    console.log('Modal just openned');
+  }
+
+  onClosingState(state) {
+    console.log('the open/close of the swipeToClose just changed');
+  }
+
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
     title: strings.createDiary,
@@ -236,10 +258,10 @@ openImagePicker(){
     headerTitleStyle : {color:'#808080',fontSize:17},
      }
   render() {  const { navigate } = this.props.navigation;
-
+   var BContent = <Button onPress={() => this.setState({isOpen: false})} >X</Button>;
     let listTable = this.state.users.map((u,i) => {
       return (
-        <TouchableHighlight  onPress={() => this.addGuest(i)}>
+        <TouchableHighlight selected={u.invited} onPress={() => this.addGuest(i)}>
           <ListItem avatar>
             <Left>
               <Thumbnail small source={{uri: u.url}}   />
@@ -283,6 +305,32 @@ openImagePicker(){
           });
     return (
         <Container>
+        <Modal  style={{zIndex: 4}} ref={"modal1"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose}
+          onOpened={this.onOpen} onClosingState={this.onClosingState} backdropContent={true} coverScreen={true}>
+            <View>
+              <List>
+                <ListItem itemDivider>
+                  <Left>
+                    <Text>{strings.guest}</Text>
+                   </Left>
+                  <Body>
+                   </Body>
+                   <Button transparent onPress={() => { this.refs.modal1.close()}}>
+                     <Icon color='#808080' style={{fontWeight: 'bold'}} name='close' />
+                   </Button>
+               </ListItem>
+               {listTable2}
+             </List>
+          </View>
+          <ScrollView>
+            <List>
+              <ListItem itemDivider>
+                <Text>{strings.friends}</Text>
+              </ListItem>
+              {listTable}
+            </List>
+          </ScrollView>
+        </Modal>
           <PopupDialog
               ref={(popupDialog) => { this.popupDialog = popupDialog; }}
             >
@@ -309,23 +357,19 @@ openImagePicker(){
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
               source={{uri: this.state.url}} />
             </TouchableHighlight>
+              <Text style={{alignSelf:'center'}}>{strings.changePhoto}</Text>
 
+              <ScrollView horizontal={true} style={{padding:5}} >
+                <Button rounded bordered dark onPress={() => {
+                  this.refs.modal1.open()
+                }}>
+                  <Icon name='group-add' />
+                </Button>
+                  <List  style={{flex:  1, flexDirection: 'row', marginTop:5}}>
+                   {listavatars}
+                </List>
+              </ScrollView>
             <Form style={{padding:10}}>
-              <Left>
-                <Label>{strings.privacy }</Label>
-                <Switch value={ this.state.privacy }
-                  onValueChange={this.privacyChange.bind( this ) }/>
-              </Left>
-                <Right style={{flex:  1, flexDirection: 'row', padding: 10}}>
-                  <Button rounded bordered dark onPress={() => {
-                    this.popupDialog.show();
-                  }}>
-                    <Icon name='group-add' />
-                  </Button>
-                    <List  style={{flex:  1, flexDirection: 'row', marginTop:5}}>
-                     {listavatars}
-                  </List>
-                </Right>
 
               <Label>{strings.name }</Label>
               <AutogrowInput style={{ fontSize: 18}}  maxLength={30}
