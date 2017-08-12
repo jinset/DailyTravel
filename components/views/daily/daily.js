@@ -7,15 +7,18 @@ import {
   ScrollView,
   Image,
   TouchableHighlight,
+  TouchableOpacity,
+  Easing,
 
 } from 'react-native';
-import { Container, Content, Button, Text, Input, Item, Label, Card, CardItem, View, Body, Form, DeckSwiper } from 'native-base';
+import { Container, Content, Button, Text, Input, Item, Label,Left,Right, Card, CardItem, View, Body, Form, DeckSwiper } from 'native-base';
 import { getDatabase } from '../../common/database';
 import DatePicker from 'react-native-datepicker';
 import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
 import DialogBox from 'react-native-dialogbox';
+import ZoomImage from 'react-native-zoom-image';
 
 export default class Daily extends Component{
 
@@ -40,24 +43,6 @@ export default class Daily extends Component{
       headerTitleStyle : {color:'#9A9DA4',fontSize:17},
     });
 
-    async getPhotos(idDiary, idDaily) {
-      return new Promise((resolve, reject) => {
-        this.imageDataRef = getDatabase().ref("/diary/"+idDiary+"/daily/"+idDaily+"/photos/");
-        this.imageDataRef.on('value', (snap) => {
-          var photos=[];
-          snap.forEach((child) => {
-            console.log("VVVVEEEEAAA" + child.val());
-            photos.push({
-              _key: child.key,
-              url: child.val().url,
-            });
-          });
-          console.log(photos);
-          resolve(photos)
-        })
-      })
-    }
-
   async getDaily(){
     try {
       const { params } = this.props.navigation.state;
@@ -76,16 +61,20 @@ export default class Daily extends Component{
           });
       });
 
-      let photos = await this.getPhotos(idDiary, idDaily);
-
-      console.log("termina");
-      console.log(photos);
+      this.imageDataRef = getDatabase().ref("/diary/"+idDiary+"/daily/"+idDaily+"/photos/");
+      this.imageDataRef.on('value', (snap) => {
+        var photos=[];
+        snap.forEach((child) => {
+          console.log("VVVVEEEEAAA" + child.val());
+          photos.push({
+            _key: child.key,
+            url: child.val().url,
+          });
+        });
         this.setState({
-          dataSource: this.state.dataSource.cloneWithPages(photos)
-        }, ()=>
-        console.log(this.state.dataSource)
-      );
-
+          dataSource: this.state.dataSource.cloneWithRows(photos)
+        });
+      })
     } catch (e) {
       console.log(e);
     } finally {
@@ -103,7 +92,7 @@ export default class Daily extends Component{
     goBack();
   }
 
-  deleteOption(dailyId, diaryId){
+  deleteDailyOption(dailyId, diaryId){
     this.dialogbox.confirm({
       title: strings.confirm,
       content: strings.confirmPopUp,
@@ -122,43 +111,68 @@ export default class Daily extends Component{
     });
   }
 
+  _renderItem(image){
+    const { navigate } = this.props.navigation;
+    return(
+      <Card>
+          <ZoomImage
+            source={{uri:image.url}}
+            imgStyle={{width: Dimensions.get('window').width/6, height: Dimensions.get('window').height/10}}
+            showDuration={200}
+            enableScaling={false}
+            easingFunc={Easing.ease}
+          />
+      </Card>
+    );
+  }
+
   render() {
     const { navigate } = this.props.navigation;
     return(
       <Container >
 
       <DialogBox ref={dialogbox => { this.dialogbox = dialogbox }}/>
-      <Content  style={{zIndex: -1}}>
+      <Content style={{zIndex: -1, backgroundColor:'white'}}>
           <Card>
-            <CardItem style={{alignItems: 'center', paddingLeft: 10, paddingRight: 10}}>
-              <Button transparent small
-                onPress={() => navigate('gallery', {idDaily:this.state.idDaily, idDiary:this.state.idDiary})}>
-                <Icon active name='collections' />
-              </Button>
-
-              <Button transparent small
-                onPress={()=> navigate('editDaily', {idDaily:this.state.idDaily, idDiary:this.state.idDiary})}>
-                <Icon active name='mode-edit' />
-              </Button>
-
-              <Button transparent small
-                onPress={() => this.deleteOption(this.state.idDaily, this.state.idDiary)}>
-                <Icon active name='delete' />
-              </Button>
-
-            </CardItem>
             <CardItem>
+              <Left>
+                <Label>{this.state.date}</Label>
+              </Left>
+
               <Body>
-                <Label>{strings.name}</Label>
-                <Text style={{fontWeight: 'bold',fontSize: 18, width:260}}>{this.state.name}</Text>
               </Body>
+
+              <Right style={{flexDirection: 'row'}}>
+                <Button transparent small style={{paddingLeft: 10, paddingRight: 10}}
+                  onPress={() => this.deleteDailyOption(this.state.idDaily, this.state.idDiary)}>
+                  <Icon active name='delete' />
+                </Button>
+
+                <Button transparent small style={{paddingLeft: 10, paddingRight: 10}}
+                  onPress={()=> navigate('editDaily', {idDaily:this.state.idDaily, idDiary:this.state.idDiary})}>
+                  <Icon active name='mode-edit' />
+                </Button>
+              </Right>
             </CardItem>
 
             <CardItem>
               <Body>
-                <Label>{strings.date}</Label>
-                <Text>{this.state.date}</Text>
+                <Text note style={{fontWeight: 'bold',fontSize: 18, width:260}}>{this.state.name}</Text>
               </Body>
+            </CardItem>
+
+            <CardItem>
+              <ScrollView horizontal={true}>
+                <Button transparent small style={{paddingLeft: 10, paddingRight: 20, marginTop:10}}
+                  onPress={() => navigate('gallery', {idDaily:this.state.idDaily, idDiary:this.state.idDiary})}>
+                  <Icon active name='visibility' />
+                </Button>
+                <ListView
+                  horizontal={true}
+                  dataSource={this.state.dataSource}
+                  renderRow={this._renderItem.bind(this)}
+                />
+              </ScrollView>
             </CardItem>
 
             <CardItem>
@@ -174,6 +188,7 @@ export default class Daily extends Component{
                 <Text>{this.state.tips}</Text>
               </Body>
             </CardItem>
+
           </Card>
           </Content>
 
