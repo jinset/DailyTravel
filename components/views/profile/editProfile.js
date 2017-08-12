@@ -45,7 +45,6 @@ export default class EditProfile extends Component {
          inputNickname: '',
          inputName: '',
          inputLastName: '',
-         inputNickname: '',
          inputEmail: '',
          inputBirthDay: '',
        }
@@ -71,23 +70,27 @@ export default class EditProfile extends Component {
      const {goBack} = this.props.navigation;
      const { params } = this.props.navigation.state;
      const { navigate } = this.props.navigation;
-     //let nick = this.state.inputNickname;
+     let nick = this.state.inputNickname;
+     let name = this.state.inputName;
+     let lastName = this.state.inputLastName;
      let email = this.state.inputEmail;
      var that = this.state;
+     //shsuenc@ucenfotec.ac.cr
      try{
          MessageBarManager.registerMessageBar(this.refs.alert);
          // Validate if there is empty values /////////////////////////////////////////////////////////
-         if (that.inputNickname == ''|| that.inputName == ''||
-             that.inputLastName == '' || that.inputEmail == ''){
-                 MessageBarManager.showAlert({
-                    title: strings.espaces,
-                    message: strings.blankinputs,
-                    alertType: 'info',
-                    position: 'bottom',
-                    duration: 4000,
-                    stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
-                 });
-          }else{
+         if(nick.trim() == ''){
+             nick = params.nickname
+         }
+         if(name.trim() == ''){
+             name = params.userName
+         }
+         if(lastName.trim() == ''){
+             lastName = params.lastName
+         }
+         if(email.trim() == ''){
+             email = params.email
+         }
             let checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(that.inputNickname);
             checkNick.once('value', function(snapshot) {
                // Validate if a nickname exits or input nickname repeated /////////////
@@ -103,13 +106,13 @@ export default class EditProfile extends Component {
                }else{
                  let emailPath = "/users/"+that.uid+"/email"
                  var user = firebase.auth().currentUser;
-                      user.updateEmail(that.inputEmail).then(function(){
-                            getDatabase().ref(emailPath).set(that.inputEmail)
+                      user.updateEmail(email).then(function(){
+                            getDatabase().ref(emailPath).set(email)
                             getDatabase().ref().child('users/' + that.uid).update({
-                              nickname: that.inputNickname,
-                              name: that.inputName,
-                              lastName: that.inputLastName,
-                              email: that.inputEmail,
+                              nickname: nick,
+                              name: name,
+                              lastName: lastName,
+                              email: email,
                               bornDay: that.inputBirthDay,
                             }); //update user
                             goBack()
@@ -143,7 +146,6 @@ export default class EditProfile extends Component {
                        }); // user.updateEmail error
                }// snapshot.exists == true
             })// checkNick.once
-         }// else blanckinputs
      } catch(error){
        alert(strings.somethingGoesWrong +" "+ error.code)
      }
