@@ -85,8 +85,8 @@ export default class EditDaily extends Component{
 
   static navigationOptions = ({ navigation }) => ({
       title: strings.daily,
-      headerStyle: {backgroundColor: '#70041b', height: 50 },
-      headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+      headerStyle: {height: 50 },
+      headerTitleStyle : {color:'#9A9DA4',fontSize:17},
     });
 
   openImagePicker(){
@@ -137,13 +137,13 @@ export default class EditDaily extends Component{
   updateDaily(){
     MessageBarManager.registerMessageBar(this.refs.alert);
     var that = this.state;
-    if (that.name == '') {
+    if (that.name.trim() == '') {
       MessageBarManager.showAlert({
-         message: strings.blankinputs,
+         message: strings.blankName,
          alertType: 'info',
          position: 'bottom',
          duration: 4000,
-         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+         stylesheetInfo: { backgroundColor: '#808080', strokeColor: 'grey' }
       });
     }else{
       const { goBack } = this.props.navigation;
@@ -163,14 +163,14 @@ export default class EditDaily extends Component{
 
   renderImages(image){
     return(
-      <Image source={{uri: image.url}} style={{width: 100, height: 100}}/>
+      <Image source={{uri: image.url}} style={{width: 100, height: 100, marginRight:5}}/>
     )
   }
 
   render() {
     return(
       <Container>
-        <Content>
+        <Content style={{backgroundColor:'white'}}>
           <Form style={{padding:10}}>
             <Label>{strings.name }</Label>
             <Input
@@ -196,14 +196,15 @@ export default class EditDaily extends Component{
                    }}
                  onDateChange={(date) => {this.setState({date: date})}}
               />
-
-              <TouchableOpacity style={{margin: 20}}
-                onPress={this.openImagePicker.bind(this)}>
-                <Icon name="add-a-photo"/>
-              </TouchableOpacity>
             </Item>
 
+
               <ScrollView horizontal={true} >
+                <TouchableOpacity style={{margin: 20,marginTop:40}}
+                  onPress={this.openImagePicker.bind(this)}>
+                  <Icon name="add-a-photo"/>
+                </TouchableOpacity>
+
                 <ListView
                   horizontal={true}
                   dataSource={this.state.dataSource}
@@ -230,13 +231,13 @@ export default class EditDaily extends Component{
               />
 
           </Form>
+          <MessageBarAlert ref="alert" />
         </Content>
 
-          <Button full dark style= {{backgroundColor: '#41BEB6'}}
+          <Button full dark style= {{backgroundColor: '#41BEB6', zIndex: -1}}
               onPress={this.updateDaily.bind(this)}>
               <Text>{strings.save}</Text>
           </Button>
-          <MessageBarAlert ref="alert" />
       </Container>
     );
   }
