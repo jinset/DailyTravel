@@ -17,6 +17,9 @@ import Home from './home/home';
 //Import de vista Profile
 import Profile from './profile/profile';
 
+//Import de vista NotificationsView
+import NotificationsView from './notifications/notificationsView.js'
+
 //Import de vista Friends
 import Friends from './friends/friends.js'
 import VisitProfile from './friends/visitProfile.js'
@@ -48,11 +51,11 @@ export const DTHome = StackNavigator({
     home: { screen: Home },
 });
 
+
 export const DTDiaryMap = StackNavigator({
   //Map
     diaryMap: { screen: DiaryMap },
 });
-
 export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
@@ -66,6 +69,10 @@ export const DTProfile = StackNavigator({
           editDaily: { screen: EditDaily },
           daily: { screen: Daily },
           gallery: { screen: Gallery },
+          //NotificationsView
+
+          notifications: { screen: NotificationsView },
+
 });
 
 export const DTFriends = StackNavigator({
