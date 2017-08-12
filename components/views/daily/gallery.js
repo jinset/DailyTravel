@@ -15,6 +15,8 @@ import { getDatabase } from '../../common/database';
 import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
 import DialogBox from 'react-native-dialogbox';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 
 import ZoomImage from 'react-native-zoom-image';
@@ -63,16 +65,43 @@ export default class Gallery extends Component{
       })
     }
 
-  componentDidMount(){
+  componentWillMount(){
     this.getPhotos();
   }
+
+  componentDidMount() {
+  MessageBarManager.registerMessageBar(this.refs.alert);
+  MessageBarManager.registerMessageBar(this.refs.imageDeleted);
+  MessageBarManager.showAlert({
+     message: strings.howDeleteImage,
+     alertType: 'info',
+     position: 'bottom',
+     durationToShow: 600,
+     durationToHide: 600,
+     viewLeftInset: 50,
+     viewRightInset: 50,
+     animationType: 'SlideFromTop',
+     duration: 3500,
+     stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+  });
+}
 
   deleteImage(dailyId, diaryId, imageId){
     getDatabase().ref("/diary/"+diaryId+"/daily/"+dailyId+"/photos/"+imageId).remove();
     getDatabase().ref("/diary/"+diaryId+"/daily/"+dailyId+"/photos/").limitToLast(1).on("child_added", function(snapshot) {
       getDatabase().ref().child("/diary/"+diaryId+"/daily/"+dailyId+"/url").set(snapshot.val().url);
     });
-
+    MessageBarManager.showAlert({
+       message: strings.imageDeleted,
+       alertType: 'info',
+       position: 'bottom',
+       durationToShow: 600,
+       durationToHide: 600,
+       viewLeftInset: 50,
+       viewRightInset: 50,
+       duration: 3500,
+       stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey'}
+    });
   }
 
   deleteOption(dailyId, diaryId, imageId){
@@ -98,21 +127,13 @@ export default class Gallery extends Component{
     const { navigate } = this.props.navigation;
     return(
       <Card>
-        <CardItem>
-          <ZoomImage
+        <TouchableOpacity
+          onLongPress={()=> this.deleteOption(this.state.idDaily, this.state.idDiary, image._key)}>
+          <Image
             source={{uri:image.url}}
-            imgStyle={{width: Dimensions.get('window').width, height: Dimensions.get('window').height/2}}
-            showDuration={200}
-            enableScaling={false}
-            easingFunc={Easing.ease}
+            style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height/2}}
           />
-        </CardItem>
-
-          <TouchableOpacity
-            onPress={() => this.deleteOption(this.state.idDaily, this.state.idDiary, image._key)}>
-                <Icon active name='delete' />
-          </TouchableOpacity>
-
+        </TouchableOpacity>
       </Card>
     );
   }
@@ -121,7 +142,9 @@ export default class Gallery extends Component{
     return(
       <Container>
           <Card>
-            <CardItem style={{alignItems: 'center'}}>
+          <MessageBarAlert ref="imageDeleted" />
+          <MessageBarAlert ref="alert" />
+            <CardItem style={{zIndex: -1}}>
                 <ListView
                   dataSource={this.state.dataSource}
                   renderRow={this._renderItem.bind(this)}

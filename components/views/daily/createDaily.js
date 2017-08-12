@@ -132,13 +132,13 @@ export default class CreateDaily extends Component{
   addDaily(){
     MessageBarManager.registerMessageBar(this.refs.alert);
     var that = this.state;
-    if (that.name == '') {
+    if (that.name.trim() == '') {
       MessageBarManager.showAlert({
-         message: strings.blankinputs,
+         message: strings.blankName,
          alertType: 'info',
          position: 'bottom',
          duration: 4000,
-         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+         stylesheetInfo: { backgroundColor: '#808080', strokeColor: 'grey' }
       });
     }else{
       const { goBack } = this.props.navigation;
@@ -165,7 +165,7 @@ export default class CreateDaily extends Component{
   render() {
     return(
       <Container>
-        <Content>
+        <Content style={{backgroundColor:'white'}}>
           <Form style={{padding:10}}>
               <Label>{strings.name }</Label>
               <Input
@@ -222,13 +222,13 @@ export default class CreateDaily extends Component{
               />
 
           </Form>
+          <MessageBarAlert ref="alert" />
         </Content>
 
         <Button full dark style= {{backgroundColor: '#41BEB6'}}
           onPress={this.addDaily.bind(this)}>
           <Text>{strings.save}</Text>
         </Button>
-        <MessageBarAlert ref="alert" />
       </Container>
     );
   }
