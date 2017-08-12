@@ -1,17 +1,18 @@
 import { getDatabase } from './database';
 /*
-userSend: es el usuario que envia la Notificaciones
-userIdGet: es el usuario que recibe la notificacion
+userIdSent: es el usuario que envia la Notificaciones
+userIdGet: es el Id del usuario que recibe la notificacion
+userGet: es el objeto usuario (guarada el nickname, nombre, foto, etc)
 type: tipo de Notificacion
 date: fecha en que se mando
  */
 
-export const createNotification = (userIdGet,userSend,type,date) => {
-  getDatabase().ref('notifications/' + userIdGet).push({
+export const createNotification = (userIdSent, userIdGet,userGet,type,date) => {
+  getDatabase().ref('notifications/' + userSendId).push({
     status: false,
-    type: userSend,
-    userSendId: type,
-    userSendNickName: date,
-    date: userIdGet
+    type: type,
+    userIdGet: userIdGet,
+    userGet: userGet,
+    date: date
   });
 }

@@ -80,6 +80,10 @@ let strings = new LocalizedStrings({
    yes: "Yes",
    no: "No",
    confirm: "Confirm",
+   notifications: "Notifications",
+   noInternet: "Internet connection not found",
+   iAppearWhenHome: "I appear when you don't follow no one",
+   touchMeToCreateHome: "Touch me to follow new friends",
  },
  es:{
    home:"Inicio",
@@ -160,6 +164,12 @@ let strings = new LocalizedStrings({
    yes: "Sí",
    no: "No",
    confirm: "Confirmación",
+   notifications: "Notificaciones",
+   noInternet: "Conexión a internet no encontrada",
+   iAppearWhenHome: "Yo aparezco cuando no sigues a nadie",
+   touchMeToCreateHome: "Tocame para buscar y seguir amigos",
+
+
  }
 });
 

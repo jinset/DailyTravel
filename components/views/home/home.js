@@ -6,16 +6,20 @@ import {
   Dimensions,
   AsyncStorage,
   RefreshControl,
+  NetInfo,
+  StyleSheet
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Left,Right, Body, Spinner,View,Fab,Drawer} from 'native-base';
-import { ListItem } from 'react-native-elements';
+import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Left,Right, Body, Spinner,View,Fab,Drawer, ListItem} from 'native-base';
 import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
-import { createNotification } from '../../common/notification';
 import HideableView from 'react-native-hideable-view';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
+
+
  export default class Home extends Component {
 
    constructor(props) {
@@ -25,15 +29,19 @@ import HideableView from 'react-native-hideable-view';
        dataSource: new ListView.DataSource({
          rowHasChanged: (row1, row2) => row1 !== row2,
        }),
-       showSpinner:true,
+       showSpinner:false,
+       showSpinnerTop:false,
        idUser: "",
        currentPageIndex : 1,
        refreshing: false,
+       isConnected: true,
+       showPig: false,
      };
    }
 
    static navigationOptions = {
      title: strings.home,
+     header: null,
      headerStyle: {height: 50 },
      headerTitleStyle : {color:'#9A9DA4',fontSize:17},
      }
@@ -41,7 +49,7 @@ import HideableView from 'react-native-hideable-view';
 
     _onRefresh() {
        this.setState({refreshing: true});
-       this.load().then(() => {
+       this.loadRefreshing().then(() => {
          console.log("Aqui si funciona");
          this.setState({refreshing: false});
        });
@@ -120,7 +128,6 @@ import HideableView from 'react-native-hideable-view';
         this.setState({
            showSpinner: true
          });
-
         var arrayFollows = [];
         let homeArray = [];
         var current = this.state.currentPageIndex;
@@ -128,13 +135,11 @@ import HideableView from 'react-native-hideable-view';
         this.setState({
           currentPageIndex: current
         });
-
          var user = await this.getLogin(this.state.idUser);
          arrayFollows.push(this.state.idUser);
          for (var i in user.follows) {
             arrayFollows.push(user.follows[i].uid);
          }
-
         let array = await this.getDiaries(current , arrayFollows);
         for (var i in array) {
           await this.getUser(array[i]).then(data => {
@@ -144,90 +149,163 @@ import HideableView from 'react-native-hideable-view';
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(homeArray)
         });
-        /*Desaparece el loading*/
         this.setState({
-           showSpinner: false
-         });
+          showSpinner: false
+        });
       } catch (error) {
         console.log(error.message);
       }
+    }
 
+    async loadRefreshing() {
+      try {
+        var arrayFollows = [];
+        let homeArray = [];
+        var current = this.state.currentPageIndex;
+        current = current +1;
+        this.setState({
+          currentPageIndex: current
+        });
+         var user = await this.getLogin(this.state.idUser);
+         arrayFollows.push(this.state.idUser);
+         for (var i in user.follows) {
+            arrayFollows.push(user.follows[i].uid);
+         }
+        let array = await this.getDiaries(current , arrayFollows);
+        for (var i in array) {
+          await this.getUser(array[i]).then(data => {
+            homeArray.push(data)
+          });
+        }
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(homeArray)
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    async loadHome(){
+      try {
+        this.setState({
+           showSpinnerTop: true
+         });
+        let homeArray = [];
+        var arrayFollows = [];
+        var idUser = "";
+        await AsyncStorage.getItem("user").then((value) => {
+          this.state.idUser = value;
+          idUser = value;
+        })
+       var user = await this.getLogin(idUser);
+       arrayFollows.push(idUser);
+       for (var i in user.follows) {
+          arrayFollows.push(user.follows[i].uid);
+       }
+
+        let array = await this.getDiaries(this.state.currentPageIndex,arrayFollows);
+        if (array.length == 0) {
+          var current = this.state.currentPageIndex;
+          while (array.length == 0) {
+            current = current +1;
+            this.setState({
+              currentPageIndex: current
+              // showPig: true
+            });
+            array = await this.getDiaries(current,arrayFollows);
+          }
+        }
+
+        for (var i in array) {
+          await this.getUser(array[i]).then(data => {
+            homeArray.push(data);
+          });
+        }
+
+        /*Carga el home en el dataSource*/
+          this.setState({
+              dataSource: this.state.dataSource.cloneWithRows(homeArray)
+            });
+            /*Desaparece el loading*/
+
+           this.setState({
+              showSpinnerTop: false
+            });
+
+          /*  this.setState({
+              showPig: false
+            });*/
+      } catch (error) {
+        console.log(error.message);
+      }
     }
 
   async componentDidMount() {
-    try {
-      let homeArray = [];
-      var arrayFollows = [];
-      var idUser = "";
-      await AsyncStorage.getItem("user").then((value) => {
-        this.state.idUser = value;
-        idUser = value;
-      })
-     var user = await this.getLogin(idUser);
-     arrayFollows.push(idUser);
-     for (var i in user.follows) {
-        arrayFollows.push(user.follows[i].uid);
-     }
+    NetInfo.isConnected.fetch().done(isConnected => {
+        if (isConnected === true) {
 
-      let array = await this.getDiaries(this.state.currentPageIndex,arrayFollows);
-      for (var i in array) {
-        await this.getUser(array[i]).then(data => {
-          homeArray.push(data);
-        });
-      }
-      /*Carga el home en el dataSource*/
-    this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(homeArray)
-      });
-      /*Desaparece el loading*/
-     this.setState({
-        showSpinner: false
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-
+          this.loadHome();
+        }else{
+          this.loadHome();
+            MessageBarManager.registerMessageBar(this.refs.alert);
+            MessageBarManager.showAlert({
+              title: "error",
+              message: strings.noInternet,
+              alertType: 'info',
+              position: 'bottom',
+              duration: 10000,
+              stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+            });
+        }
+    });
   }
+  /*
+  <View>
+    <View>
+    <Body style={{alignItems:'center'}} >
+      <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item._key})}>
+        <Image source={{uri: item.url}} style={{height: 300, width: Dimensions.get('window').width}} />
+      </TouchableHighlight>
+      <Text>{item.description}</Text>
+    </Body>
+  </View>
 
-
+  <View>
+       <Text>{item.name}</Text>
+  </View>
+  </View>
+*/
 
   _renderItem(item) {
     const { navigate } = this.props.navigation;
     return (
-      <Card style={{flex: 0}} key={item._key}>
-      <CardItem >
-        <Left>
-        <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.idOwner})}>
-          <Thumbnail source={{uri: item.photoUser}}/>
-          </TouchableHighlight>
-          <Body>
-          <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.idOwner})}>
-            <Text>{item.userNick}</Text>
+      <View style={{flex: 0, backgroundColor:'white', margin:10}} key={item._key} >
+        <View>
+          <ListItem>
+            <Left>
+              <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.idOwner})}>
+                <Thumbnail source={{uri: item.photoUser}}/>
+              </TouchableHighlight>
+            <Body>
+              <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.idOwner})}>
+                <Text>{item.userNick}</Text>
+              </TouchableHighlight>
+            </Body>
+            </Left>
+            <Right>
+              <Icon active name='more-vert' />
+            </Right>
+          </ListItem>
+          <View>
+            <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item._key})}>
+              <Thumbnail square source={{uri: item.url}} style={{height: Dimensions.get('window').height/2, width: Dimensions.get('window').width}}/>
             </TouchableHighlight>
-          </Body>
-        </Left>
-        <Right>
-            <Icon active name='more-vert' />
-        </Right>
-      </CardItem>
-      <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item._key})}>
-      <CardItem >
-        <Body style={{alignItems:'center'}} >
-          <Image source={{uri: item.url}}
-            style={{height: 300, width: Dimensions.get('window').width}}
-          />
-          <Text>
-            {item.description}
-          </Text>
-        </Body>
-      </CardItem>
-      </TouchableHighlight>
-
-      <CardItem>
-           <Text>{item.name}</Text>
-      </CardItem>
-      </Card>
-
+            <Text style={{marginTop:10, marginButton:10}}>{item.name}</Text>
+          </View>
+          <View>
+            <Text style={{marginTop:10, marginButton:10}}>{item.description}</Text>
+          </View>
+        </View>
+      </View>
     );
   }
 
@@ -236,26 +314,39 @@ import HideableView from 'react-native-hideable-view';
     const { navigate } = this.props.navigation;
     return (
       <Container>
-         <Content>
+
+      <HideableView visible={this.state.showSpinnerTop} removeWhenHidden={true} >
+         <Spinner color='#41BEB6' />
+      </HideableView>
+         <Content contentContainerStyle={{flex: 1}}>
            <ListView
            refreshControl={
              <RefreshControl
                 refreshing={this.state.refreshing}
                 onRefresh={this._onRefresh.bind(this)}
+                tintColor="#41BEB6"
+                colors={['#41BEB6',"#9A9DA4"]}
+                progressBackgroundColor="#FCFAFA"
               />
             }
              dataSource={this.state.dataSource}
              renderRow={this._renderItem.bind(this)}
-             enableEmptySections={true}
              onEndReached={this.load.bind(this)}
-             scrollRenderAheadDistance={1600}
+             onEndReachedThreshold={50}
+             enableEmptySections={true}
              >
            </ListView>
-           <HideableView visible={this.state.showSpinner} removeWhenHidden={true} >
-              <Spinner />
+           <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
+              <Text style={styles.message}>{strings.iAppearWhenHome}</Text>
+              <Text style={styles.message}>{strings.touchMeToCreateHome}</Text>
+                <Image
+                   style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
+                   source={require('../profile/ProfilePig.jpg')} />
+           </HideableView>
+           <HideableView visible={this.state.showSpinner} removeWhenHidden={true} style={{backgroundColor:'transparent'}}>
+              <Spinner color='#41BEB6' />
            </HideableView>
          </Content>
-
          <View>
            <Fab
              active='false'
@@ -266,8 +357,33 @@ import HideableView from 'react-native-hideable-view';
              onPress={()=> navigate('newDiary')}>
              <Icon color='white' name="library-books" />
            </Fab>
+           <Fab
+             active='false'
+             direction="up"
+             containerStyle={{ }}
+             style={{  backgroundColor:'#41BEB6'}}
+             position="bottomLeft"
+             onPress={()=> navigate('notifications')}>
+             <Icon color='white' name="add-alert" />
+           </Fab>
+           <MessageBarAlert ref="alert"/>
+
          </View>
        </Container>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  center: {
+      alignItems: 'center',
+  },
+  message: {
+    fontStyle: 'italic',
+    textAlign: 'justify',
+    fontSize: 18,
+    textDecorationStyle: 'solid',
+    color: '#000000',
+    paddingLeft: 20,
+  },
+});

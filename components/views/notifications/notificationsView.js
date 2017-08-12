@@ -8,16 +8,17 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Left,Right, Body, Spinner,View,Fab,Drawer} from 'native-base';
+import {  Container, Content, Card, CardItem, Thumbnail,  Button, Left,Right, Body, Spinner,View,Fab, List, Text, SwipeRow} from 'native-base';
 import { ListItem } from 'react-native-elements';
 import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import { createNotification } from '../../common/notification';
 import HideableView from 'react-native-hideable-view';
-//import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
- export default class Home extends Component {
+ export default class NotificationsView extends Component {
 
    constructor(props) {
      super(props);
@@ -31,96 +32,56 @@ import HideableView from 'react-native-hideable-view';
        currentPageIndex : 1
      };
    }
+
     static navigationOptions = {
-        title: strings.home,
-        header: null,
+        title: strings.notifications,
+        headerStyle: {height: 50 },
+        headerTitleStyle : {color:'#9A9DA4',fontSize:17},
     }
-
-  async getLogin(idUser) {
-      return new Promise((resolve, reject) => {
-        var ref = getDatabase().ref("users/" + idUser);
-        ref.once("value").then(function(snapshot) {
-          var val = snapshot.val();
-          console.log(val);
-          resolve(val);
-        });
-      })
-    };
-
     /*
       Obtiene los diarios que su privacidad esten en falsos
      */
-    async getDiaries(current, arrayIds) {
+    async getNotifications(idUser, current) {
       return new Promise((resolve, reject) => {
         var pageSize = current * 10;
-        var url = getDatabase().ref('diary').limitToLast(pageSize).orderByChild("privacy").equalTo(false);
+        var url = getDatabase().ref('notifications/'+ idUser).limitToLast(pageSize);
         url.on('value', (snap) => {
-          var diaries = [];
+          var notifications = [];
           snap.forEach((child) => {
-            if (arrayIds.includes(child.val().idOwner)) {
-              if (child.val().status === true) {
-                diaries.push({
-                  _key: child.key,
-                  name: child.val().name,
-                  description: child.val().description,
-                  url: child.val().url,
-                  idOwner: child.val().idOwner
-                });
-              }
-            }
+            notifications.push({
+            _key: child.key
+            // status: child.val().status,
+            // type: child.val().type,
+            // userIdGet: child.val().userIdGet,
+            // userGet: child.val().userGet,
+            // date: child.val().date
+            })
           });
-          resolve(diaries.reverse())
+          resolve(notifications.reverse())
         })
       })
     }
-    /*
-      Obtiene el usuario y arma un objeto con el usuario + diario donde retorna ese objeto
-     */
-    async getUser(dataUser) {
-      return new Promise((resolve, reject) => {
-        var diaries = [];
-        var ref = getDatabase().ref("users/" + dataUser.idOwner);
-        ref.once("value", (snapshot) => {
-          var val = snapshot.val();
-          diaries = {
-            _key: dataUser._key,
-            name: dataUser.name,
-            description: dataUser.description,
-            url: dataUser.url,
-            idOwner: dataUser.idOwner,
-            userNick: val.nickname,
-            photoUser: val.url
-          }
-          resolve(diaries);
-        })
-      });
-    };
-
 
   async componentWillMount() {
     try {
-      alert("llamaaaa");
-      let homeArray = [];
-      var arrayFollows = [];
+      this.setState({
+         showSpinner: true
+       });
       var idUser = "";
       await AsyncStorage.getItem("user").then((value) => {
         this.state.idUser = value;
         idUser = value;
       })
-     var user = await this.getLogin(idUser);
-     arrayFollows.push(idUser);
-     for (var i in user.follows) {
-        arrayFollows.push(user.follows[i].uid);
-     }
-      let array = await this.getDiaries(this.state.currentPageIndex,arrayFollows);
-      for (var i in array) {
-        await this.getUser(array[i]).then(data => {
-          homeArray.push(data)
-        });
-      }
+      console.log(
+        "vamos al Array"
+      );
+      let array = await this.getNotifications(idUser,this.state.currentPageIndex );
+      console.log(
+        "Termina el Array"
+      );
       /*Carga el home en el dataSource*/
     this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(homeArray)
+        dataSource: this.state.dataSource.cloneWithRows(array)
       });
       /*Desaparece el loading*/
      this.setState({
@@ -132,82 +93,23 @@ import HideableView from 'react-native-hideable-view';
 
   }
 
-async load() {
-  try {
-    /*Muestra el loading*/
-    this.setState({
-       showSpinner: true
-     });
-
-    var arrayFollows = [];
-    let homeArray = [];
-    var current = this.state.currentPageIndex;
-    current = current +1;
-    this.setState({
-      currentPageIndex: current
-    });
-
-     var user = await this.getLogin(this.state.idUser);
-     arrayFollows.push(this.state.idUser);
-     for (var i in user.follows) {
-        arrayFollows.push(user.follows[i].uid);
-     }
-
-    let array = await this.getDiaries(current , arrayFollows);
-    for (var i in array) {
-      await this.getUser(array[i]).then(data => {
-        homeArray.push(data)
-      });
-    }
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(homeArray)
-    });
-    /*Desaparece el loading*/
-    this.setState({
-       showSpinner: false
-     });
-  } catch (error) {
-    console.log(error.message);
-  }
-
-}
-
   _renderItem(item) {
     const { navigate } = this.props.navigation;
     return (
-      <Card style={{flex: 0}} key={item._key}>
-      <CardItem >
-        <Left>
-        <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.idOwner})}>
-          <Thumbnail source={{uri: item.photoUser}}/>
-          <Body>
-            <Text>{item.userNick}</Text>
-            <Text note>April 15, 2016</Text>
-          </Body>
-          </TouchableHighlight>
-        </Left>
-        <Right>
-            <Icon active name='more-vert' />
-        </Right>
-      </CardItem>
-      <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item._key})}>
-      <CardItem >
-        <Body style={{alignItems:'center'}} >
-          <Image source={{uri: item.url}}
-            style={{height: 300, width: Dimensions.get('window').width}}
-          />
-          <Text>
-            {item.description}
-          </Text>
-        </Body>
-      </CardItem>
-      </TouchableHighlight>
-
-      <CardItem>
-           <Text>{item.name}</Text>
-      </CardItem>
-      </Card>
-
+              <List key={item._key}>
+                    <ListItem avatar>
+                      <Left>
+                        <Thumbnail source={{uri: item.userGet.url}} />
+                      </Left>
+                      <Body>
+                        <Text>{item.userGet.nickname}</Text>
+                        <Text note>Doing what you like will always keep you happy . .</Text>
+                      </Body>
+                      <Right>
+                        <Text note>{item.date}</Text>
+                      </Right>
+                    </ListItem>
+              </List>
     );
   }
 
@@ -218,11 +120,9 @@ async load() {
       <Container>
          <Content>
            <ListView
-             onStartReached={this.load.bind(this)}
              dataSource={this.state.dataSource}
              renderRow={this._renderItem.bind(this)}
              enableEmptySections={true}
-             onEndReached={this.load.bind(this)}
              >
            </ListView>
            <HideableView visible={this.state.showSpinner} removeWhenHidden={true} >
