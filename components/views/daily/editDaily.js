@@ -16,8 +16,10 @@ import { getDatabase } from '../../common/database';
 import DatePicker from 'react-native-datepicker';
 import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
-import AutogrowInput from 'react-native-autogrow-input';
+import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import firebase from 'firebase';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 import MultiImage from 'react-native-multi-image-selector'
 
@@ -133,18 +135,30 @@ export default class EditDaily extends Component{
   }
 
   updateDaily(){
-    const { goBack } = this.props.navigation;
-    let idDiary = this.state.idDiary;
-    let idDaily = this.state.idDaily;
-    getDatabase().ref().child('/diary/'+idDiary+'/daily/'+idDaily).update({
-      name: this.state.name,
-      date: this.state.date,
-      experience: this.state.experience,
-      tips: this.state.tips,
-      status: this.state.status,
-    });
-    this.saveImage()
-    goBack(null);
+    MessageBarManager.registerMessageBar(this.refs.alert);
+    var that = this.state;
+    if (that.name == '') {
+      MessageBarManager.showAlert({
+         message: strings.blankinputs,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 4000,
+         stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+      });
+    }else{
+      const { goBack } = this.props.navigation;
+      let idDiary = this.state.idDiary;
+      let idDaily = this.state.idDaily;
+      getDatabase().ref().child('/diary/'+idDiary+'/daily/'+idDaily).update({
+        name: this.state.name,
+        date: this.state.date,
+        experience: this.state.experience,
+        tips: this.state.tips,
+        status: this.state.status,
+      });
+      this.saveImage()
+      goBack(null);
+    }
   }
 
   renderImages(image){
@@ -157,15 +171,14 @@ export default class EditDaily extends Component{
     return(
       <Container>
         <Content>
-        <Form>
-
-            <Item stackedLabel>
-              <Label>{strings.name }</Label>
-              <Input
-                value = {this.state.name}
-                onChangeText={(text) => this.setState({name:text})}
-              />
-            </Item >
+          <Form style={{padding:10}}>
+            <Label>{strings.name }</Label>
+            <Input
+              style={{fontSize: 18}}
+              maxLength={40}
+              value = {this.state.name}
+              onChangeText={(text) => this.setState({name:text})}
+            />
 
             <Item>
               <DatePicker
@@ -190,7 +203,6 @@ export default class EditDaily extends Component{
               </TouchableOpacity>
             </Item>
 
-            <Item>
               <ScrollView horizontal={true} >
                 <ListView
                   horizontal={true}
@@ -198,18 +210,21 @@ export default class EditDaily extends Component{
                   renderRow={this.renderImages.bind(this)}
                 />
               </ScrollView>
-            </Item>
 
               <Label>{strings.experiences}</Label>
-              <AutogrowInput
-                style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+              <AutoGrowingTextInput
+                style={{fontSize: 18}}
+                maxHeight={150}
+                minHeight={45}
                 value = {this.state.experience}
                 onChangeText={(text) => this.setState({experience:text})}
               />
 
               <Label>{strings.tips }</Label>
-              <AutogrowInput
-                style={{minHeight:Dimensions.get('window').height/5, fontSize: 18}}
+              <AutoGrowingTextInput
+                style={{fontSize: 18}}
+                maxHeight={150}
+                minHeight={45}
                 value = {this.state.tips}
                 onChangeText={(text) => this.setState({tips:text})}
               />
@@ -221,7 +236,7 @@ export default class EditDaily extends Component{
               onPress={this.updateDaily.bind(this)}>
               <Text>{strings.save}</Text>
           </Button>
-
+          <MessageBarAlert ref="alert" />
       </Container>
     );
   }

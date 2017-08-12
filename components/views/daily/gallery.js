@@ -7,13 +7,17 @@ import {
   ScrollView,
   Image,
   TouchableHighlight,
-
+  TouchableOpacity,
+  Easing,
 } from 'react-native';
-import { Container, Content, Button, Text, Input, Item, Label, Card, CardItem, View, Body, Form, DeckSwiper } from 'native-base';
+import { Container, Content, Button, Text, Input, Item, Label, Card, CardItem, View, Body, Form, DeckSwiper, Right } from 'native-base';
 import { getDatabase } from '../../common/database';
 import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
 import DialogBox from 'react-native-dialogbox';
+
+
+import ZoomImage from 'react-native-zoom-image';
 
 
 export default class Gallery extends Component{
@@ -91,18 +95,24 @@ export default class Gallery extends Component{
   }
 
   _renderItem(image){
-    console.log(image);
+    const { navigate } = this.props.navigation;
     return(
       <Card>
-        <TouchableHighlight
-          onLongPress={() => this.deleteOption(this.state.idDaily, this.state.idDiary, image._key)}>
-            <Image source={{uri:image.url}} style={{width: Dimensions.get('window').width-20, height: Dimensions.get('window').height/2, margin:20}} />
-        </TouchableHighlight>
+        <CardItem>
+          <ZoomImage
+            source={{uri:image.url}}
+            imgStyle={{width: Dimensions.get('window').width, height: Dimensions.get('window').height/2}}
+            showDuration={200}
+            enableScaling={false}
+            easingFunc={Easing.ease}
+          />
+        </CardItem>
 
-        <Button transparent small
-          onPress={() => this.deleteImage(this.state.idDaily, this.state.idDiary, image._key)}>
-          <Icon active name='delete' />
-        </Button>
+          <TouchableOpacity
+            onPress={() => this.deleteOption(this.state.idDaily, this.state.idDiary, image._key)}>
+                <Icon active name='delete' />
+          </TouchableOpacity>
+
       </Card>
     );
   }
