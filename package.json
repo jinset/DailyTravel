@@ -40,6 +40,7 @@
     "react-native-message-bar": "^1.6.0",
     "react-native-modal": "^2.5.0",
     "react-native-modal-dropdown": "^0.4.4",
+    "react-native-modalbox": "^1.4.2",
     "react-native-multi-image-selector": "^1.0.4",
     "react-native-pixfactory-accordion": "^0.2.3",
     "react-native-popup-dialog": "^0.9.29",

@@ -13,9 +13,10 @@ import * as firebase from 'firebase';
 //Image Picker
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import PopupDialog, { DialogTitle } from 'react-native-popup-dialog';
 import HelperDiary from './helperDiary';
 import Modal from 'react-native-modalbox';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 const Blob = RNFetchBlob.polyfill.Blob
 const fs = RNFetchBlob.fs
@@ -163,6 +164,17 @@ openImagePicker(){
    }
    ////////////////////////////////////////////////////AGREGA DIARIO////////////////////////////////
   add(){
+    MessageBarManager.registerMessageBar(this.refs.alert);
+    var that = this.state;
+    if (that.name.trim() == '') {
+      MessageBarManager.showAlert({
+         message: strings.blankName,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 4000,
+         stylesheetInfo: { backgroundColor: '#808080', strokeColor: 'grey' }
+      });
+    }else{
      getDatabase().ref().child('diary/').push({
       idOwner:this.state.idOwner,
        name:this.state.name,
@@ -186,6 +198,7 @@ openImagePicker(){
     this.createImage()
     const { navigate } = this.props.navigation;
      navigate('profile');
+   }
 }
 
 ///////////////////////////////////////// addGuest /////////////////////////////////////////////////////////////
@@ -238,18 +251,6 @@ openImagePicker(){
     }
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  onClose() {
-    console.log('Modal just closed');
-  }
-
-  onOpen() {
-    console.log('Modal just openned');
-  }
-
-  onClosingState(state) {
-    console.log('the open/close of the swipeToClose just changed');
-  }
 
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
@@ -331,27 +332,7 @@ openImagePicker(){
             </List>
           </ScrollView>
         </Modal>
-          <PopupDialog
-              ref={(popupDialog) => { this.popupDialog = popupDialog; }}
-            >
-            <View >
-              <List>
-              <ListItem itemDivider>
-               <Text>{strings.guest}</Text>
-             </ListItem>
-             <ScrollView>
-                  {listTable2}
-              </ScrollView>
-              <ListItem itemDivider>
-               <Text>{strings.friends}</Text>
-             </ListItem>
-             <ScrollView>
-                {listTable}
-             </ScrollView>
-              </List>
-            </View>
-          </PopupDialog>
-          <Content  style={{zIndex: -1, backgroundColor:'white'}}>
+          <Content  style={{ backgroundColor:'white'}}>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
             <Thumbnail
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
@@ -369,6 +350,8 @@ openImagePicker(){
                    {listavatars}
                 </List>
               </ScrollView>
+
+            <ScrollView>
             <Form style={{padding:10}}>
 
               <Label>{strings.name }</Label>
@@ -384,8 +367,12 @@ openImagePicker(){
                 onChangeText={(text) => this.setState({culture:text})} />
 
             </Form>
+
+          </ScrollView>
+                        <MessageBarAlert ref="alert" />
+
           </Content>
-        <Button full dark style= {{backgroundColor: '#41BEB6'}}
+        <Button full dark style= {{backgroundColor: '#41BEB6', zIndex: -1}}
          onPress={() => this.add()} >
          <Text>{strings.save }</Text>
         </Button>

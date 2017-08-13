@@ -1,4 +1,4 @@
-import { TouchableHighlight, Alert ,AsyncStorage,Dimensions,Platform,Image } from 'react-native';
+import { TouchableHighlight, Alert ,AsyncStorage,Dimensions,Platform,Image,ScrollView } from 'react-native';
 import React, {Component} from 'react';
 import { Container, Content, Form,List,Toast,ListItem,Radio,View, Item, Input, Label, Button ,Text,Body , Right, Switch, Card,
    CardItem, Thumbnail, Left  } from 'native-base';
@@ -6,6 +6,7 @@ import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
 import PopupDialog, { DialogTitle } from 'react-native-popup-dialog';
+import Modal from 'react-native-modalbox';
 //Firebase
 import { getDatabase } from '../../common/database';
 import * as firebase from 'firebase';
@@ -13,6 +14,9 @@ import * as firebase from 'firebase';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import HelperDiary from './helperDiary';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
+
 const Blob = RNFetchBlob.polyfill.Blob
 const fs = RNFetchBlob.fs
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
@@ -221,6 +225,17 @@ let ref='';
   }
    ///////////////////////////////////////////////////////AGREGA DIARIO///////////////////////////////////////////////////////
   add(){
+     MessageBarManager.registerMessageBar(this.refs.alert);
+    var that = this.state;
+    if (that.name.trim() == '') {
+      MessageBarManager.showAlert({
+         message: strings.blankName,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 4000,
+         stylesheetInfo: { backgroundColor: '#808080', strokeColor: 'grey' }
+      });
+    }else{
      getDatabase().ref().child(ref).set({
       idOwner:this.state.idOwner,
        name:this.state.name,
@@ -231,6 +246,7 @@ let ref='';
        status:this.state.status,
    })
        this.props.navigation.goBack()
+     }
 }
 
    addDiaryUsers(userId,userstatus){
@@ -337,23 +353,33 @@ let ref='';
           });
     return (
         <Container>
-           <PopupDialog
-              ref={(popupDialog) => { this.popupDialog = popupDialog; }}
-            >
+        <Modal  style={{zIndex: 4}} ref={"modal1"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose}
+          onOpened={this.onOpen} onClosingState={this.onClosingState} backdropContent={true} coverScreen={true}>
             <View>
               <List>
+                <ListItem itemDivider>
+                  <Left>
+                    <Text>{strings.guest}</Text>
+                   </Left>
+                  <Body>
+                   </Body>
+                   <Button transparent onPress={() => { this.refs.modal1.close()}}>
+                     <Icon color='#808080' style={{fontWeight: 'bold'}} name='close' />
+                   </Button>
+               </ListItem>
+               {listTable2}
+             </List>
+          </View>
+          <ScrollView>
+            <List>
               <ListItem itemDivider>
-               <Text>{strings.guest}</Text>
-             </ListItem>
-                  {listTable2}
-                  <ListItem itemDivider>
-               <Text>{strings.friends}</Text>
-             </ListItem>
-             {listTable}
-              </List>
-            </View>
-          </PopupDialog>
-          <Content  style={{zIndex: -1, backgroundColor:'white'}}>
+                <Text>{strings.friends}</Text>
+              </ListItem>
+              {listTable}
+            </List>
+          </ScrollView>
+        </Modal>
+          <Content  style={{ backgroundColor:'white'}}>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
             <Thumbnail
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
@@ -369,7 +395,7 @@ let ref='';
               </Left>
                 <Right style={{flex:  1, flexDirection: 'row', padding: 10}}>
                   <Button rounded bordered dark onPress={() => {
-                    this.popupDialog.show();
+                    this.refs.modal1.open()
                   }}>
                     <Icon name='group-add' />
                   </Button>
@@ -394,6 +420,7 @@ let ref='';
           />
 
           </Form>
+                        <MessageBarAlert ref="alert" />
         </Content>
                   <Button full dark style= {{backgroundColor: '#41BEB6'}}
                     onPress={() => this.add()} >
