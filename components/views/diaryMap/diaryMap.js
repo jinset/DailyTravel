@@ -24,18 +24,17 @@ import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
 import CameraProfileComponent from '../cameraComponent/CameraProfileComponent';
 import * as firebase from 'firebase';
-import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
 import HideableView from 'react-native-hideable-view';
 import MapView from 'react-native-maps';
 
 var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs";
 
-var colors = [{type: 'restaurant', icon: 'restaurant', bg: '#41BEB6', color: 'white', selected: true},
-              {type: 'establishment', icon: 'location-city', bg: 'white', color: '#808080', selected: false},
-              {type: 'cafe', icon: 'free-breakfast', bg: 'white', color: '#808080', selected: false},
-              {type: 'food', icon: 'local-pizza', bg: 'white', color: '#808080', selected: false},
-              {type: 'bar', icon: 'local-bar', bg: 'white', color: '#808080', selected: false}
+var colors = [{type: 'restaurant', name: strings.restaurant, icon: 'restaurant', bg: '#41BEB6', color: 'white', selected: true},
+              {type: 'establishment', name: strings.establishment, icon: 'location-city', bg: 'white', color: '#808080', selected: false},
+              {type: 'cafe', name: strings.coffe, icon: 'free-breakfast', bg: 'white', color: '#808080', selected: false},
+              {type: 'food', name: strings.food, icon: 'local-pizza', bg: 'white', color: '#808080', selected: false},
+              {type: 'bar', name: strings.bar, icon: 'local-bar', bg: 'white', color: '#808080', selected: false}
             ]
 
 export default class DiaryMap extends Component {
@@ -57,6 +56,7 @@ export default class DiaryMap extends Component {
            longitudeDelta: 0.0421,
          },
          type: 'food',
+         typeName: strings.restaurant,
          radius: 500,
          places: [],
          active: false,
@@ -168,7 +168,9 @@ getUrl(lat, long, radius, type){
       }
     }
     var type = colors[i].type;
-    this.setState({type: type})
+    var name = colors[i].name;
+    this.setState({type: type,
+                   typeName: name})
   }
 
   render() {
@@ -187,7 +189,7 @@ getUrl(lat, long, radius, type){
                       <Header style={{backgroundColor: 'white', position: 'absolute'}} searchBar rounded>
                           <Item>
                             <Icon name="search" />
-                            <Input placeholder={strings.search + ' by ' + this.state.type}
+                            <Input placeholder={strings.searchBy +' '+ this.state.typeName}
                                    maxLength = {20}
                                    onChangeText={(text) => this.search(text)}
                             />
