@@ -198,7 +198,7 @@ static navigationOptions = ({ navigation }) => ({
         </Content>
         <View  style={{zIndex: -1}}>
           <Button light full
-            onPress={()=> navigate('listDaily', {diaryKey:params.diaryKey})}>
+            onPress={()=> navigate('listDaily', {diaryKey:params.diaryKey,isMe:this.state.isMe})}>
               <Text>{strings.daily}</Text>
           </Button>
         </View>
