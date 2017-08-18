@@ -133,8 +133,22 @@ getUrl(lat, long, radius, type){
     fetch(url)
       .then((data) => data.json())
       .then((res) => {
+        const placesArray = [];
+        res.results.map((place, i) =>{
+          placesArray.push(
+            <Marker
+              key={i}
+              coordinate={{
+                latitude: place.geometry.location.lat,
+                longitude: place.geometry.location.lng
+              }}>
+              <Icon large color='black' name="face"/>
+            </Marker>
+          )
+        })
         this.setState({
-          places: res.results.slice(0)
+          places: res.results.slice(0),
+          placesLocation: placesArray
         })
       })
   }
@@ -208,6 +222,7 @@ getUrl(lat, long, radius, type){
                         <MapView.Marker coordinate={this.state.region}>
                             <Icon large color='black' name="face"/>
                         </MapView.Marker>
+                        {this.state.placesArray}
                     </MapView>
                     <Fab
                       active={this.state.active}
