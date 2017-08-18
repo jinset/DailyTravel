@@ -133,6 +133,7 @@ getUrl(lat, long, radius, type){
     fetch(url)
       .then((data) => data.json())
       .then((res) => {
+        alert(res);
         const placesArray = [];
         res.results.map((place, i) =>{
           placesArray.push(
@@ -146,6 +147,7 @@ getUrl(lat, long, radius, type){
             </Marker>
           )
         })
+        console.log("AQUI SE JUEGA"+placesArray);
         this.setState({
           places: res.results.slice(0),
           placesLocation: placesArray
@@ -222,7 +224,7 @@ getUrl(lat, long, radius, type){
                         <MapView.Marker coordinate={this.state.region}>
                             <Icon large color='black' name="face"/>
                         </MapView.Marker>
-                        {this.state.placesArray}
+                        {this.state.placesLocation}
                     </MapView>
                     <Fab
                       active={this.state.active}
