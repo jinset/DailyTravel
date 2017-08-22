@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import { Container, Content, Form,List,Toast,ListItem,Radio,View, Item, Input, Label, Button ,Text,Body , Right, Switch, Card,
    CardItem, Thumbnail, Left  } from 'native-base';
 import strings from '../../common/local_strings.js';
+import HideableView from 'react-native-hideable-view';
 import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
 import PopupDialog, { DialogTitle } from 'react-native-popup-dialog';
@@ -54,6 +55,7 @@ let ref='';
               diaryUsers: [],
               users: [],
               uidCurrentUser:'',
+              isOwner:false,
             }
 
         });
@@ -86,23 +88,45 @@ let ref='';
                       checkRepeat.once('value', function(snapshot) {
                           if(snapshot.exists() == true){
                            if(child.key != value){
+                             if(that.state.idOwner != child.key){
                               diaryUsers.push({
                                 id: child.key,
                                 nickname: child.val().nickname,
                                 name: child.val().name,
                                 lastName: child.val().lastName,
                                 url: child.val().url,
-                                invited: child.val().invitationStus,
+                                invited: child.val().invitationStatus,
+                                isOwner:false,
                               });//users.push
                             } //if nick diff from current
                             else{
+                            diaryUsers.push({
+                              id: child.key,
+                              nickname:  child.val().nickname,
+                              url: child.val().url,
+                              invited: child.val().invitationStatus,
+                              isOwner:true,
+                            });//users.push¡
+                          }
+                          }
+                            else{
+                              if(that.state.idOwner != child.key){
+                                 diaryUsers.push({
+                                   id: child.key,
+                                   nickname: strings.me,
+                                   url: child.val().url,
+                                   invited: child.val().invitationStatus,
+                                   isOwner:false,
+                                 });//users.push¡
+                              }else{
                                diaryUsers.push({
                                  id: child.key,
                                  nickname: strings.me,
                                  url: child.val().url,
-                                 invited: child.val().invitationStus,
+                                 invited: child.val().invitationStatus,
+                                 isOwner:true,
                                });//users.push¡
-
+                             }
                             }
                           }
                           that.setState({
@@ -123,7 +147,7 @@ let ref='';
                              name: child.val().name,
                              lastName: child.val().lastName,
                              url: child.val().url,
-                             invited: child.val().invitationStus,
+                             invited: child.val().invitationStatus,
                            });//users.push
                       }
                    that.setState({
@@ -136,39 +160,12 @@ let ref='';
 })//userList.on
     //alert(diaryUsers.length)
   }
-  getUserDiaries(){
-    var diaryUsers = [];
-
-    AsyncStorage.getItem("user").then((value) => {
-      snap.forEach((child) => {
-          let checkRepeat = getDatabase().ref('userDiary/').orderByChild("idDiary").equalTo(key);
-          checkRepeat.once('value', function(snapshot) {
-              if(snapshot.exists() == true){
-               if(child.key != value){
-                  diaryUsers.push({
-                    id: child.key,
-                    nickname: child.val().nickname,
-                    name: child.val().name,
-                    lastName: child.val().lastName,
-                    url: child.val().url,
-                    invited: child.val().invitationStus,
-                  });//users.push
-                } //if nick diff from current
-              }
-
-              that.setState({
-                  diaryUsers: diaryUsers,
-              })//setState
-          })//checkRepeat.once
-      });//snap.forEach
-   })//AsyncStorage
-  }
 ///////////////////////////////////////////////////////OBTIENE IMAGEN////////////////////////////////////////////////////////////////
-   async componentwillMount(){
+   getImageUrl(){
      try{
        HelperDiary.getImageUrl(key, (url) => {
          this.setState({
-           imagePath: url,
+           url: url,
          })
        })
        this.setState({
@@ -204,15 +201,16 @@ let ref='';
        }
        ///////////////////////////////////////////////////CREA IMAGEN///////////////////////////////////////////////////////////
        createImage(){
-         if(this.state.key){
+         if(key){
              try{
                 this.state.imagePath ?
-                    uploadImage(this.state.imagePath, `${this.state.key}.jpg`)
+                    uploadImage(this.state.imagePath, `${key}.jpg`)
                         .then((responseData) => {
-                          HelperDiary.setImageUrl(this.state.key, responseData)
+                          HelperDiary.setImageUrl(key, responseData)
                         })
                         .done()
                     : null
+                    this.getImageUrl();
              } catch(error){
                alert(error)
              }
@@ -253,15 +251,17 @@ let ref='';
      var myRef = getDatabase().ref().push();
           getDatabase().ref().child('userDiary/').push({
           idUser:userId,
-          idDiary: this.state.key,
-          invitationStus:userstatus,
+          idDiary: key,
+          invitationStatus:true,
           status:this.state.status,
+          userDiary:userId+'-'+key
       }).catch(function(error) {
           alert(error);
      });
    }
 ///////////////////////////////////////// addGuest /////////////////////////////////////////////////////////////
     addGuest(i){
+      this.addDiaryUsers(this.state.users[i].id,this.state.users[i].invited)
       var diaryUsers =[];
       diaryUsers=this.state.diaryUsers;
       diaryUsers.push({
@@ -285,6 +285,15 @@ let ref='';
 ///////////////////////////////////////// removeGuest /////////////////////////////////////////////////////////////
     removeGuest(i){
       if(this.state.uidCurrentUser != this.state.diaryUsers[i].id){
+        var that = this.state;
+        var tthat = this;
+        let ref = getDatabase().ref('/userDiary/')
+        followersList = (ref.orderByChild("userDiary").equalTo(this.state.diaryUsers[i].id+'-'+key))
+        followersList.once('value', (snap) => {
+            snap.forEach((child) => {
+                ref.child(child.key).remove();
+            });
+        });
         var users =[];
         users=this.state.users;
         users.push({
@@ -294,16 +303,18 @@ let ref='';
           lastName: this.state.diaryUsers[i].lastName,
           url: this.state.diaryUsers[i].url,
           invited: !this.state.diaryUsers[i].invited,
-        });//users.push
+        });
 
-        var diaryUsers = [];
-        diaryUsers=this.state.diaryUsers;
-        diaryUsers.splice(i, 1);
+                var diaryUsers = [];
+                diaryUsers=this.state.diaryUsers;
+                diaryUsers.splice(i, 1);
+
+
         this.setState({
             users: users,
             diaryUsers:diaryUsers,
         })//users.push
-    }
+      }
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -322,7 +333,9 @@ let ref='';
             </Body>
 
           <Right>
-            <Radio selected={u.invited} onPress={() => this.addGuest(i)} />
+            <Button light style={{height:35}} onPress={() => this.addGuest(i)} >
+                <Text style={{fontSize:12}}>{strings.invite}</Text>
+              </Button>
           </Right>
           </ListItem>
             )
@@ -338,7 +351,12 @@ let ref='';
               </Body>
 
             <Right>
-              <Radio selected={u.invited} onPress={() => this.removeGuest(i)} />
+            <HideableView visible={!this.state.diaryUsers[i].isOwner} removeWhenHidden={true} duration={100}>
+                <Button lighstyle={{height:35}} onPress={() => this.removeGuest(i)}>
+                  <Text style={{fontSize:12}}>{strings.eject}</Text>
+                </Button>
+            </HideableView>
+
             </Right>
             </ListItem>
               )
@@ -385,7 +403,7 @@ let ref='';
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
               source={{uri: this.state.url}} />
             </TouchableHighlight>
-              <Text style={{alignSelf:'center'}}>{strings.changePhoto}</Text>
+              <Text style={{alignSelf:'center', backgroundColor:'#808080', color:'white', padding:5,top:-15,fontSize:10}}>{strings.changePhoto}</Text>
 
             <Form style={{padding:10}}>
               <Left>

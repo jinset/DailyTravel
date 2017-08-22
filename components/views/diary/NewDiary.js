@@ -23,6 +23,7 @@ const fs = RNFetchBlob.fs
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
 window.Blob = Blob
 
+var key:'';
 var newRef ='';
 var usuario ='';
  export default class NewDiary extends Component {
@@ -155,7 +156,7 @@ openImagePicker(){
           getDatabase().ref().child('userDiary/').push({
           idUser:elemento.id,
           idDiary: this.state.key,
-          invitationStus:true,
+          invitationStatus:true,
           status:this.state.status,
           userDiary:elemento.id+'-'+ this.state.key,
       }).catch(function(error) {
@@ -338,7 +339,7 @@ openImagePicker(){
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
               source={{uri: this.state.url}} />
             </TouchableHighlight>
-              <Text style={{alignSelf:'center'}}>{strings.changePhoto}</Text>
+            <Text style={{alignSelf:'center', backgroundColor:'#808080', color:'white', padding:5,top:-15,fontSize:10}}>{strings.changePhoto}</Text>
 
               <ScrollView horizontal={true} style={{padding:5}} >
                 <Button rounded bordered dark onPress={() => {
@@ -353,7 +354,11 @@ openImagePicker(){
 
             <ScrollView>
             <Form style={{padding:10}}>
-
+            <Left>
+              <Label>{strings.privacy }</Label>
+              <Switch value={ this.state.privacy }
+                onValueChange={this.privacyChange.bind( this ) }/>
+            </Left>
               <Label>{strings.name }</Label>
               <AutogrowInput style={{ fontSize: 18}}  maxLength={30}
                 onChangeText={(text) => this.setState({name:text})} />

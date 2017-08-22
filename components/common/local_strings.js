@@ -88,6 +88,8 @@ let strings = new LocalizedStrings({
    iAppearWhenHome: "I appear when you don't follow no one",
    touchMeToCreateHome: "Touch me to follow new friends",
    changePhoto: "Change photo ",
+   eject: "Eject",
+   invite: "Invite",
  },
  es:{
    home:"Inicio",
@@ -176,6 +178,8 @@ let strings = new LocalizedStrings({
    howDeleteImage: "Mantenga presionado una imagen para eliminar",
    imageDeleted: "Imagen borrada",
    changePhoto: "Cambiar foto ",
+   eject: "Expulsar",
+   invite: "Invitar",
  },
  zh:{
    home:"首頁",
