@@ -41,7 +41,9 @@ import EditProfile from './profile/editProfile';
 import {getAuth} from '../common/database';
 
 //Import de Mapa
-import DiaryMap from './diaryMap/diaryMap.js'
+import DiaryMap from './diaryMap/diaryMap.js';
+import DailyMap from './diaryMap/dailyMap.js';
+import AddDailyMap from './diaryMap/addDailyMap.js';
 
 //Import Icons
 import { Icon } from 'react-native-elements';
@@ -55,13 +57,17 @@ export const DTHome = StackNavigator({
 export const DTDiaryMap = StackNavigator({
   //Map
     diaryMap: { screen: DiaryMap },
+    //DailyMap
+      dailyMap: {screen: DailyMap},
+      addDailyMap: {screen: AddDailyMap},
 });
 export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
     editProfile: {screen: EditProfile},
-      newDiary: { screen: NewDiary },
-      editDiary: { screen: EditDiary },
+        //Diary
+        newDiary: { screen: NewDiary },
+        editDiary: { screen: EditDiary },
         DairyView: { screen: DairyView },
         //Daily
           listDaily: { screen: ListDaily },
@@ -70,9 +76,7 @@ export const DTProfile = StackNavigator({
           daily: { screen: Daily },
           gallery: { screen: Gallery },
           //NotificationsView
-
           notifications: { screen: NotificationsView },
-
 });
 
 export const DTFriends = StackNavigator({
