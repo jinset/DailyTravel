@@ -95,9 +95,9 @@ export default class DiaryMap extends Component {
           this.setRegion(lat, lon)
           this.getPlaces()
         }, (error) => alert(error.message),
-        {enableHighAccuracy: true, timeout: 25000}
-        /* Mobile
-        {enableHighAccuracy: false, timeout: 25000}*/
+        //{enableHighAccuracy: true, timeout: 25000}
+        //Mobile
+        {enableHighAccuracy: false, timeout: 25000}
       )
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,9 +110,9 @@ export default class DiaryMap extends Component {
           const lon = position.coords.longitude
           this.setRegion(lat, lon)
         }, (error) => alert(error.message),
-        {enableHighAccuracy: true, timeout: 25000}
-        /* Mobile
-        {enableHighAccuracy: false, timeout: 25000}*/
+        //{enableHighAccuracy: true, timeout: 25000}
+        // Mobile
+        {enableHighAccuracy: false, timeout: 25000}
       )
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

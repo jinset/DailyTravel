@@ -32,38 +32,68 @@ export default class Login extends Component {
     }
   }
 
-  login() {
-    const { navigate } = this.props.navigation;
-    // this.setState({ showSpinner: true });
-    try {
-      MessageBarManager.registerMessageBar(this.refs.alert);
-      getAuth().signInWithEmailAndPassword(this.state.email,
-        this.state.password).then(function(firebaseUser) {
-          AsyncStorage.setItem("user", firebaseUser.uid);
-          navigate('dtTabs');
-      }).catch(function(error) {
-        // this.setState({ showSpinner: false });
-        MessageBarManager.showAlert({
-           message: strings.wrongPassEmail,
-           alertType: 'info',
-           position: 'bottom',
-           duration: 4000,
-           stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
-        });
-      });
-    } catch (e) {
-      // this.setState({ showSpinner: false });
-      console.log(e);
-    }
+  async doLogin(){
+    this.setState({ showSpinner: true });
+    await this.login();
+    this.setState({ showSpinner: false });
 
   }
+
+  async login(){
+    return new Promise((resolve, reject) => {
+      const { navigate } = this.props.navigation;
+      MessageBarManager.registerMessageBar(this.refs.alert);
+      getAuth().signInWithEmailAndPassword(this.state.email,
+        this.state.password).then(function(firebaseUser){
+          AsyncStorage.setItem("user", firebaseUser.uid);
+          navigate('dtTabs');
+          resolve(console.log("yes"))
+        }).catch(function(error){
+          MessageBarManager.showAlert({
+             message: strings.wrongPassEmail,
+             alertType: 'info',
+             position: 'bottom',
+             duration: 4000,
+             stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+          });
+          resolve(console.log("no"));
+        })
+    })
+
+  }
+
+  /*async login() {
+      const { navigate } = this.props.navigation;
+      // this.setState({ showSpinner: true });
+      try {
+        MessageBarManager.registerMessageBar(this.refs.alert);
+        getAuth().signInWithEmailAndPassword(this.state.email,
+          this.state.password).then(function(firebaseUser) {
+            AsyncStorage.setItem("user", firebaseUser.uid);
+            navigate('dtTabs');
+        }).catch(function(error) {
+          // this.setState({ showSpinner: false });
+          MessageBarManager.showAlert({
+             message: strings.wrongPassEmail,
+             alertType: 'info',
+             position: 'bottom',
+             duration: 4000,
+             stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+          });
+        });
+      } catch (e) {
+        // this.setState({ showSpinner: false });
+        console.log(e);
+      }
+    }*/
+
   render() {
     const { navigate } = this.props.navigation;
 
     return (
-      <Container style={{flex: 1,marginTop:90}}>
+      <Container style={{flex: 1}}>
              <Content padder>
-             <HideableView visible={this.state.showSpinner} removeWhenHidden={true} style={{backgroundColor:'transparent'}}>
+             <HideableView visible={this.state.showSpinner} removeWhenHidden={false} style={{backgroundColor:'transparent', position:'relative'}}>
                 <Spinner color='#41BEB6' />
              </HideableView>
              <Form>
@@ -89,7 +119,7 @@ export default class Login extends Component {
                   <Text style={{textAlign: 'center', fontSize:15}}>{strings.forgetpass}</Text>
                 </Button>
               </Body>
-                <Button block dark onPress = {this.login.bind(this)} style={{marginTop:15,backgroundColor: '#41BEB6'}}>
+                <Button block dark onPress = {this.doLogin.bind(this)} style={{marginTop:15,backgroundColor: '#41BEB6'}}>
                    <Text >{strings.loging}</Text>
                 </Button>
               <Body>

@@ -14,7 +14,7 @@ import { StackNavigator } from 'react-navigation';
 import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Left,Right, Body, Spinner,View,Fab,Drawer, ListItem} from 'native-base';
 import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
-import { getDatabase } from '../../common/database';
+import { getDatabase, getAuth } from '../../common/database';
 import HideableView from 'react-native-hideable-view';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
@@ -36,6 +36,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
        refreshing: false,
        isConnected: true,
        showPig: false,
+       fcm_token: ""
      };
    }
 
@@ -123,9 +124,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     async load() {
       try {
         /*Muestra el loading*/
-        this.setState({
-           showSpinner: true
-         });
+        this.setState({refreshing: true});
+
         var arrayFollows = [];
         let homeArray = [];
         var current = this.state.currentPageIndex;
@@ -147,9 +147,9 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(homeArray)
         });
-        this.setState({
-          showSpinner: false
-        });
+        //termina el loading
+        this.setState({refreshing: false});
+
       } catch (error) {
         console.log(error.message);
       }
@@ -184,9 +184,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     }
     async loadHome(){
       try {
-        this.setState({
-           showSpinnerTop: true
-         });
+        this.setState({refreshing: true});
+
         let homeArray = [];
         var arrayFollows = [];
         var idUser = "";
@@ -225,9 +224,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
             });
             /*Desaparece el loading*/
 
-           this.setState({
-              showSpinnerTop: false
-            });
+            this.setState({refreshing: false});
+
 
           /*  this.setState({
               showPig: false
@@ -238,6 +236,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     }
 
   async componentDidMount() {
+
     NetInfo.isConnected.fetch().done(isConnected => {
         if (isConnected === true) {
           this.loadHome();
@@ -352,15 +351,6 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
              position="bottomRight"
              onPress={()=> navigate('newDiary')}>
              <Icon color='white' name="library-books" />
-           </Fab>
-           <Fab
-             active='false'
-             direction="up"
-             containerStyle={{ }}
-             style={{  backgroundColor:'#41BEB6'}}
-             position="bottomLeft"
-             onPress={()=> navigate('notifications')}>
-             <Icon color='white' name="add-alert" />
            </Fab>
            <MessageBarAlert ref="alert"/>
 

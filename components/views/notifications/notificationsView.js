@@ -17,6 +17,8 @@ import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import { createNotification } from '../../common/notification';
 import HideableView from 'react-native-hideable-view';
+import DialogBox from 'react-native-dialogbox';
+
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
@@ -49,11 +51,34 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
          this.setState({refreshing: false});
        });
      }
-     accept(){
-       alert("un popup pa aceptar");
+
+     handleOnPress = (idDiary, name, key) => {
+       this.dialogbox.confirm({
+           content: 'Accept invitation for diary ' + name + '?',
+           ok: {
+               callback: () => {
+                   this.updateNotification(key);
+                   this.updateUserDiary(idDiary);
+                   this._onRefresh();
+               },
+           },
+       });
      }
+
+     updateNotification(key){
+       getDatabase().ref().child('notifications/'+ this.state.idUser + '/' + key).update({
+         status:true
+       })
+     }
+
+     updateUserDiary(idDiary){
+       getDatabase().ref().child('userDiary/'+ this.state.idUser + '-' + idDiary).update({
+         status:true
+       })
+     }
+
     /*
-      Obtiene los diarios que su privacidad esten en falsos
+      Obtiene las 10 primeras notificaciones
      */
     async getNotifications(idUser, current) {
       return new Promise((resolve, reject) => {
@@ -67,7 +92,9 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
             status: child.val().status,
             type: child.val().type,
             userIdGet: child.val().userIdGet,
-            date: child.val().date
+            date: child.val().date,
+            diaryId: child.val().diaryId,
+            diaryName: child.val().diaryName
             })
           });
           resolve(notifications.reverse())
@@ -79,21 +106,25 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
       try {
         return new Promise((resolve, reject) => {
           console.log(dataUser);
-          var users = [];
-          var ref = getDatabase().ref("users/" + dataUser.userIdGet);
-          ref.once("value", (snapshot) => {
-            var val = snapshot.val();
-            users = {
-              _key: dataUser.key,
-              status: dataUser.status,
-              type: dataUser.type,
-              userIdGet: dataUser.userIdGet,
-              date: dataUser.date,
-              userNick: val.nickname,
-              photoUser: val.url
-            }
-            resolve(users);
-          })
+            var users = [];
+            var ref = getDatabase().ref("users/" + dataUser.userIdGet);
+            ref.once("value", (snapshot) => {
+              var val = snapshot.val();
+              console.log(val);
+              users = {
+                _key: dataUser._key,
+                status: dataUser.status,
+                type: dataUser.type,
+                userIdGet: dataUser.userIdGet,
+                date: dataUser.date,
+                diaryId: dataUser.diaryId,
+                diaryName: dataUser.diaryName,
+                userNick: val.nickname,
+                photoUser: val.url
+              }
+              console.log(users);
+              resolve(users);
+            })
         });
       } catch (e) {
         console.log(e);
@@ -105,9 +136,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     async loadNotifications() {
       try {
         let notificationsArray = [];
-        this.setState({
-           showSpinnerTop: true
-         });
+        this.setState({refreshing: true});
+
         var idUser = "";
         await AsyncStorage.getItem("user").then((value) => {
           this.state.idUser = value;
@@ -124,9 +154,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
           dataSource: this.state.dataSource.cloneWithRows(notificationsArray)
         });
         /*Desaparece el loading*/
-       this.setState({
-          showSpinnerTop: false
-        });
+        this.setState({refreshing: false});
+
       } catch (error) {
         console.log(error.message);
       }
@@ -188,9 +217,14 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
         {(() => {
           switch (item.type) {
             case "follow": return <Text>La persona {item.userNick} te ha seguido</Text>;
-            case "invitation":  return <TouchableHighlight onPress={() => this.accept()}>
-              <Text>La persona {item.userNick} te ha enviado una invitacion</Text>
-            </TouchableHighlight>;
+            case "invitation":
+            switch (item.status) {
+              case false: return <TouchableHighlight onPress={() => this.handleOnPress(item.diaryId, item.diaryName, item._key)}>
+                  <Text>La persona {item.userNick} te ha enviado una invitacion para participar al diario, presionar para aceptar la invitacion </Text>
+              </TouchableHighlight>;
+
+              case true: return <Text>Ya has aceptado la invitacion al diario {item.diaryName}</Text>
+            }
           }
         })()}
         </View>
@@ -226,7 +260,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
              enableEmptySections={true}
              >
            </ListView>
-
+           <DialogBox ref={dialogbox => { this.dialogbox = dialogbox }}/>
          </Content>
 
          <View>

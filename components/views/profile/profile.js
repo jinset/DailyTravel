@@ -16,7 +16,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {Component} from 'react';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Container, Content, Form, Segment, Item, Separator, Input, Label, Button,Fab,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import baseStyles from '../../style/baseStyles.js';
@@ -200,6 +200,14 @@ export default class Profile extends Component {
          })
        }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////log out ///////////////////////////////////////////////////////////////
+logout() {
+  const { navigate } = this.props.navigation;
+  AsyncStorage.removeItem("user", ()=>{
+    console.log("se va");
+    navigate('login');
+  });
+}
 
   render() {
 
@@ -270,6 +278,10 @@ export default class Profile extends Component {
                           </View>
                     </View>
                  </Left>
+                 <Button transparent small onPress={this.logout.bind(this)}>
+                     <Icon active name='exit-to-app' />
+                 </Button>
+
                     <Button transparent small
                             onPress={()=>navigate('editProfile', {uid: this.state.uid,
                                                                   nickname: this.state.nickname,

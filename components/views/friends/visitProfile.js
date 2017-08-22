@@ -170,7 +170,7 @@ export default class EditProfile extends Component {
               lastName: snapshot.child("lastName").val(),
               url: snapshot.child("url").val(),
             });
-            createNotification(that.uid, that.uidCurrentUser, "follow", Moment(new Date()).format("YYYY-MM-DD"));
+            createNotification(that.uid, that.uidCurrentUser, "follow", Moment(new Date()).format("YYYY-MM-DD"),"","");
 
       })
       this.setState({

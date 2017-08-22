@@ -19,8 +19,8 @@ export default class GetPassword extends Component {
 
   static navigationOptions = {
     headerTitle: strings.forgetpass,
-    headerStyle: {backgroundColor: '#41BEB6',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
   };
 
   constructor(props) {
@@ -36,9 +36,7 @@ export default class GetPassword extends Component {
     try {
       MessageBarManager.registerMessageBar(this.refs.alert);
       var that = this.state
-      // this.setState({ showSpinner: true });
       getAuth().sendPasswordResetEmail(this.state.email).then(function() {
-        // this.setState({ showSpinner: false });
         MessageBarManager.showAlert({
            message: strings.checkEmail + " " + that.email,
            alertType: 'info',
@@ -47,7 +45,6 @@ export default class GetPassword extends Component {
            stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
         });
       }).catch(function(error) {
-        // this.setState({ showSpinner: false });
         MessageBarManager.showAlert({
            message: strings.unknowEmail,
            alertType: 'info',
@@ -57,7 +54,6 @@ export default class GetPassword extends Component {
         });
       });
     } catch (e) {
-      // this.setState({ showSpinner: false });
       console.log(e);
     }
 
