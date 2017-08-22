@@ -195,7 +195,7 @@ export default class EditProfile extends Component {
                                            onChangeText={(text) => this.setState({inputLastName: text})}
                                            maxLength = {20}/>
                                 </Item>
-                                <Item>
+                                <ListItem style={{marginLeft:2, paddingTop:5, paddingBottom:5, paddingRight:5}}>
                                       <DatePicker
                                         iconComponent={ <Icon active name='cake' /> }
                                         style={{width: 20}}
@@ -208,32 +208,11 @@ export default class EditProfile extends Component {
                                         maxDate="01/01/2010"
                                         confirmBtnText="Confirm"
                                         cancelBtnText="Cancel"
-                                        customStyles={{
-
-                                        }}
                                         onDateChange={(date) => {this.setState({inputBirthDay: date})}}
                                       />
                                     <Label>{"   " + this.state.inputBirthDay}</Label>
-                                  </Item>
+                                </ListItem>
                         </Card>
-                        <Separator></Separator>
-                        <PixAccordion
-                           renderHeader={() => <View style={styles.center}>
-                                                   <View style={styles.row}>
-                                                    <Text>
-                                                        {strings.signOff}
-                                                    </Text>
-                                                    <Icon active name='keyboard-arrow-down' />
-                                                    </View>
-                                                  </View>
-                                         }
-                           easing="bounce"
-                         >
-                                         <Icon large name='exit-to-app'
-                                               style={styles.centerIcon}
-                                               onPress={this.logout.bind(this)}
-                                               color={'white'} />
-                         </PixAccordion>
                         <Separator></Separator>
                         <Left >
                             <View style={styles.privateInfo}>

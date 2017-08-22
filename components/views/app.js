@@ -71,7 +71,12 @@ export const DTProfile = StackNavigator({
           gallery: { screen: Gallery },
           //NotificationsView
 
-          notifications: { screen: NotificationsView },
+
+});
+
+export const DTNotificatios = StackNavigator({
+  //Notifications
+  notifications: { screen: NotificationsView },
 
 });
 
@@ -113,6 +118,10 @@ export const DailyTravelTabs = TabNavigator({
     diaryMapTab: { screen: DTDiaryMap,
       navigationOptions:{
         tabBarLabel: strings.map,
+    }},
+    notificationsTab: { screen: DTNotificatios,
+      navigationOptions:{
+        tabBarLabel: strings.notifications,
     }},
     friendsTab: { screen: DTFriends,
       navigationOptions:{

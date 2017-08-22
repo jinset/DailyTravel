@@ -6,10 +6,11 @@ import {
   AsyncStorage,
 } from 'react-native';
 
-import { Container, Content,Form, Item, Input, Label, Button, Icon, Body} from 'native-base';
+import { Container, Content,Form, Item, Input, Label, Button, Icon, Body, Spinner} from 'native-base';
 import React, {Component} from 'react';
 import {getAuth} from '../common/database';
 import strings from '../common/local_strings.js';
+import HideableView from 'react-native-hideable-view';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
@@ -18,14 +19,16 @@ export default class GetPassword extends Component {
 
   static navigationOptions = {
     headerTitle: strings.forgetpass,
-    headerStyle: {backgroundColor: '#41BEB6',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
   };
 
   constructor(props) {
     super(props);
+    console.disableYellowBox = true;
     this.state = {
-      email: ''
+      email: '',
+      showSpinner: false
     }
   }
 
@@ -61,6 +64,9 @@ export default class GetPassword extends Component {
     return (
       <Container style={{flex: 1,marginTop:90}}>
              <Content padder>
+             <HideableView visible={this.state.showSpinner} removeWhenHidden={true} style={{backgroundColor:'transparent'}}>
+                <Spinner color='#41BEB6' />
+             </HideableView>
              <Form>
               <Item floatingLabel>
                   <Label>{strings.email}</Label>
