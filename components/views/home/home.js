@@ -14,7 +14,7 @@ import { StackNavigator } from 'react-navigation';
 import {  Container, Content, Card, CardItem, Thumbnail, Text, Button, Left,Right, Body, Spinner,View,Fab,Drawer, ListItem} from 'native-base';
 import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
-import { getDatabase } from '../../common/database';
+import { getDatabase, getAuth } from '../../common/database';
 import HideableView from 'react-native-hideable-view';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
@@ -36,6 +36,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
        refreshing: false,
        isConnected: true,
        showPig: false,
+       fcm_token: ""
      };
    }
 
@@ -49,7 +50,6 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     _onRefresh() {
        this.setState({refreshing: true});
        this.loadRefreshing().then(() => {
-         console.log("Aqui si funciona");
          this.setState({refreshing: false});
        });
      }
@@ -124,9 +124,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     async load() {
       try {
         /*Muestra el loading*/
-        this.setState({
-           showSpinner: true
-         });
+        this.setState({refreshing: true});
+
         var arrayFollows = [];
         let homeArray = [];
         var current = this.state.currentPageIndex;
@@ -148,9 +147,9 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(homeArray)
         });
-        this.setState({
-          showSpinner: false
-        });
+        //termina el loading
+        this.setState({refreshing: false});
+
       } catch (error) {
         console.log(error.message);
       }
@@ -185,9 +184,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     }
     async loadHome(){
       try {
-        this.setState({
-           showSpinnerTop: true
-         });
+        this.setState({refreshing: true});
+
         let homeArray = [];
         var arrayFollows = [];
         var idUser = "";
@@ -226,9 +224,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
             });
             /*Desaparece el loading*/
 
-           this.setState({
-              showSpinnerTop: false
-            });
+            this.setState({refreshing: false});
+
 
           /*  this.setState({
               showPig: false
@@ -239,9 +236,9 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     }
 
   async componentDidMount() {
+
     NetInfo.isConnected.fetch().done(isConnected => {
         if (isConnected === true) {
-
           this.loadHome();
         }else{
           this.loadHome();
@@ -277,8 +274,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
   _renderItem(item) {
     const { navigate } = this.props.navigation;
     return (
-      <View style={{flex: 0, backgroundColor:'white', margin:10}} key={item._key} >
-        <View>
+      <View style={{backgroundColor:'white', marginTop:5, marginButton:5}} key={item._key} >
+        <View >
           <ListItem>
             <Left>
               <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.idOwner})}>
@@ -291,17 +288,16 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
             </Body>
             </Left>
             <Right>
-              <Icon active name='more-vert' />
             </Right>
           </ListItem>
-          <View>
+          <View style={{ backgroundColor:'white', margin:10}}>
             <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item._key})}>
               <Thumbnail square source={{uri: item.url}} style={{height: Dimensions.get('window').height/2, width: Dimensions.get('window').width}}/>
             </TouchableHighlight>
             <Text style={{marginTop:10, marginButton:10}}>{item.name}</Text>
           </View>
-          <View>
-            <Text style={{marginTop:10, marginButton:10}}>{item.description}</Text>
+          <View style={{backgroundColor:'white', margin:10}}>
+            <Text>{item.description}</Text>
           </View>
         </View>
       </View>
@@ -313,7 +309,6 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
     const { navigate } = this.props.navigation;
     return (
       <Container>
-
       <HideableView visible={this.state.showSpinnerTop} removeWhenHidden={true} >
          <Spinner color='#41BEB6' />
       </HideableView>
@@ -355,15 +350,6 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
              position="bottomRight"
              onPress={()=> navigate('newDiary')}>
              <Icon color='white' name="library-books" />
-           </Fab>
-           <Fab
-             active='false'
-             direction="up"
-             containerStyle={{ }}
-             style={{  backgroundColor:'#41BEB6'}}
-             position="bottomLeft"
-             onPress={()=> navigate('notifications')}>
-             <Icon color='white' name="add-alert" />
            </Fab>
            <MessageBarAlert ref="alert"/>
 

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "651940849732",
+    "firebase_url": "https://daily-travel-6ff5f.firebaseio.com",
+    "project_id": "daily-travel-6ff5f",
+    "storage_bucket": "daily-travel-6ff5f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651940849732:android:57d431526a0c9dd5",
+        "android_client_info": {
+          "package_name": "com.dailytravel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "651940849732-g95gtgdb0qvr5josne9r3q3svkmp7u72.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwZu9iWaXG_QcABtuTih19pTOajk71ZiU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
