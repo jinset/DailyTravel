@@ -54,7 +54,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
      handleOnPress = (idDiary, name, key) => {
        this.dialogbox.confirm({
-           content: 'Accept invitation for diary ' + name + '?',
+           content: strings.acceptInvitation + " " + name + '?',
            ok: {
                callback: () => {
                    this.updateNotification(key);
@@ -73,7 +73,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
      updateUserDiary(idDiary){
        getDatabase().ref().child('userDiary/'+ this.state.idUser + '-' + idDiary).update({
-         status:true
+         invitationStatus:true
        })
      }
 
@@ -216,14 +216,14 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
         <View>
         {(() => {
           switch (item.type) {
-            case "follow": return <Text>La persona {item.userNick} te ha seguido</Text>;
+            case "follow": return <Text>{strings.theUser} {item.userNick} {strings.hasFollowed}</Text>;
             case "invitation":
             switch (item.status) {
               case false: return <TouchableHighlight onPress={() => this.handleOnPress(item.diaryId, item.diaryName, item._key)}>
-                  <Text>La persona {item.userNick} te ha enviado una invitacion para participar al diario, presionar para aceptar la invitacion </Text>
+                  <Text>{strings.theUser} {item.userNick} {strings.sendInvitation} {item.diaryName}, {strings.touchAccept} </Text>
               </TouchableHighlight>;
 
-              case true: return <Text>Ya has aceptado la invitacion al diario {item.diaryName}</Text>
+              case true: return <Text>{strings.acceptAlreadyInvitation} {item.diaryName}</Text>
             }
           }
         })()}

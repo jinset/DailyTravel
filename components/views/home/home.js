@@ -288,7 +288,6 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
             </Body>
             </Left>
             <Right>
-              <Icon active name='more-vert' />
             </Right>
           </ListItem>
           <View style={{ backgroundColor:'white', margin:10}}>
