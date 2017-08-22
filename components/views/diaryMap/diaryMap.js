@@ -17,26 +17,33 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Header, Form, Segment, Item, Separator, Input, Label, Button,Fab,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
+import { Container, Content, Header, Form, Segment, List, Item, Separator, Input, Label, Button,Fab,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import baseStyles from '../../style/baseStyles.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
-import CameraProfileComponent from '../cameraComponent/CameraProfileComponent';
 import * as firebase from 'firebase';
-import {getAuth} from '../../common/database';
 import { Icon } from 'react-native-elements';
+import MapView, {Marker} from 'react-native-maps';
+import Modal from 'react-native-modalbox';
 import HideableView from 'react-native-hideable-view';
-import MapView from 'react-native-maps';
 
-var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs";
+// var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs";    DANI
+var APIKey = "AIzaSyCQjiBm5_7fm6DsB0vf8Mz8Tn6i9xighXM";
 
-var colors = [{type: 'restaurant', icon: 'restaurant', bg: '#41BEB6', color: 'white', selected: true},
-              {type: 'establishment', icon: 'location-city', bg: 'white', color: '#808080', selected: false},
-              {type: 'cafe', icon: 'free-breakfast', bg: 'white', color: '#808080', selected: false},
-              {type: 'food', icon: 'local-pizza', bg: 'white', color: '#808080', selected: false},
-              {type: 'bar', icon: 'local-bar', bg: 'white', color: '#808080', selected: false}
-            ]
+var colors = [{type: 'restaurant', name: strings.restaurant, icon: 'restaurant', bg: '#41BEB6', color: 'white', selected: true},
+              {type: 'establishment', name: strings.establishment, icon: 'location-city', bg: 'white', color: '#808080', selected: false},
+              {type: 'cafe', name: strings.coffe, icon: 'free-breakfast', bg: 'white', color: '#808080', selected: false},
+              {type: 'food', name: strings.food, icon: 'local-pizza', bg: 'white', color: '#808080', selected: false},
+              {type: 'bar', name: strings.bar, icon: 'local-bar', bg: 'white', color: '#808080', selected: false}
+            ];
+
+var types = [{ restaurants: [],
+               establishments: [],
+               cafe: [],
+               food: [],
+               bar: [],
+            }];
 
 export default class DiaryMap extends Component {
 
@@ -56,12 +63,15 @@ export default class DiaryMap extends Component {
            latitudeDelta: 0.0922,
            longitudeDelta: 0.0421,
          },
-         type: 'food',
-         radius: 500,
-         places: [],
-         active: false,
-         arrow: 'keyboard-arrow-down',
-         colors: colors,
+         places: [], // Total list of places
+         type: 'food', // Type by default in getPlaces()
+         typeName: strings.restaurant, // Search Placeholder
+         radius: 500, // radius of search in getPlaces()
+         active: false, // Fab active false
+         arrow: 'keyboard-arrow-down', // Switch of arrow in Fab
+         colors: colors, // List to switch color of options after Fab is opened
+         icon: '', //List to switch icons
+         sltPlace: 'Select a place to travel', // The selected place of the list showed in the modal
        }
     }
     /*latitude: 10.00253, longitude: -84.14021,*/
@@ -70,6 +80,7 @@ export default class DiaryMap extends Component {
 /////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
     async componentWillMount(){
         this.doCurrent()
+        this.selectType(0)
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -131,30 +142,71 @@ getUrl(lat, long, radius, type){
   getPlaces(){
     const url = this.getUrl(this.state.region.latitude, this.state.region.longitude, this.state.radius, this.state.type)
     fetch(url)
-      .then((data) => data.json())
-      .then((res) => {
-        this.setState({
-          places: res.results.slice(0)
-        })
-      })
+     .then((data) => data.json())
+     .then((res) => {
+       if(res.status === "OK"){
+       var placesArray = [];
+       var icon = this.state.icon;
+       res.results.map((place, i) =>{
+           placesArray.push(
+             <Marker
+               key={i}
+               coordinate={{
+                 latitude: place.geometry.location.lat,
+                 longitude: place.geometry.location.lng
+               }}>
+               <Icon large color='black' name={icon}/>
+             </Marker>
+           )
+       })
+       this.setState({
+         places: res.results.slice(0),
+         placesLocation: placesArray
+       })
+     }else{
+       alert("DENIED")
+     }
+    })
+
   }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////// Select Place ///////////////////////////////////////////////////////////////
+// Placeholder of search
+selectPlace(p){
+  this.setState({
+    sltPlace: p.name,
+  })
+  this.refs.modal1.close()
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 ///////////////////////////////////////// Search ////////////////////////////////////////////////////////////////////
    search(text){
-     results = [];
-     if(text.length > 2){
+     var results = [];
+     if(text.length > 1){
        this.state.places.map((p, i) => {
          if(p.name.toLowerCase().match(text)){
-              results.push(p.name)
+           results.push(p)
          }
        })
-      }
+       this.setState({
+         places: results.reverse()
+       })
+     }else{
+       this.getPlaces()
+     }
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Select Type ////////////////////////////////////////////////////////////////////
   selectType(i){
+    var type = colors[i].type;
+    var name = colors[i].name;
+    var icon = colors[i].icon;
+    this.setState({type: type,
+                   typeName: name,
+                   icon: icon})
     for(j=0; j<colors.length; j++){
       if(i == j){
         colors[j].bg = '#41BEB6';
@@ -167,36 +219,57 @@ getUrl(lat, long, radius, type){
         colors[j].selected = false;
       }
     }
-    var type = colors[i].type;
-    this.setState({type: type})
+    this.getPlaces()
   }
+
 
   render() {
     const { navigate } = this.props.navigation;
 
     listFabs = this.state.colors.map((c, i) => {
                   return (
-                    <Button onPress={() => { this.selectType(i)}} style={{ backgroundColor: c.bg }}>
+                    <Button onPress={() => { this.selectType(i)}} style={{ backgroundColor: c.bg, zIndex: 2}}>
                         <Icon color={c.color} name={c.icon} />
                     </Button>
                   )
               })
+    listPlaces = this.state.places.map((p, i) => {
+                    return (
+                              <List>
+                                  <ListItem>
+                                      <Text style={styles.place} onPress={() =>{ this.selectPlace(p) }}>{p.name}</Text>
+                                  </ListItem>
+                              </List>
+                            )
+                })
     return (
           <Container>
                   <View style={styles.search}>
-                      <Header style={{backgroundColor: 'white', position: 'absolute'}} searchBar rounded>
+                      <Header style={{backgroundColor: 'white', position: 'absolute', zIndex: 3}} searchBar rounded>
                           <Item>
                             <Icon name="search" />
-                            <Input placeholder={strings.search + ' by ' + this.state.type}
+                            <Input placeholder={strings.searchBy +' '+ this.state.typeName}
                                    maxLength = {20}
                                    onChangeText={(text) => this.search(text)}
+                                   onFocus={() =>{ this.refs.modal1.open()}}
                             />
                           </Item>
                           <Button transparent>
                             <Text>{strings.search}</Text>
                           </Button>
                       </Header>
+
                   </View>
+                  <Modal style={{zIndex: 4}} ref={"modal1"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose}
+                            onOpened={this.onOpen} onClosingState={this.onClosingState} backdropContent={true}>
+                        <ScrollView style={{marginTop: 80}}>
+                          {listPlaces}
+                        </ScrollView>
+                        <View style={{justifyContent: 'center', backgroundColor: '#808080', height: 45}}>
+                          <Icon large color='white' name="arrow-drop-down-circle"
+                                onPress={() =>{ this.refs.modal1.close() }}/>
+                        </View>
+                  </Modal>
                   <View style={styles.container}>
                     <MapView style={styles.map}
                         provider={MapView.PROVIDER_GOOGLE}
@@ -208,12 +281,13 @@ getUrl(lat, long, radius, type){
                         <MapView.Marker coordinate={this.state.region}>
                             <Icon large color='black' name="face"/>
                         </MapView.Marker>
+                        {this.state.placesLocation}
                     </MapView>
                     <Fab
                       active={this.state.active}
                       direction="down"
                       containerStyle={{ }}
-                      style={{backgroundColor:'#41BEB6', zIndex: 2, top:6}}
+                      style={{backgroundColor:'#41BEB6', zIndex: 4, top:6}}
                       position="topRight"
                       onPress={() => {
                                         this.setState({active: !this.state.active})
@@ -227,24 +301,25 @@ getUrl(lat, long, radius, type){
                       <Icon color='white' name={this.state.arrow}/>
                       {listFabs}
                     </Fab>
+                  {/*<Fab
+                    active='false'
+                    direction="up"
+                    containerStyle={{ }}
+                    style={{backgroundColor:'#41BEB6', zIndex: 1}}
+                    position="bottomLeft"
+                    onPress={()=> navigate('newDiary')}>
+                    <Icon color='white' name="library-books" />
+                  </Fab>
                  <Fab
                    active='false'
                    direction="up"
                    containerStyle={{ }}
-                   style={{backgroundColor:'#41BEB6'}}
-                   position="bottomLeft"
-                   onPress={()=> navigate('newDiary')}>
-                   <Icon color='white' name="library-books" />
-                 </Fab>
-                 <Fab
-                   active='false'
-                   direction="up"
-                   containerStyle={{ }}
-                   style={{  backgroundColor:'#41BEB6'}}
+                   style={{backgroundColor:'#41BEB6', zIndex: 1}}
                    position="bottomRight"
+                   visible={true}
                    onPress={()=> alert(this.state.region.latitude) }>
                    <Icon color='white' name="my-location" />
-                 </Fab>
+                 </Fab>*/}
               </View>
           </Container>
     );
@@ -275,6 +350,12 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     justifyContent: 'flex-start',
+  },
+  place: {
+    fontStyle: 'italic',
+    fontSize: 16,
+    color: '#000000',
+    padding: 10,
   },
 });
 
