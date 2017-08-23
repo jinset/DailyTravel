@@ -204,7 +204,6 @@ export default class Profile extends Component {
 logout() {
   const { navigate } = this.props.navigation;
   AsyncStorage.removeItem("user", ()=>{
-    console.log("se va");
     navigate('login');
   });
 }

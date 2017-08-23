@@ -23,7 +23,7 @@ const fs = RNFetchBlob.fs
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
 window.Blob = Blob
 
-var key:'';
+var key='';
 var newRef ='';
 var usuario ='';
  export default class NewDiary extends Component {
@@ -137,12 +137,12 @@ openImagePicker(){
    }
    ///////////////////////////////////////////////////CREA IMAGEN///////////////////////////////////////////////////////////
    createImage(){
-     if(this.state.key){
+     if(key){
          try{
             this.state.url ?
-                uploadImage(this.state.url, `${this.state.key}.jpg`)
+                uploadImage(this.state.url, `${key}.jpg`)
                     .then((responseData) => {
-                      HelperDiary.setImageUrl(this.state.key, responseData)
+                      HelperDiary.setImageUrl(key, responseData)
                     })
                     .done()
                 : null
@@ -188,7 +188,10 @@ openImagePicker(){
    }).then((snap) =>{
     this.setState({
       key: snap.key,
-    })
+    });
+    key=snap.key;
+      alert(key + ' yyyy '+this.state.key)
+      this.createImage();
       var diaryUsers =[];
       diaryUsers=this.state.diaryUsers;
       var tthat = this;
@@ -196,7 +199,7 @@ openImagePicker(){
           tthat.addDiaryUsers(elemento);
       });
   });
-    this.createImage()
+
     const { navigate } = this.props.navigation;
      navigate('profile');
    }
@@ -387,7 +390,7 @@ openImagePicker(){
 }
 
 
-{
+
 
   ///////////////////////////////////////////////VARIABLE IMAGEN////////////////////////////////////////////////////////////////////
   const uploadImage = (uri, imageName) => {
@@ -416,7 +419,7 @@ openImagePicker(){
                })
         })
      }
-
+{
   /*//para los invitados
   //   var myRef = getDatabase().ref().push();
   //      var key =myRef.key;
