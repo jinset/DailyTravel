@@ -24,12 +24,12 @@ import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
 import * as firebase from 'firebase';
 import { Icon } from 'react-native-elements';
-import MapView from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 import Modal from 'react-native-modalbox';
 import HideableView from 'react-native-hideable-view';
 
-var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs";
-//var APIKey = "AIzaSyCQjiBm5_7fm6DsB0vf8Mz8TnighXM";
+var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs";  //DANI
+//var APIKey = "AIzaSyCQjiBm5_7fm6DsB0vf8Mz8Tn6i9xighXM";
 
 var colors = [{type: 'restaurant', name: strings.restaurant, icon: 'restaurant', bg: '#41BEB6', color: 'white', selected: true},
               {type: 'establishment', name: strings.establishment, icon: 'location-city', bg: 'white', color: '#808080', selected: false},
@@ -66,11 +66,13 @@ export default class DiaryMap extends Component {
          places: [], // Total list of places
          type: 'food', // Type by default in getPlaces()
          typeName: strings.restaurant, // Search Placeholder
-         radius: 500, // radius of search in getPlaces()
+         radius: 5000, // radius of search in getPlaces()
          active: false, // Fab active false
          arrow: 'keyboard-arrow-down', // Switch of arrow in Fab
          colors: colors, // List to switch color of options after Fab is opened
+         icon: '', // List to switch icons
          sltPlace: 'Select a place to travel', // The selected place of the list showed in the modal
+         buttonDisabled: true, // Button starts disabled until the user pick a place
        }
     }
     /*latitude: 10.00253, longitude: -84.14021,*/
@@ -141,16 +143,32 @@ getUrl(lat, long, radius, type){
   getPlaces(){
     const url = this.getUrl(this.state.region.latitude, this.state.region.longitude, this.state.radius, this.state.type)
     fetch(url)
-      .then((data) => data.json())
-      .then((res) => {
-        if(res.status === "OK"){
-          this.setState({
-            places: res.results.slice(0)
-          })
-        }else{
-          //alert("denied")
-        }
-      })
+     .then((data) => data.json())
+     .then((res) => {
+       if(res.status === "OK"){
+       var placesArray = [];
+       var icon = this.state.icon;
+       res.results.map((place, i) =>{
+           placesArray.push(
+             <Marker
+               key={i}
+               coordinate={{
+                 latitude: place.geometry.location.lat,
+                 longitude: place.geometry.location.lng
+               }}>
+               <Icon large color='black' name={icon}/>
+             </Marker>
+           )
+       })
+       this.setState({
+         places: res.results.slice(0),
+         placesLocation: placesArray
+       })
+     }else{
+       //alert("DENIED")
+     }
+    })
+
   }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -159,6 +177,7 @@ getUrl(lat, long, radius, type){
 selectPlace(p){
   this.setState({
     sltPlace: p.name,
+    buttonDisabled: false,
   })
   this.refs.modal1.close()
 }
@@ -186,8 +205,10 @@ selectPlace(p){
   selectType(i){
     var type = colors[i].type;
     var name = colors[i].name;
+    var icon = colors[i].icon;
     this.setState({type: type,
-                   typeName: name})
+                   typeName: name,
+                   icon: icon})
     for(j=0; j<colors.length; j++){
       if(i == j){
         colors[j].bg = '#41BEB6';
@@ -239,7 +260,8 @@ selectPlace(p){
                           </Item>
                       </Header>
                       <Button full style={{top:60, zIndex: 2, backgroundColor: 'black'}}
-                               onPress={()=> navigate('addDailyMap')}>
+                              disabled={this.state.buttonDisabled}
+                              onPress={()=> navigate('addDailyMap', {sltPlace:this.state.sltPlace})}>
                         <Text style={styles.sltPlace}>{this.state.sltPlace}</Text>
                       </Button>
                   </View>
@@ -268,6 +290,7 @@ selectPlace(p){
                         <MapView.Marker coordinate={this.state.region}>
                             <Icon large color='black' name="face"/>
                         </MapView.Marker>
+                        {this.state.placesLocation}
                     </MapView>
                     <Fab
                       active={this.state.active}

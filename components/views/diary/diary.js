@@ -12,13 +12,13 @@ import * as firebase from 'firebase';
 var idOwner, name, description, culture, url, key
 
 export default class DiaryView extends Component {
-  /////////////////////////////////////////NAVIGATE OPTIONS/////////////////////////////////////
+/////////////////////////////////////////NAVIGATE OPTIONS/////////////////////////////////////
 static navigationOptions = ({ navigation }) => ({
     title: strings.diary,
     headerStyle: {height: 50 },
     headerTitleStyle : {color:'#808080',fontSize:17},
     });
-  ///////////////////////////////////////////CONSTRUCTOR//////////////////////////////////////////
+///////////////////////////////////////////CONSTRUCTOR//////////////////////////////////////////
   constructor(props) {
     super(props);
     console.disableYellowBox = true;
