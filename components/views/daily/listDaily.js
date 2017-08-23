@@ -11,6 +11,7 @@ import { Icon } from 'react-native-elements';
 import { Container, Content, Button, Text, Input, Right, Header, Item, Card, CardItem } from 'native-base';
 import { ListItem } from 'react-native-elements';
 import { getDatabase } from '../../common/database';
+import HideableView from 'react-native-hideable-view';
 import strings from '../../common/local_strings.js';
 
 export default class ListDaily extends Component{
@@ -22,6 +23,7 @@ export default class ListDaily extends Component{
     let idDiary = params.diaryKey;
     this.dataRef = getDatabase().ref("/diary/"+idDiary+"/daily/").orderByChild("status").equalTo(true);
     this.state = {
+      isMe:params.isMe,
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       })
@@ -117,12 +119,13 @@ export default class ListDaily extends Component{
                     maxLength = {20}
                     onChangeText={(text) => this.searchDaily(text)}
                   />
-
+                  <HideableView visible={this.state.isMe} removeWhenHidden={true} duration={100}>
                   <Button transparent
                     onPress={this.addDaily.bind(this)}>
                       <Icon active name='add' />
                       <Icon active name='book'/>
                   </Button>
+                  </HideableView>
                 </Item>
 
                 <Button transparent>

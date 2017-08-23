@@ -7,19 +7,24 @@ import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
 import HideableView from 'react-native-hideable-view';
+import { createNotification } from '../../common/notification';
 //Firebase
 import { getDatabase } from '../../common/database';
 import * as firebase from 'firebase';
 //Image Picker
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import PopupDialog, { DialogTitle } from 'react-native-popup-dialog';
 import HelperDiary from './helperDiary';
+import Modal from 'react-native-modalbox';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
+
 const Blob = RNFetchBlob.polyfill.Blob
 const fs = RNFetchBlob.fs
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
 window.Blob = Blob
 
+var key='';
 var newRef ='';
 var usuario ='';
  export default class NewDiary extends Component {
@@ -32,7 +37,7 @@ var usuario ='';
       name: '',
       status: true,
       privacy: false,
-      date:'',
+      date:new Date().toLocaleDateString(),
       description: '',
       culture: '',
       url:'https://firebasestorage.googleapis.com/v0/b/daily-travel-6ff5f.appspot.com/o/images%2Fdiary%2FdefultDiary.png?alt=media&token=238cc03e-2a95-426a-8d32-7adf0e52bd6f',
@@ -41,6 +46,10 @@ var usuario ='';
       btnText: 'Seguir',
       txt: '',
       uidCurrentUser:'',
+      isOpen: false,
+     isDisabled: false,
+     swipeToClose: true,
+sliderValue: 0.3
     }
   }
 
@@ -129,12 +138,12 @@ openImagePicker(){
    }
    ///////////////////////////////////////////////////CREA IMAGEN///////////////////////////////////////////////////////////
    createImage(){
-     if(this.state.key){
+     if(key){
          try{
             this.state.url ?
-                uploadImage(this.state.url, `${this.state.key}.jpg`)
+                uploadImage(this.state.url, `${key}.jpg`)
                     .then((responseData) => {
-                      HelperDiary.setImageUrl(this.state.key, responseData)
+                      HelperDiary.setImageUrl(key, responseData)
                     })
                     .done()
                 : null
@@ -144,19 +153,31 @@ openImagePicker(){
      }
    }
    addDiaryUsers(elemento){
-     var myRef = getDatabase().ref().push();
-          getDatabase().ref().child('userDiary/').push({
+     var myRef = getDatabase().ref().child('userDiary/');
+          myRef.child(elemento.id+'-'+ this.state.key).set({
           idUser:elemento.id,
           idDiary: this.state.key,
-          invitationStus:true,
-          status:this.state.status,
+          invitationStatus:true,
           userDiary:elemento.id+'-'+ this.state.key,
       }).catch(function(error) {
           alert(error);
      });
+     //createNotification( that.uidCurrentUser,elemento.id, "invitation", Moment(new Date()).format("YYYY-MM-DD"),that.key,that.name);
+
    }
    ////////////////////////////////////////////////////AGREGA DIARIO////////////////////////////////
   add(){
+    MessageBarManager.registerMessageBar(this.refs.alert);
+    var that = this.state;
+    if (that.name.trim() == '') {
+      MessageBarManager.showAlert({
+         message: strings.blankName,
+         alertType: 'info',
+         position: 'bottom',
+         duration: 4000,
+         stylesheetInfo: { backgroundColor: '#808080', strokeColor: 'grey' }
+      });
+    }else{
      getDatabase().ref().child('diary/').push({
       idOwner:this.state.idOwner,
        name:this.state.name,
@@ -169,7 +190,9 @@ openImagePicker(){
    }).then((snap) =>{
     this.setState({
       key: snap.key,
-    })
+    });
+    key=snap.key;
+      this.createImage();
       var diaryUsers =[];
       diaryUsers=this.state.diaryUsers;
       var tthat = this;
@@ -177,31 +200,36 @@ openImagePicker(){
           tthat.addDiaryUsers(elemento);
       });
   });
-    this.createImage()
+
     const { navigate } = this.props.navigation;
      navigate('profile');
+   }
 }
 
 ///////////////////////////////////////// addGuest /////////////////////////////////////////////////////////////
     addGuest(i){
       var diaryUsers =[];
       diaryUsers=this.state.diaryUsers;
-      diaryUsers.push({
-        id:this.state.users[i].id,
-        nickname: this.state.users[i].nickname,
-        name: this.state.users[i].name,
-        lastName: this.state.users[i].lastName,
-        url: this.state.users[i].url,
-        invited: !this.state.users[i].invited,
-      });//users.push
+      if(diaryUsers.length<=3){
+        diaryUsers.push({
+          id:this.state.users[i].id,
+          nickname: this.state.users[i].nickname,
+          name: this.state.users[i].name,
+          lastName: this.state.users[i].lastName,
+          url: this.state.users[i].url,
+          invited: !this.state.users[i].invited,
+        });//users.push
 
-      var users = [];
-      users=this.state.users;
-      users.splice(i, 1);
-      this.setState({
-          users: users,
-          diaryUsers:diaryUsers,
-      })//users.push
+        var users = [];
+        users=this.state.users;
+        users.splice(i, 1);
+        this.setState({
+            users: users,
+            diaryUsers:diaryUsers,
+        })//users.push
+      }else{
+        alert("Solo se puede invitar a 3 personas")
+      }
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////// removeGuest /////////////////////////////////////////////////////////////
@@ -236,10 +264,10 @@ openImagePicker(){
     headerTitleStyle : {color:'#808080',fontSize:17},
      }
   render() {  const { navigate } = this.props.navigation;
-
+   var BContent = <Button onPress={() => this.setState({isOpen: false})} >X</Button>;
     let listTable = this.state.users.map((u,i) => {
       return (
-        <TouchableHighlight  onPress={() => this.addGuest(i)}>
+        <TouchableHighlight selected={u.invited} onPress={() => this.addGuest(i)}>
           <ListItem avatar>
             <Left>
               <Thumbnail small source={{uri: u.url}}   />
@@ -283,50 +311,58 @@ openImagePicker(){
           });
     return (
         <Container>
-          <PopupDialog
-              ref={(popupDialog) => { this.popupDialog = popupDialog; }}
-            >
-            <View >
+        <Modal  style={{zIndex: 4}} ref={"modal1"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose}
+          onOpened={this.onOpen} onClosingState={this.onClosingState} backdropContent={true} coverScreen={true}>
+            <View>
               <List>
+                <ListItem itemDivider>
+                  <Left>
+                    <Text>{strings.guest}</Text>
+                   </Left>
+                  <Body>
+                   </Body>
+                   <Button transparent onPress={() => { this.refs.modal1.close()}}>
+                     <Icon color='#808080' style={{fontWeight: 'bold'}} name='close' />
+                   </Button>
+               </ListItem>
+               {listTable2}
+             </List>
+          </View>
+          <ScrollView>
+            <List>
               <ListItem itemDivider>
-               <Text>{strings.guest}</Text>
-             </ListItem>
-             <ScrollView>
-                  {listTable2}
-              </ScrollView>
-              <ListItem itemDivider>
-               <Text>{strings.friends}</Text>
-             </ListItem>
-             <ScrollView>
-                {listTable}
-             </ScrollView>
-              </List>
-            </View>
-          </PopupDialog>
-          <Content  style={{zIndex: -1, backgroundColor:'white'}}>
+                <Text>{strings.friends}</Text>
+              </ListItem>
+              {listTable}
+            </List>
+          </ScrollView>
+        </Modal>
+          <Content  style={{ backgroundColor:'white'}}>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
             <Thumbnail
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
               source={{uri: this.state.url}} />
             </TouchableHighlight>
+            <Text style={{alignSelf:'center', backgroundColor:'#808080', color:'white', padding:5,top:-15,fontSize:10}}>{strings.changePhoto}</Text>
 
+              <ScrollView horizontal={true} style={{padding:5}} >
+                <Button rounded bordered dark onPress={() => {
+                  this.refs.modal1.open()
+                }}>
+                  <Icon name='group-add' />
+                </Button>
+                  <List  style={{flex:  1, flexDirection: 'row', marginTop:5}}>
+                   {listavatars}
+                </List>
+              </ScrollView>
+
+            <ScrollView>
             <Form style={{padding:10}}>
-              <Left>
-                <Label>{strings.privacy }</Label>
-                <Switch value={ this.state.privacy }
-                  onValueChange={this.privacyChange.bind( this ) }/>
-              </Left>
-                <Right style={{flex:  1, flexDirection: 'row', padding: 10}}>
-                  <Button rounded bordered dark onPress={() => {
-                    this.popupDialog.show();
-                  }}>
-                    <Icon name='group-add' />
-                  </Button>
-                    <List  style={{flex:  1, flexDirection: 'row', marginTop:5}}>
-                     {listavatars}
-                  </List>
-                </Right>
-
+            <Left>
+              <Label>{strings.privacy }</Label>
+              <Switch value={ this.state.privacy }
+                onValueChange={this.privacyChange.bind( this ) }/>
+            </Left>
               <Label>{strings.name }</Label>
               <AutogrowInput style={{ fontSize: 18}}  maxLength={30}
                 onChangeText={(text) => this.setState({name:text})} />
@@ -340,8 +376,12 @@ openImagePicker(){
                 onChangeText={(text) => this.setState({culture:text})} />
 
             </Form>
+
+          </ScrollView>
+                        <MessageBarAlert ref="alert" />
+
           </Content>
-        <Button full dark style= {{backgroundColor: '#41BEB6'}}
+        <Button full dark style= {{backgroundColor: '#41BEB6', zIndex: -1}}
          onPress={() => this.add()} >
          <Text>{strings.save }</Text>
         </Button>
@@ -351,7 +391,7 @@ openImagePicker(){
 }
 
 
-{
+
 
   ///////////////////////////////////////////////VARIABLE IMAGEN////////////////////////////////////////////////////////////////////
   const uploadImage = (uri, imageName) => {
@@ -380,7 +420,7 @@ openImagePicker(){
                })
         })
      }
-
+{
   /*//para los invitados
   //   var myRef = getDatabase().ref().push();
   //      var key =myRef.key;

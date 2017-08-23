@@ -27,8 +27,8 @@ export default class Signup extends Component {
   // Nav options can be defined as a function of the screen's props:
   static navigationOptions = {
     headerTitle: strings.createNewAccount,
-    headerStyle: {backgroundColor: '#41BEB6',height: 50 },
-    headerTitleStyle : {color:'white',fontWeight: 'ligth',alignSelf: 'center'},
+    headerStyle: {height: 50 },
+    headerTitleStyle : {color:'#9A9DA4',fontSize:17},
   };
 
   constructor(props) {
@@ -49,7 +49,7 @@ export default class Signup extends Component {
   add() {
     MessageBarManager.registerMessageBar(this.refs.alert);
     var that = this.state;
-    if (that.name == '' || that.lastName == '' || that.email == '' || that.password == '' || that.country == '' || that.nickname == '') {
+    if (that.name.trim() == '' || that.lastName.trim() == '' || that.email.trim() == '' || that.password.trim() == '' || that.country.trim() == '' || that.nickname.trim() == '') {
       MessageBarManager.showAlert({
          message: strings.blankinputs,
          alertType: 'info',
@@ -62,8 +62,8 @@ export default class Signup extends Component {
       var checkNick = getDatabase().ref('/users').orderByChild("nickname").equalTo(this.state.nickname);
       checkNick.once('value', function(snapshot) {
         if (snapshot.exists() == false) {
-          getAuth().createUserWithEmailAndPassword(that.email,
-            that.password).catch(function(error) {
+          getAuth().createUserWithEmailAndPassword(that.email.trim(),
+            that.password.trim()).catch(function(error) {
             var errorCode = error.code;
             var errorMessage = error.message;
             if (errorCode == 'auth/weak-password') {
@@ -89,13 +89,13 @@ export default class Signup extends Component {
             }else{
               getDatabase().ref().child('users/' + firebaseUser.uid).update({
                 status: 'act',
-                name: that.name,
-                lastName: that.lastName,
-                email: that.email,
+                name: that.name.trim(),
+                lastName: that.lastName.trim(),
+                email: that.email.trim(),
                 admin: false,
                 birthPlace: that.country,
                 bornDay: that.date,
-                nickname: that.nickname,
+                nickname: that.nickname.trim(),
                 url: that.url,
                 follows: [],
               });
@@ -163,12 +163,13 @@ export default class Signup extends Component {
                 </Left>
                 <Right>
                   <DatePicker
+                  iconComponent={ <Icon active name='cake' /> }
                   style={{width: 150}}
                      date={Moment(this.state.date, 'MM/DD/YY')}
                      mode="date"
                      placeholder="select date"
                      format="MM/DD/YY"
-                     //minDate="2016-05-01"
+                    //  minDate="01/01/1920"
                      maxDate={Moment(this.state.date, 'MM/DD/YY')}
                      confirmBtnText="Confirm"
                      cancelBtnText="Cancel"
