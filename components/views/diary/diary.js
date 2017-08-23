@@ -94,7 +94,7 @@ static navigationOptions = ({ navigation }) => ({
                                    name: child.val().name,
                                    lastName: child.val().lastName,
                                    url: child.val().url,
-                                   invited: child.val().invitationStus,
+                                   invited: child.val().invitationStatus,
                                  });//users.push
                                } //if nick diff from current
                                else{
@@ -103,7 +103,7 @@ static navigationOptions = ({ navigation }) => ({
                                     id: child.key,
                                     nickname: strings.me,
                                     url: child.val().url,
-                                    invited: child.val().invitationStus,
+                                    invited: child.val().invitationStatus,
                                   });//users.push¡
                                }
 

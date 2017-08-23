@@ -7,6 +7,7 @@ import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
 import HideableView from 'react-native-hideable-view';
+import { createNotification } from '../../common/notification';
 //Firebase
 import { getDatabase } from '../../common/database';
 import * as firebase from 'firebase';
@@ -36,7 +37,7 @@ var usuario ='';
       name: '',
       status: true,
       privacy: false,
-      date:'',
+      date:new Date().toLocaleDateString(),
       description: '',
       culture: '',
       url:'https://firebasestorage.googleapis.com/v0/b/daily-travel-6ff5f.appspot.com/o/images%2Fdiary%2FdefultDiary.png?alt=media&token=238cc03e-2a95-426a-8d32-7adf0e52bd6f',
@@ -152,16 +153,17 @@ openImagePicker(){
      }
    }
    addDiaryUsers(elemento){
-     var myRef = getDatabase().ref().push();
-          getDatabase().ref().child('userDiary/').push({
+     var myRef = getDatabase().ref().child('userDiary/');
+          myRef.child(elemento.id+'-'+ this.state.key).set({
           idUser:elemento.id,
           idDiary: this.state.key,
           invitationStatus:true,
-          status:this.state.status,
           userDiary:elemento.id+'-'+ this.state.key,
       }).catch(function(error) {
           alert(error);
      });
+     //createNotification( that.uidCurrentUser,elemento.id, "invitation", Moment(new Date()).format("YYYY-MM-DD"),that.key,that.name);
+
    }
    ////////////////////////////////////////////////////AGREGA DIARIO////////////////////////////////
   add(){
@@ -190,7 +192,6 @@ openImagePicker(){
       key: snap.key,
     });
     key=snap.key;
-      alert(key + ' yyyy '+this.state.key)
       this.createImage();
       var diaryUsers =[];
       diaryUsers=this.state.diaryUsers;

@@ -248,12 +248,11 @@ let ref='';
 }
 
    addDiaryUsers(userId,userstatus){
-     var myRef = getDatabase().ref().push();
-          getDatabase().ref().child('userDiary/').push({
+     var myRef = getDatabase().ref().child('userDiary/');
+          myRef.child(userId+'-'+ key).set({
           idUser:userId,
           idDiary: key,
           invitationStatus:true,
-          status:this.state.status,
           userDiary:userId+'-'+key
       }).catch(function(error) {
           alert(error);

@@ -205,10 +205,11 @@ static getFollows(userId, callback){
 /////////////////// DairysByUser ///////////////////
   static getDairysByUserGuest(userId, callback){
     let ref= getDatabase().ref('userDiary/');
-    userList = (ref.orderByChild("idUser").equalTo(userId))
+    userList = (ref.orderByKey().startAt(userId));
        userList.on('value', (snap) => {
            var diarys = [];
          snap.forEach((child) => {
+           if(child.val().invitationStatus==true){
            firebase.database().ref('/diary/'+child.val().idDiary).on('value', (snap) => {
              if(snap.val().status==true){
             diarys.push({
@@ -222,6 +223,7 @@ static getFollows(userId, callback){
             }
             callback(diarys)
           });
+        }
         })
     })
 
