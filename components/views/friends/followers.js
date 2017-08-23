@@ -129,6 +129,7 @@ export default class Followers extends Component {
             tthat.addFollowers(i)
         }
       })//checkRepeat.once
+      createNotification(that.uid, that.uidCurrentUser, "follow", Moment(new Date()).format("YYYY-MM-DD"),"","");
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
