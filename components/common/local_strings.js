@@ -98,7 +98,10 @@ let strings = new LocalizedStrings({
    touchAccept: "touch to accept the invitation",
    acceptAlreadyInvitation: "You've already accepted the invitation to diary",
    hasFollowed: "has followed you",
-   acceptInvitation: "Accept the invitation to diary"
+   acceptInvitation: "Accept the invitation to diary",
+   changePhoto: "Change photo ",
+   eject: "Eject",
+   invite: "Invite",
  },
  es:{
    home:"Inicio",
@@ -197,7 +200,10 @@ let strings = new LocalizedStrings({
    touchAccept: "toca para aceptar la invitación ",
    acceptAlreadyInvitation: "Ya has aceptado la invitación al diario",
    hasFollowed: "te ha seguido",
-   acceptInvitation: "¿Aceptar la invitación al diario"
+   acceptInvitation: "¿Aceptar la invitación al diario",
+  changePhoto: "Cambiar foto ",
+  eject: "Expulsar",
+  invite: "Invitar",
 
  },
  zh:{

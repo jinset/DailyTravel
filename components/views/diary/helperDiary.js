@@ -5,6 +5,7 @@ class HelperDiary {
 
   static setImageUrl(diaryId, uri){
     let diaryNamePath = "/diary/"+diaryId
+    alert(diaryNamePath)
     return getDatabase().ref(diaryNamePath).update({url:uri,});
   }
 
