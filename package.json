@@ -38,6 +38,7 @@
     "react-native-loading-spinner-overlay": "^0.5.1",
     "react-native-localization": "^0.1.31",
     "react-native-maps": "^0.15.3",
+    "react-native-material-dropdown": "^0.2.0",
     "react-native-message-bar": "^1.6.0",
     "react-native-modal": "^2.5.0",
     "react-native-modal-dropdown": "^0.4.4",

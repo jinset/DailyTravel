@@ -7,7 +7,11 @@ import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import DailyList from '../daily/listDaily.js';
 import HelperDiary from './helperDiary';
+import HideableView from 'react-native-hideable-view';
 import * as firebase from 'firebase';
+import DialogBox from 'react-native-dialogbox';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 var idOwner, name, description, culture, url, key
 
@@ -29,6 +33,7 @@ static navigationOptions = ({ navigation }) => ({
       name: '',
       description: '',
       diaryUsers: [],
+      isMe: '',
         };
   }
   ////////////////////////////////////////////////OBTIENE DATOS DEL DIARIO////////////////////////////////////////////////////////////////
@@ -62,11 +67,14 @@ static navigationOptions = ({ navigation }) => ({
                    })*/}
                   this.props.navigation.goBack()
                }
-     }async componentDidMount(){
+
+     }
+     async componentDidMount(){
+
        const { params } = this.props.navigation.state;
-       var that = this
        //usuarios en diario
           var diarys = [];
+          var me=false;
        let   ref = getDatabase().ref("/users")
        userList = (ref.orderByChild("nickname"))
        var that = this
@@ -86,30 +94,52 @@ static navigationOptions = ({ navigation }) => ({
                                    name: child.val().name,
                                    lastName: child.val().lastName,
                                    url: child.val().url,
-                                   invited: child.val().invitationStus,
+                                   invited: child.val().invitationStatus,
                                  });//users.push
                                } //if nick diff from current
                                else{
+                               me=true
                                   diaryUsers.push({
                                     id: child.key,
                                     nickname: strings.me,
                                     url: child.val().url,
-                                    invited: child.val().invitationStus,
+                                    invited: child.val().invitationStatus,
                                   });//users.push¡
-
                                }
 
                             }
                             that.setState({
                                 diaryUsers: diaryUsers,
+                                isMe: me,
                             })//setState
-
                         })//checkRepeat.once
                     });//snap.forEach
   })//AsyncStorage
+  this.setState({
+      isMe: me,
+  })
   })//userList.on
       //alert(diaryUsers.length)
     }
+
+      deleteOption( diaryId){
+        this.dialogbox.confirm({
+          title: strings.confirm,
+          content: strings.confirmPopUp,
+          ok: {
+              text: strings.yes,
+              callback: () => {
+                  this.deleteDiary(diaryId);
+              },
+            },
+              cancel: {
+                text: strings.no,
+                callback: () => {
+                },
+              },
+        });
+      }
+
      deleteDiary(diaryId){
        HelperDiary.deleteDiary(diaryId)
        const { navigate } = this.props.navigation;
@@ -137,17 +167,22 @@ static navigationOptions = ({ navigation }) => ({
                {listavatars}
             </List>
           <Card  >
-            <CardItem>
-              <Text style={{fontWeight: 'bold',fontSize: 18, width:260}}>{this.state.name}</Text>
-
-              <Button transparent small
-                      onPress={() => this.deleteDiary(params.diaryKey)}>
+            <CardItem style={{ flexDirection: 'row'}}>
+            <View style={{ flex:  5, alignSelf:'flex-start'}}>
+              <Text style={{ fontWeight: 'bold',fontSize: 18}}>{this.state.name} {this.state.isMe} </Text>
+              </View>
+              <HideableView visible={this.state.isMe} removeWhenHidden={true} duration={100}>
+              <View style={{ flex:  1,flexDirection: 'row', alignSelf:'flex-end'}} >
+              <Button transparent small style={{marginTop:-2, paddingLeft:2}}
+                      onPress={() => this.deleteOption(params.diaryKey)}>
                   <Icon active name='delete' />
                 </Button>
-              <Button transparent small
+              <Button transparent small style={{marginTop:-2, paddingLeft:2}}
                       onPress={()=> navigate('editDiary', {diaryKey:params.diaryKey})}>
                   <Icon active name='mode-edit' />
                 </Button>
+                </View>
+            </HideableView>
             </CardItem>
             <CardItem>
               <Body>
@@ -161,12 +196,13 @@ static navigationOptions = ({ navigation }) => ({
             </CardItem>
           </Card>
         </Content>
-        <View>
+        <View  style={{zIndex: -1}}>
           <Button light full
-            onPress={()=> navigate('listDaily', {diaryKey:params.diaryKey})}>
+            onPress={()=> navigate('listDaily', {diaryKey:params.diaryKey,isMe:this.state.isMe})}>
               <Text>{strings.daily}</Text>
           </Button>
         </View>
+        <DialogBox ref={dialogbox => { this.dialogbox = dialogbox }}/>
       </Container>
     );
   }
