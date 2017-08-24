@@ -8,6 +8,7 @@ import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
 import HideableView from 'react-native-hideable-view';
 import { createNotification } from '../../common/notification';
+import Moment from 'moment';
 //Firebase
 import { getDatabase } from '../../common/database';
 import * as firebase from 'firebase';
@@ -153,6 +154,7 @@ openImagePicker(){
      }
    }
    addDiaryUsers(elemento){
+      var that = this.state;
      var myRef = getDatabase().ref().child('userDiary/');
           myRef.child(elemento.id+'-'+ this.state.key).set({
           idUser:elemento.id,
@@ -162,7 +164,7 @@ openImagePicker(){
       }).catch(function(error) {
           alert(error);
      });
-     //createNotification( that.uidCurrentUser,elemento.id, "invitation", Moment(new Date()).format("YYYY-MM-DD"),that.key,that.name);
+//     createNotification( that.uidCurrentUser,elemento.id, "invitation", Moment(new Date()).format("YYYY-MM-DD"),that.key,that.name);
 
    }
    ////////////////////////////////////////////////////AGREGA DIARIO////////////////////////////////
