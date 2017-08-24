@@ -28,6 +28,7 @@ import Helper from './helper';
 import HideableView from 'react-native-hideable-view';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
+import { createNotification } from '../../common/notification';
 
 export default class Profile extends Component {
 
@@ -146,6 +147,7 @@ getFollows(){
             tthat.addFollowers(i)
         }
       })//checkRepeat.once
+      createNotification(that.uid, that.uidCurrentUser, "follow", Moment(new Date()).format("YYYY-MM-DD"),"","");
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

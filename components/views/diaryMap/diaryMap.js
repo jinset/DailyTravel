@@ -28,8 +28,8 @@ import MapView, {Marker} from 'react-native-maps';
 import Modal from 'react-native-modalbox';
 import HideableView from 'react-native-hideable-view';
 
-// var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs";    DANI
-var APIKey = "AIzaSyCQjiBm5_7fm6DsB0vf8Mz8Tn6i9xighXM";
+var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs";  //DANI
+//var APIKey = "AIzaSyCQjiBm5_7fm6DsB0vf8Mz8Tn6i9xighXM";
 
 var colors = [{type: 'restaurant', name: strings.restaurant, icon: 'restaurant', bg: '#41BEB6', color: 'white', selected: true},
               {type: 'establishment', name: strings.establishment, icon: 'location-city', bg: 'white', color: '#808080', selected: false},
@@ -66,12 +66,14 @@ export default class DiaryMap extends Component {
          places: [], // Total list of places
          type: 'food', // Type by default in getPlaces()
          typeName: strings.restaurant, // Search Placeholder
-         radius: 500, // radius of search in getPlaces()
+         radius: 5000, // radius of search in getPlaces()
          active: false, // Fab active false
          arrow: 'keyboard-arrow-down', // Switch of arrow in Fab
          colors: colors, // List to switch color of options after Fab is opened
-         icon: '', //List to switch icons
+         icon: '', // List to switch icons
          sltPlace: 'Select a place to travel', // The selected place of the list showed in the modal
+         buttonDisabled: true, // Button starts disabled until the user pick a place
+         buttonDisabledColor: '#73797D',
        }
     }
     /*latitude: 10.00253, longitude: -84.14021,*/
@@ -106,9 +108,9 @@ export default class DiaryMap extends Component {
           this.setRegion(lat, lon)
           this.getPlaces()
         }, (error) => alert(error.message),
-        //{enableHighAccuracy: true, timeout: 25000}
+        {enableHighAccuracy: true, timeout: 25000}
         //Mobile
-        {enableHighAccuracy: false, timeout: 25000}
+        //{enableHighAccuracy: false, timeout: 25000}
       )
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,9 +123,9 @@ export default class DiaryMap extends Component {
           const lon = position.coords.longitude
           this.setRegion(lat, lon)
         }, (error) => alert(error.message),
-        //{enableHighAccuracy: true, timeout: 25000}
+        {enableHighAccuracy: true, timeout: 25000}
         // Mobile
-        {enableHighAccuracy: false, timeout: 25000}
+        //{enableHighAccuracy: false, timeout: 25000}
       )
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,7 +166,7 @@ getUrl(lat, long, radius, type){
          placesLocation: placesArray
        })
      }else{
-       alert("DENIED")
+       //alert("DENIED")
      }
     })
 
@@ -176,6 +178,8 @@ getUrl(lat, long, radius, type){
 selectPlace(p){
   this.setState({
     sltPlace: p.name,
+    buttonDisabled: false,
+    buttonDisabledColor: 'black'
   })
   this.refs.modal1.close()
 }
@@ -244,6 +248,8 @@ selectPlace(p){
                 })
     return (
           <Container>
+                  {/* *********************************************************************************** */}
+                  {/* Search View */}
                   <View style={styles.search}>
                       <Header style={{backgroundColor: 'white', position: 'absolute', zIndex: 3}} searchBar rounded>
                           <Item>
@@ -254,12 +260,15 @@ selectPlace(p){
                                    onFocus={() =>{ this.refs.modal1.open()}}
                             />
                           </Item>
-                          <Button transparent>
-                            <Text>{strings.search}</Text>
-                          </Button>
                       </Header>
-
+                      <Button full style={{top:60, zIndex: 2, backgroundColor: this.state.buttonDisabledColor}}
+                              disabled={this.state.buttonDisabled}
+                              onPress={()=> navigate('addDailyMap', {sltPlace:this.state.sltPlace})}>
+                        <Text style={styles.sltPlace}>{this.state.sltPlace}</Text>
+                      </Button>
                   </View>
+                  {/* *********************************************************************************** */}
+                  {/* Modal of search */}
                   <Modal style={{zIndex: 4}} ref={"modal1"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose}
                             onOpened={this.onOpen} onClosingState={this.onClosingState} backdropContent={true}>
                         <ScrollView style={{marginTop: 80}}>
@@ -270,6 +279,8 @@ selectPlace(p){
                                 onPress={() =>{ this.refs.modal1.close() }}/>
                         </View>
                   </Modal>
+                  {/* ************************************************************************************ */}
+                  {/* MapView and Fabs */}
                   <View style={styles.container}>
                     <MapView style={styles.map}
                         provider={MapView.PROVIDER_GOOGLE}
@@ -321,6 +332,7 @@ selectPlace(p){
                    <Icon color='white' name="my-location" />
                  </Fab>*/}
               </View>
+              {/* MapView and Fabs*/}
           </Container>
     );
   }
@@ -356,6 +368,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000000',
     padding: 10,
+  },
+  sltPlace: {
+    fontStyle: 'italic',
+    fontSize: 16,
+    color: 'white',
+    padding: 5,
   },
 });
 
