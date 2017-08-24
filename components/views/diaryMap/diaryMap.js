@@ -24,7 +24,7 @@ import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
 import * as firebase from 'firebase';
 import { Icon } from 'react-native-elements';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, Callout} from 'react-native-maps';
 import Modal from 'react-native-modalbox';
 import HideableView from 'react-native-hideable-view';
 
@@ -155,7 +155,12 @@ getUrl(lat, long, radius, type){
                  latitude: place.geometry.location.lat,
                  longitude: place.geometry.location.lng
                }}>
-               <Icon large color='black' name={icon}/>
+                <Icon large color='black' name={icon}/>
+                 <Callout>
+                  <View>
+                    <Text>{place.name}</Text>
+                  </View>
+                 </Callout>
              </Marker>
            )
        })
