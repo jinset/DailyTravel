@@ -1,5 +1,6 @@
 import { getDatabase } from '../../common/database';
 import * as firebase from 'firebase'
+import { Alert,Image, Dimensions,AsyncStorage } from 'react-native';
 
 let repeat = true
 
@@ -205,11 +206,12 @@ static getFollows(userId, callback){
 /////////////////// DairysByUser ///////////////////
   static getDairysByUserGuest(userId, callback){
     let ref= getDatabase().ref('userDiary/');
-    userList = (ref.orderByKey().startAt(userId));
+    i=0
+    userList = (ref.orderByChild("idUser").equalTo(userId));
        userList.on('value', (snap) => {
            var diarys = [];
          snap.forEach((child) => {
-           if(child.val().invitationStatus==true){
+           if(child.val().invitationStatus==true ){
            firebase.database().ref('/diary/'+child.val().idDiary).on('value', (snap) => {
              if(snap.val().status==true){
             diarys.push({
