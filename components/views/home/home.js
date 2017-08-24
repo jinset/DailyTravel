@@ -335,7 +335,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
               <Text style={styles.message}>{strings.touchMeToCreateHome}</Text>
                 <Image
                    style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
-                   source={require('../profile/ProfilePig.jpg')} />
+                   source={require('../../common/pigs/EmptyHome.png')} />
            </HideableView>
            <HideableView visible={this.state.showSpinner} removeWhenHidden={true} style={{backgroundColor:'transparent'}}>
               <Spinner color='#41BEB6' />

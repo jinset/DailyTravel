@@ -37,7 +37,7 @@ var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 
-let diarys = [{id: null, name: null, description: null, url: null}]
+let diarys = [{id: '', name: '', description: '', url: ''}]
 let follows = [{id: null, nickname: null, name: null, lastName: null, url: null}]
 let followers = [{id: null, nickname: null, name: null, lastName: null, url: null}]
 
@@ -48,6 +48,12 @@ export default class Profile extends Component {
        super(props);
        console.disableYellowBox = true;
        this.state = {
+         dataSource: new ListView.DataSource({
+           rowHasChanged: (row1, row2) => row1 !== row2,
+         }),
+         dataSource2: new ListView.DataSource({
+           rowHasChanged: (row1, row2) => row1 !== row2,
+         }),
          uid: '',
          userName: '',
          lastName: '',
@@ -55,11 +61,12 @@ export default class Profile extends Component {
          nickname: '',
          imagePath: '',
          birthday: '',
-         diarys: diarys,
+         diarys: [],
          followers: followers,
          follows: follows,
          showPig: false,
          date: new Date().toLocaleDateString(),
+         showSpinnerTop: false,
          refreshing: false,
        }
     }
@@ -73,19 +80,60 @@ export default class Profile extends Component {
       }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    _onRefresh() {
+       this.setState({refreshing: true});
+       this.loadRefreshing().then(() => {
+         this.setState({refreshing: false});
+       });
+     }
+
+     async loadRefreshing() {
+       this.getData();
+     }
+
+     _renderItem(d){
+           const { navigate } = this.props.navigation;
+           return (
+                   <ScrollView>
+                       <CardItem>
+                         <Body>
+                             <View style={styles.row}>
+                                 <Thumbnail
+                                   small
+                                   source={{uri: this.state.imagePath}}
+                                 />
+                                 <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                                     <View style={styles.center}>
+                                         <Text style={styles.diary}>{"    " +d.name} </Text>
+                                     </View>
+                                 </TouchableHighlight>
+                             </View>
+                             <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                               <Left>
+                                   <Image
+                                     source={{uri: d.url}}
+                                     style={{height: 300, width: Dimensions.get('window').width}}
+                                   />
+                                   <Text style={styles.description}> {d.description} </Text>
+                              </Left>
+
+                            </TouchableHighlight>
+
+                           </Body>
+                       </CardItem>
+                       <Separator></Separator>
+                   </ScrollView>
+                 )
+
+     }
+
 /////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
     componentWillMount(){
       NetInfo.isConnected.fetch().done(isConnected => {
-          if (isConnected === true) {
-            this.setState({
-              refreshing: true,
-            })
-            this.getUsers();
-            this.setState({
-              refreshing: false,
-            })
+          if(isConnected === true) {
+            this.getData();
           }else{
-              this.getUsers();
+              this.getData();
               MessageBarManager.registerMessageBar(this.refs.alert);
               MessageBarManager.showAlert({
                 title: "error",
@@ -100,18 +148,11 @@ export default class Profile extends Component {
    }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-_onRefresh() {
-   this.setState({refreshing: true});
-   this.getUsers().then(() => {
-     this.setState({refreshing: false});
-   });
- }
-
 ///////////////////////////////////// Get Users ///////////////////////////////////////////////////////////////
-    async getUsers(){
+    getData(){
       try{
         var that = this;
-        await AsyncStorage.getItem("user").then((value) => {
+        AsyncStorage.getItem("user").then((value) => {
               this.setState({
                 uid: value
               })
@@ -148,6 +189,7 @@ _onRefresh() {
              Helper.getDairysByUserGuest(this.state.uid, (d) => {
                this.setState({
                    diarys: d.reverse(),
+                   dataSource: this.state.dataSource.cloneWithRows(d)
                 })
                  if(d.length === 0){
                      this.setState({
@@ -241,70 +283,29 @@ _onRefresh() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////// Log out ///////////////////////////////////////////////////////////////
-    logout() {
-      const { navigate } = this.props.navigation;
-      AsyncStorage.removeItem("user", ()=>{
-        navigate('login');
-      });
-    }
+logout() {
+  const { navigate } = this.props.navigation;
+  AsyncStorage.removeItem("user", ()=>{
+    navigate('login');
+  });
+}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
 
     const { navigate } = this.props.navigation;
 
-    let listTable = this.state.diarys.map((d,i) => {
-        return (
-                <ScrollView
-                  refreshControl={
-                    <RefreshControl
-                       refreshing={this.state.refreshing}
-                       onRefresh={this._onRefresh.bind(this)}
-                       tintColor="#41BEB6"
-                       colors={['#41BEB6',"#9A9DA4"]}
-                       progressBackgroundColor="#FCFAFA"
-                     />
-                   }
-                  >
-                    <CardItem key={i}>
-                      <Body>
-
-                          <View style={styles.row}>
-
-                              <Thumbnail
-                                small
-                                source={{uri: this.state.imagePath}}
-                              />
-                              <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
-                                  <View style={styles.center}>
-                                      <Text style={styles.diary}>{"    " +d.name} </Text>
-                                  </View>
-                              </TouchableHighlight>
-                          </View>
-                          <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
-                            <Left>
-                                <Image
-                                  source={{uri: d.url}}
-                                  style={{height: 300, width: Dimensions.get('window').width}}
-                                />
-                                <Text style={styles.description}> {d.description} </Text>
-                           </Left>
-
-                         </TouchableHighlight>
-
-                        </Body>
-                    </CardItem>
-                    <Separator></Separator>
-                </ScrollView>
-              )
-      });
-
     return (
           <Container>
-            <HideableView visible={this.state.showSpinnerTop} removeWhenHidden={true} >
-              <Spinner />
-            </HideableView>
-            <Content>
+            <Content   refreshControl={
+                              <RefreshControl
+                                      refreshing={this.state.refreshing}
+                                      onRefresh={this._onRefresh.bind(this)}
+                                      tintColor="#41BEB6"
+                                      colors={['#41BEB6',"#9A9DA4"]}
+                                      progressBackgroundColor="#FCFAFA"
+                                  />
+                              }>
               <Card fixed>
                 <CardItem>
                   <Left>
@@ -346,7 +347,12 @@ _onRefresh() {
                 </CardItem>
               </Card>
                   <Card>
-                        {listTable}
+                      <ListView
+                        dataSource={this.state.dataSource}
+                        renderRow={this._renderItem.bind(this)}
+                        enableEmptySections={true}
+                        >
+                      </ListView>
                   </Card>
               <Card>
                     <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
