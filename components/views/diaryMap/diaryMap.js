@@ -108,7 +108,7 @@ export default class DiaryMap extends Component {
         }, (error) => alert(error.message),
         {enableHighAccuracy: true, timeout: 25000}
         //Mobile
-        //{enableHighAccuracy: false, timeout: 25000}
+        // {enableHighAccuracy: false, timeout: 25000}
       )
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,8 +157,8 @@ getUrl(lat, long, radius, type){
                }}>
                 <Icon large color='black' name={icon}/>
                  <Callout>
-                  <View>
-                    <Text>{place.name}</Text>
+                  <View style={{width:150, alignItems:'center'}}>
+                    <Text style={{fontStyle: 'italic', fontSize: 18, fontWeight:'bold'}}>{place.name}</Text>
                   </View>
                  </Callout>
              </Marker>

@@ -65,7 +65,6 @@ export default class Daily extends Component{
       this.imageDataRef.on('value', (snap) => {
         var photos=[];
         snap.forEach((child) => {
-          console.log("VVVVEEEEAAA" + child.val());
           photos.push({
             _key: child.key,
             url: child.val().url,

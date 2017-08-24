@@ -1,4 +1,4 @@
-import { Alert,Image, Dimensions,AsyncStorage } from 'react-native';
+import { Alert,Image, Dimensions,AsyncStorage, Easing } from 'react-native';
 import React, {Component} from 'react';
 import { Container, Content,  Toast, Button,Text,Body, Right,View,List,ListItem,
  Card, CardItem, Thumbnail, Left, Tab, Tabs } from 'native-base';
@@ -12,6 +12,7 @@ import * as firebase from 'firebase';
 import DialogBox from 'react-native-dialogbox';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
+import ZoomImage from 'react-native-zoom-image';
 
 var idOwner, name, description, culture, url, key
 
@@ -160,8 +161,13 @@ static navigationOptions = ({ navigation }) => ({
     return (
       <Container>
         <Content style={{zIndex: -1, backgroundColor:'white'}}>
-          <Image source={{uri: this.state.url}}
-            style={{height: 100, width: Dimensions.get('window').width}}/>
+          <ZoomImage
+            source={{uri: this.state.url}}
+            imgStyle={{height: 100, width: Dimensions.get('window').width}}
+            showDuration={200}
+            enableScaling={false}
+            easingFunc={Easing.ease}
+          />
 
             <List  style={{flex:  1, flexDirection: 'row', marginTop:5}}>
                {listavatars}
