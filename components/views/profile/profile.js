@@ -356,7 +356,7 @@ _onRefresh() {
                        <TouchableOpacity onPress={()=>navigate('newDiary')}>
                          <Image
                             style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
-                            source={require('../../common/Pigs/EmptyProfile.png')} />
+                            source={require('../../common/pigs/EmptyProfile.png')} />
                       </TouchableOpacity>
                     </HideableView>
                </Card>

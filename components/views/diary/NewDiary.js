@@ -8,6 +8,7 @@ import { Icon } from 'react-native-elements';
 import AutogrowInput from 'react-native-autogrow-input';
 import HideableView from 'react-native-hideable-view';
 import { createNotification } from '../../common/notification';
+import Moment from 'moment';
 //Firebase
 import { getDatabase } from '../../common/database';
 import * as firebase from 'firebase';
@@ -153,17 +154,29 @@ openImagePicker(){
      }
    }
    addDiaryUsers(elemento){
-     var myRef = getDatabase().ref().child('userDiary/');
-          myRef.child(elemento.id+'-'+ this.state.key).set({
-          idUser:elemento.id,
-          idDiary: this.state.key,
-          invitationStatus:true,
-          userDiary:elemento.id+'-'+ this.state.key,
-      }).catch(function(error) {
-          alert(error);
-     });
-     //createNotification( that.uidCurrentUser,elemento.id, "invitation", Moment(new Date()).format("YYYY-MM-DD"),that.key,that.name);
-
+      var that = this.state;
+      if(that.uidCurrentUser!=elemento.id){
+         var myRef = getDatabase().ref().child('userDiary/');
+              myRef.child(elemento.id+'-'+ this.state.key).set({
+              idUser:elemento.id,
+              idDiary: this.state.key,
+              invitationStatus:false,
+              userDiary:elemento.id+'-'+ this.state.key,
+          }).catch(function(error) {
+              alert(error);
+         });
+         createNotification( elemento.id,that.uidCurrentUser, "invitation", Moment(new Date()).format("YYYY-MM-DD"),that.key,that.name);
+       }else{
+         var myRef = getDatabase().ref().child('userDiary/');
+              myRef.child(elemento.id+'-'+ this.state.key).set({
+              idUser:elemento.id,
+              idDiary: this.state.key,
+              invitationStatus:true,
+              userDiary:elemento.id+'-'+ this.state.key,
+          }).catch(function(error) {
+              alert(error);
+         });
+       }
    }
    ////////////////////////////////////////////////////AGREGA DIARIO////////////////////////////////
   add(){

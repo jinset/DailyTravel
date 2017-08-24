@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppRegistry } from 'react-native';
+import { AppRegistry,Image} from 'react-native';
 import { StackNavigator, TabNavigator } from 'react-navigation';
 import strings from '../common/local_strings';
 
@@ -45,7 +45,7 @@ import DiaryMap from './diaryMap/diaryMap.js';
 import DailyMap from './diaryMap/dailyMap.js';
 import AddDailyMap from './diaryMap/addDailyMap.js';
 
-//Import Icons
+//Import icons
 import { Icon } from 'react-native-elements';
 
 export const DTHome = StackNavigator({
@@ -119,28 +119,53 @@ DTNewDiary.navigationOptions = {
 export const DailyTravelTabs = TabNavigator({
     homeTab: { screen: DTHome,
       navigationOptions:{
-        tabBarLabel: strings.home,
+        tabBarIcon: ({ tintColor }) => (
+          <Image style={{width: 30, height: 30}}
+            source={require('../common/icons/home.png')}
+          />
+        ),
       }},
+      friendsTab: { screen: DTFriends,
+        navigationOptions:{
+
+            tabBarIcon: ({ tintColor }) => (
+              <Image  style={{width:30, height: 30}}
+                source={require('../common/icons/friends.png')}
+              />
+            ),
+        }},
+        notificationsTab: { screen: DTNotificatios,
+          navigationOptions:{
+
+              tabBarIcon: ({ tintColor }) => (
+                <Image  style={{width:30, height: 30}}
+                  source={require('../common/icons/notification.png')}
+                />
+              ),
+        }},
     diaryMapTab: { screen: DTDiaryMap,
       navigationOptions:{
-        tabBarLabel: strings.map,
+        tabBarIcon: ({ tintColor }) => (
+          <Image style={{width:30, height: 30}}
+            source={require('../common/icons/map.png')}
+          />
+        ),
     }},
-    notificationsTab: { screen: DTNotificatios,
-      navigationOptions:{
-        tabBarLabel: strings.notifications,
-    }},
-    friendsTab: { screen: DTFriends,
-      navigationOptions:{
-        tabBarLabel: strings.friends,
-      }},
     profileTab: { screen: DTProfile,
       navigationOptions:{
-        tabBarLabel: strings.profile,
+
+          tabBarIcon: ({ tintColor }) => (
+            <Image style={{width:30, height: 30}}
+              source={require('../common/icons/profile.png')}
+            />
+          ),
       }},
 
     },
   {
     tabBarOptions: {
+      showIcon: true,
+      showLabel :false,
       style: {
         backgroundColor: '#41BEB6',
       },
@@ -151,6 +176,7 @@ export const DailyTravelTabs = TabNavigator({
     swipeEnabled: false,
     tabBarPosition: 'bottom',
     showIcon: true,
+    showLabel :false,
     lazyLoad: true,
 });
 
