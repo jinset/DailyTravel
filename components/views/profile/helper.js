@@ -205,11 +205,10 @@ static getFollows(userId, callback){
 
 /////////////////// DairysByUser ///////////////////
   static getDairysByUserGuest(userId, callback){
+    var diarys = [];
     let ref= getDatabase().ref('userDiary/');
-    i=0
     userList = (ref.orderByChild("idUser").equalTo(userId));
        userList.on('value', (snap) => {
-           var diarys = [];
          snap.forEach((child) => {
            if(child.val().invitationStatus==true ){
            firebase.database().ref('/diary/'+child.val().idDiary).on('value', (snap) => {
@@ -221,15 +220,12 @@ static getFollows(userId, callback){
               url: snap.val().url,
               idOwner:snap.val().idOwner,
             });
-
             }
-            callback(diarys)
           });
         }
         })
     })
-
-
+    callback(diarys)
   }
 //////////////////////////////////////////////////////
 }

@@ -155,17 +155,28 @@ openImagePicker(){
    }
    addDiaryUsers(elemento){
       var that = this.state;
-     var myRef = getDatabase().ref().child('userDiary/');
-          myRef.child(elemento.id+'-'+ this.state.key).set({
-          idUser:elemento.id,
-          idDiary: this.state.key,
-          invitationStatus:true,
-          userDiary:elemento.id+'-'+ this.state.key,
-      }).catch(function(error) {
-          alert(error);
-     });
-//     createNotification( that.uidCurrentUser,elemento.id, "invitation", Moment(new Date()).format("YYYY-MM-DD"),that.key,that.name);
-
+      if(that.uidCurrentUser!=elemento.id){
+         var myRef = getDatabase().ref().child('userDiary/');
+              myRef.child(elemento.id+'-'+ this.state.key).set({
+              idUser:elemento.id,
+              idDiary: this.state.key,
+              invitationStatus:false,
+              userDiary:elemento.id+'-'+ this.state.key,
+          }).catch(function(error) {
+              alert(error);
+         });
+         createNotification( elemento.id,that.uidCurrentUser, "invitation", Moment(new Date()).format("YYYY-MM-DD"),that.key,that.name);
+       }else{
+         var myRef = getDatabase().ref().child('userDiary/');
+              myRef.child(elemento.id+'-'+ this.state.key).set({
+              idUser:elemento.id,
+              idDiary: this.state.key,
+              invitationStatus:true,
+              userDiary:elemento.id+'-'+ this.state.key,
+          }).catch(function(error) {
+              alert(error);
+         });
+       }
    }
    ////////////////////////////////////////////////////AGREGA DIARIO////////////////////////////////
   add(){
