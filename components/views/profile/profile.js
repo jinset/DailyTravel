@@ -14,10 +14,12 @@ import {
   Text,
   AsyncStorage,
   TouchableOpacity,
+  RefreshControl,
+  NetInfo,
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator, NavigationActions } from 'react-navigation';
-import { Container, Content, Form, Segment, Item, Separator, Input, Label, Button,Fab,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
+import { Container, Content, Form, Segment, Item, Separator, Input, Spinner, Label, Button,Fab,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, ListItem} from 'native-base';
 import strings from '../../common/local_strings.js';
 import baseStyles from '../../style/baseStyles.js';
 import { getDatabase } from '../../common/database';
@@ -31,9 +33,11 @@ import HideableView from 'react-native-hideable-view';
 import ModalDropdown from 'react-native-modal-dropdown';
 import { createNotification } from '../../common/notification';
 import Moment from 'moment';
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 
-let diarys = [{id: null, name: null, description: null, url: null}]
+let diarys = [{id: '', name: '', description: '', url: ''}]
 let follows = [{id: null, nickname: null, name: null, lastName: null, url: null}]
 let followers = [{id: null, nickname: null, name: null, lastName: null, url: null}]
 
@@ -44,6 +48,12 @@ export default class Profile extends Component {
        super(props);
        console.disableYellowBox = true;
        this.state = {
+         dataSource: new ListView.DataSource({
+           rowHasChanged: (row1, row2) => row1 !== row2,
+         }),
+         dataSource2: new ListView.DataSource({
+           rowHasChanged: (row1, row2) => row1 !== row2,
+         }),
          uid: '',
          userName: '',
          lastName: '',
@@ -51,11 +61,13 @@ export default class Profile extends Component {
          nickname: '',
          imagePath: '',
          birthday: '',
-         diarys: diarys,
+         diarys: [],
          followers: followers,
          follows: follows,
          showPig: false,
          date: new Date().toLocaleDateString(),
+         showSpinnerTop: false,
+         refreshing: false,
        }
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,74 +80,143 @@ export default class Profile extends Component {
       }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
-    async componentDidMount(){
-     try{
-       var that = this;
-       AsyncStorage.getItem("user").then((value) => {
-             this.setState({
-               uid: value
-             })
-             Helper.getUserName(this.state.uid, (name) => {
-               this.setState({
-                 userName: name,
-               })
-             })
-             Helper.getUserNickname(this.state.uid, (nickname) => {
-              this.setState({
-                  nickname: nickname,
-               })
-            })
-            Helper.getUserLastName(this.state.uid, (lastname) => {
-              this.setState({
-                lastName: lastname,
-              })
-            })
-            Helper.getUserEmail(this.state.uid, (email) => {
-              this.setState({
-                email: email,
-              })
-            })
-            Helper.getImageUrl(this.state.uid, (url) => {
-              this.setState({
-                imagePath: url,
-              })
-            })
-            Helper.getUserBirthDay(this.state.uid, (birthday) => {
-              this.setState({
-                birthday: birthday,
-              })
-            })
-            Helper.getDairysByUserGuest(this.state.uid, (d) => {
-              this.setState({
-                  diarys: d.reverse(),
-               })
-                if(d.length === 0){
-                    this.setState({
-                        showPig: true,
-                     })
-                }else{
-                  this.setState({
-                      showPig: false,
-                   })
-                }
-            })
-            Helper.getFollowers(this.state.uid, (f) => {
-               this.setState({
-                 followers: f,
-               })
-             })
-             Helper.getFollows(this.state.uid, (f) => {
-               this.setState({
-                 follows: f,
-               })
-             })
-       })
-     } catch(error){
-       alert("error: " + error)
+    _onRefresh() {
+       this.setState({refreshing: true});
+       this.loadRefreshing().then(() => {
+         this.setState({refreshing: false});
+       });
      }
+
+     async loadRefreshing() {
+       this.getData();
+     }
+
+     _renderItem(d){
+           const { navigate } = this.props.navigation;
+           return (
+                   <ScrollView>
+                       <CardItem>
+                         <Body>
+                             <View style={styles.row}>
+                                 <Thumbnail
+                                   small
+                                   source={{uri: this.state.imagePath}}
+                                 />
+                                 <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                                     <View style={styles.center}>
+                                         <Text style={styles.diary}>{"    " +d.name} </Text>
+                                     </View>
+                                 </TouchableHighlight>
+                             </View>
+                             <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                               <Left>
+                                   <Image
+                                     source={{uri: d.url}}
+                                     style={{height: 300, width: Dimensions.get('window').width}}
+                                   />
+                                   <Text style={styles.description}> {d.description} </Text>
+                              </Left>
+
+                            </TouchableHighlight>
+
+                           </Body>
+                       </CardItem>
+                       <Separator></Separator>
+                   </ScrollView>
+                 )
+
+     }
+
+/////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
+    componentWillMount(){
+      NetInfo.isConnected.fetch().done(isConnected => {
+          if(isConnected === true) {
+            this.getData();
+          }else{
+              this.getData();
+              MessageBarManager.registerMessageBar(this.refs.alert);
+              MessageBarManager.showAlert({
+                title: "error",
+                message: strings.noInternet,
+                alertType: 'info',
+                position: 'bottom',
+                duration: 10000,
+                stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
+              });
+          }
+      });
    }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////// Get Users ///////////////////////////////////////////////////////////////
+    getData(){
+      try{
+        var that = this;
+        AsyncStorage.getItem("user").then((value) => {
+              this.setState({
+                uid: value
+              })
+              Helper.getUserName(this.state.uid, (name) => {
+                this.setState({
+                  userName: name,
+                })
+              })
+              Helper.getUserNickname(this.state.uid, (nickname) => {
+               this.setState({
+                   nickname: nickname,
+                })
+             })
+             Helper.getUserLastName(this.state.uid, (lastname) => {
+               this.setState({
+                 lastName: lastname,
+               })
+             })
+             Helper.getUserEmail(this.state.uid, (email) => {
+               this.setState({
+                 email: email,
+               })
+             })
+             Helper.getImageUrl(this.state.uid, (url) => {
+               this.setState({
+                 imagePath: url,
+               })
+             })
+             Helper.getUserBirthDay(this.state.uid, (birthday) => {
+               this.setState({
+                 birthday: birthday,
+               })
+             })
+             Helper.getDairysByUserGuest(this.state.uid, (d) => {
+               this.setState({
+                   diarys: d.reverse(),
+                   dataSource: this.state.dataSource.cloneWithRows(d)
+                })
+                 if(d.length === 0){
+                     this.setState({
+                         showPig: true,
+                      })
+                 }else{
+                   this.setState({
+                       showPig: false,
+                    })
+                 }
+             })
+             Helper.getFollowers(this.state.uid, (f) => {
+                this.setState({
+                  followers: f,
+                })
+              })
+              Helper.getFollows(this.state.uid, (f) => {
+                this.setState({
+                  follows: f,
+                })
+              })
+        })
+      } catch(error){
+        alert("error: " + error)
+      }
+    }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////// Follow /////////////////////////////////////////////////////////////
        follow(){
@@ -200,60 +281,31 @@ export default class Profile extends Component {
          })
        }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////log out ///////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////// Log out ///////////////////////////////////////////////////////////////
 logout() {
   const { navigate } = this.props.navigation;
   AsyncStorage.removeItem("user", ()=>{
     navigate('login');
   });
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
 
     const { navigate } = this.props.navigation;
 
-    let listTable = this.state.diarys.map((d,i) => {
-        return (
-                <ScrollView>
-                    <CardItem key={i}>
-                      <Body>
-
-                          <View style={styles.row}>
-
-                              <Thumbnail
-                                small
-                                source={{uri: this.state.imagePath}}
-                              />
-                              <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
-                                  <View style={styles.center}>
-                                      <Text style={styles.diary}>{"    " +d.name} </Text>
-                                  </View>
-                              </TouchableHighlight>
-                              <Right>
-                                  <Icon active name='more-vert' />
-                              </Right>
-                          </View>
-                          <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
-                            <Left>
-                                <Image
-                                  source={{uri: d.url}}
-                                  style={{height: 300, width: Dimensions.get('window').width}}
-                                />
-                                <Text style={styles.description}> {d.description} </Text>
-                           </Left>
-
-                         </TouchableHighlight>
-
-                        </Body>
-                    </CardItem>
-                    <Separator></Separator>
-                </ScrollView>
-              )
-      });
-
     return (
           <Container>
-            <Content>
+            <Content   refreshControl={
+                              <RefreshControl
+                                      refreshing={this.state.refreshing}
+                                      onRefresh={this._onRefresh.bind(this)}
+                                      tintColor="#41BEB6"
+                                      colors={['#41BEB6',"#9A9DA4"]}
+                                      progressBackgroundColor="#FCFAFA"
+                                  />
+                              }>
               <Card fixed>
                 <CardItem>
                   <Left>
@@ -295,7 +347,12 @@ logout() {
                 </CardItem>
               </Card>
                   <Card>
-                        {listTable}
+                      <ListView
+                        dataSource={this.state.dataSource}
+                        renderRow={this._renderItem.bind(this)}
+                        enableEmptySections={true}
+                        >
+                      </ListView>
                   </Card>
               <Card>
                     <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
@@ -305,7 +362,7 @@ logout() {
                        <TouchableOpacity onPress={()=>navigate('newDiary')}>
                          <Image
                             style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
-                            source={require('./ProfilePig.jpg')} />
+                            source={require('../../common/pigs/EmptyProfile.png')} />
                       </TouchableOpacity>
                     </HideableView>
                </Card>
@@ -321,6 +378,7 @@ logout() {
              <Icon color='white' name="library-books" />
            </Fab>
          </View>
+         <MessageBarAlert ref="alert"/>
           </Container>
     );
   }
