@@ -63,7 +63,8 @@ export default class AddDailyMap extends Component {
           diaryList.once('value', (snap) => {
               var diarysId = [];
               snap.forEach((child) => {
-                if(child.val().status===true){
+                if(child.val().invitationStatus === true){
+                  alert("Id: "+child.val().idDiary)
                   diarysId.push({
                     id: child.val().idDiary,
                   });
@@ -89,7 +90,7 @@ export default class AddDailyMap extends Component {
           })
           ref1.on('value', (snap) => {
             snap.forEach((child) => {
-                var place = child.val().place
+               var place = child.val().place
                if(place == undefined){
                  place = 'Sin lugar'
                }
@@ -105,7 +106,6 @@ export default class AddDailyMap extends Component {
             });//forEach
           })//ref.once
       })//diarysId.forEach
-      alert(dailys.length)
       this.setState({
         dailys: dailys.slice(0),
       })
