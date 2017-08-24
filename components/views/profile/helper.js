@@ -147,7 +147,7 @@ static setUserBirthDay(userId, birthday){
   static getDairysByUser(userId, callback){
     let ref = getDatabase().ref("/diary")
     diaryList = (ref.orderByChild("idOwner").equalTo(userId))
-    diaryList.on('value', (snap) => {
+    diaryList.once('value', (snap) => {
         var diarys = [];
         snap.forEach((child) => {
           if(child.val().status===true){
@@ -167,7 +167,7 @@ static setUserBirthDay(userId, birthday){
 /////////////////// Followers ////////////////////////
 static getFollowers(userId, callback){
   let followersList = getDatabase().ref('users/'+userId+'/followers/').orderByChild("uid")
-  followersList.on('value', (snap) => {
+  followersList.once('value', (snap) => {
     var f = [];
     snap.forEach((child) => {
       f.push({
@@ -186,7 +186,7 @@ static getFollowers(userId, callback){
 /////////////////// Follows //////////////////////
 static getFollows(userId, callback){
   let followsList = getDatabase().ref('users/'+userId+'/follows/').orderByChild("uid")
-  followsList.on('value', (snap) => {
+  followsList.once('value', (snap) => {
     var f = [];
     snap.forEach((child) => {
       f.push({
@@ -206,7 +206,7 @@ static getFollows(userId, callback){
   static getDairysByUserGuest(userId, callback){
     let ref= getDatabase().ref('userDiary/');
     userList = (ref.orderByKey().startAt(userId));
-       userList.on('value', (snap) => {
+       userList.once('value', (snap) => {
            var diarys = [];
          snap.forEach((child) => {
            if(child.val().invitationStatus==true){

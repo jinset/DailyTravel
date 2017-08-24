@@ -73,6 +73,7 @@ export default class DiaryMap extends Component {
          icon: '', // List to switch icons
          sltPlace: 'Select a place to travel', // The selected place of the list showed in the modal
          buttonDisabled: true, // Button starts disabled until the user pick a place
+         buttonDisabledColor: '#73797D',
        }
     }
     /*latitude: 10.00253, longitude: -84.14021,*/
@@ -178,6 +179,7 @@ selectPlace(p){
   this.setState({
     sltPlace: p.name,
     buttonDisabled: false,
+    buttonDisabledColor: 'black'
   })
   this.refs.modal1.close()
 }
@@ -259,7 +261,7 @@ selectPlace(p){
                             />
                           </Item>
                       </Header>
-                      <Button full style={{top:60, zIndex: 2, backgroundColor: 'black'}}
+                      <Button full style={{top:60, zIndex: 2, backgroundColor: this.state.buttonDisabledColor}}
                               disabled={this.state.buttonDisabled}
                               onPress={()=> navigate('addDailyMap', {sltPlace:this.state.sltPlace})}>
                         <Text style={styles.sltPlace}>{this.state.sltPlace}</Text>
