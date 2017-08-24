@@ -105,6 +105,7 @@ export default class AddDailyMap extends Component {
             });//forEach
           })//ref.once
       })//diarysId.forEach
+      alert(dailys.length)
       this.setState({
         dailys: dailys.slice(0),
       })
