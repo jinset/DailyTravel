@@ -92,8 +92,8 @@ export default class DiaryMap extends Component {
       region: {
         latitude: lat,
         longitude: lon,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitudeDelta: 0.0722,
+        longitudeDelta: 0.0221,
       },
     })
   }
@@ -169,7 +169,6 @@ getUrl(lat, long, radius, type){
        //alert("DENIED")
      }
     })
-
   }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
