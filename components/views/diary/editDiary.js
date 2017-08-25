@@ -17,7 +17,8 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import HelperDiary from './helperDiary';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
-
+import { createNotification } from '../../common/notification';
+import Moment from 'moment';
 const Blob = RNFetchBlob.polyfill.Blob
 const fs = RNFetchBlob.fs
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
@@ -248,15 +249,21 @@ let ref='';
 }
 
    addDiaryUsers(userId,userstatus){
+     var date = new Date();
+     var that = this.state;
      var myRef = getDatabase().ref().child('userDiary/');
           myRef.child(userId+'-'+ key).set({
           idUser:userId,
           idDiary: key,
-          invitationStatus:true,
-          userDiary:userId+'-'+key
+          invitationStatus:false,
+          userDiary:userId+'-'+key,
+          date:date.toLocaleDateString()+' '+date.toLocaleTimeString(),
       }).catch(function(error) {
           alert(error);
      });
+     if(userId!=that.uidCurrentUser){
+       createNotification( userId,that.uidCurrentUser, "invitation", Moment(new Date()).format("YYYY-MM-DD"),key,that.name);
+     }
    }
 ///////////////////////////////////////// addGuest /////////////////////////////////////////////////////////////
     addGuest(i){

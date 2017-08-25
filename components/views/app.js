@@ -45,7 +45,7 @@ import DiaryMap from './diaryMap/diaryMap.js';
 import DailyMap from './diaryMap/dailyMap.js';
 import AddDailyMap from './diaryMap/addDailyMap.js';
 
-//Import icons
+//Import Icons
 import { Icon } from 'react-native-elements';
 
 export const DTHome = StackNavigator({
@@ -121,7 +121,7 @@ export const DailyTravelTabs = TabNavigator({
       navigationOptions:{
         tabBarIcon: ({ tintColor }) => (
           <Image style={{width: 30, height: 30}}
-            source={require('../common/icons/home.png')}
+            source={require('../common/Icons/home.png')}
           />
         ),
       }},
@@ -130,33 +130,33 @@ export const DailyTravelTabs = TabNavigator({
 
             tabBarIcon: ({ tintColor }) => (
               <Image  style={{width:30, height: 30}}
-                source={require('../common/icons/friends.png')}
+                source={require('../common/Icons/friends.png')}
               />
             ),
-        }},
-        notificationsTab: { screen: DTNotificatios,
-          navigationOptions:{
-
-              tabBarIcon: ({ tintColor }) => (
-                <Image  style={{width:30, height: 30}}
-                  source={require('../common/icons/notification.png')}
-                />
-              ),
         }},
     diaryMapTab: { screen: DTDiaryMap,
       navigationOptions:{
         tabBarIcon: ({ tintColor }) => (
           <Image style={{width:30, height: 30}}
-            source={require('../common/icons/map.png')}
+            source={require('../common/Icons/map.png')}
           />
         ),
     }},
+        notificationsTab: { screen: DTNotificatios,
+          navigationOptions:{
+
+              tabBarIcon: ({ tintColor }) => (
+                <Image  style={{width:30, height: 30}}
+                  source={require('../common/Icons/notification.png')}
+                />
+              ),
+        }},
     profileTab: { screen: DTProfile,
       navigationOptions:{
 
           tabBarIcon: ({ tintColor }) => (
             <Image style={{width:30, height: 30}}
-              source={require('../common/icons/profile.png')}
+              source={require('../common/Icons/profile.png')}
             />
           ),
       }},
