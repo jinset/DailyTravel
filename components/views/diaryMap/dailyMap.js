@@ -111,14 +111,15 @@ export default class DailyMap extends Component {
      }
 
      _renderItem(daily) {
-         const { params } = this.props.navigation.state;
+         const { navigate } = this.props.navigation;
          return (
            <ListItem
                roundAvatar
                key={daily.key}
                avatar={{uri:daily.url}}
                title={daily.name}
-               subtitle={daily.date}>
+               subtitle={daily.date}
+               onPress={() => navigate('showDaily', {idDaily: daily.key, idDiary: daily.idDiary})}>
            </ListItem>
          );
      }
