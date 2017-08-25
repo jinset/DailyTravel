@@ -6,6 +6,7 @@ import {
   ListView,
   Image,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Container, Content, Button, Text, Input, Right, Header, Item, Card, CardItem } from 'native-base';
@@ -24,6 +25,7 @@ export default class ListDaily extends Component{
     this.dataRef = getDatabase().ref("/diary/"+idDiary+"/daily/").orderByChild("status").equalTo(true);
     this.state = {
       isMe:params.isMe,
+      refreshing: false,
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       })
@@ -35,6 +37,21 @@ export default class ListDaily extends Component{
     headerStyle: {height: 50 },
     headerTitleStyle : {color:'#9A9DA4',fontSize:17},
   }
+
+  _onRefresh() {
+     this.setState({refreshing: true});
+     this.loadRefreshing().then(() => {
+       this.setState({refreshing: false});
+     });
+   }
+
+   async loadRefreshing() {
+     try {
+       this.getDailyList(this.dataRef);
+     } catch (error) {
+       console.log(error.message);
+     }
+   }
 
   getDailyList(dataRef) {
     dataRef.on('value', (snap) => {
@@ -49,14 +66,16 @@ export default class ListDaily extends Component{
           url: child.val().url,
           });
       });
+      dailies.reverse()
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(dailies)
       });
     });
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.getDailyList(this.dataRef);
+
   }
 
   _renderItem(daily) {
@@ -123,7 +142,7 @@ export default class ListDaily extends Component{
                   <Button transparent
                     onPress={this.addDaily.bind(this)}>
                       <Icon active name='add' />
-                      <Icon active name='book'/>
+                      <Icon active name='satellite'/>
                   </Button>
                   </HideableView>
                 </Item>
@@ -135,6 +154,15 @@ export default class ListDaily extends Component{
 
             <CardItem>
               <ListView
+                refreshControl={
+                  <RefreshControl
+                     refreshing={this.state.refreshing}
+                     onRefresh={this._onRefresh.bind(this)}
+                     tintColor="#41BEB6"
+                     colors={['#41BEB6',"#9A9DA4"]}
+                     progressBackgroundColor="#FCFAFA"
+                   />
+                 }
                 dataSource={this.state.dataSource}
                 renderRow={this._renderItem.bind(this)}
                 enableEmptySections={true}

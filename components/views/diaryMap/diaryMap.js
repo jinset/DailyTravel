@@ -24,12 +24,12 @@ import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
 import * as firebase from 'firebase';
 import { Icon } from 'react-native-elements';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, Callout} from 'react-native-maps';
 import Modal from 'react-native-modalbox';
 import HideableView from 'react-native-hideable-view';
 
-var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs";  //DANI
-//var APIKey = "AIzaSyCQjiBm5_7fm6DsB0vf8Mz8Tn6i9xighXM";
+//var APIKey = "AIzaSyA1gFC5XmcsWGMF4FkqUZ5xmgDQ31PJvWs";  //DANI
+var APIKey = "AIzaSyCQjiBm5_7fm6DsB0vf8Mz8Tn6i9xighXM";
 
 var colors = [{type: 'restaurant', name: strings.restaurant, icon: 'restaurant', bg: '#41BEB6', color: 'white', selected: true},
               {type: 'establishment', name: strings.establishment, icon: 'location-city', bg: 'white', color: '#808080', selected: false},
@@ -74,6 +74,9 @@ export default class DiaryMap extends Component {
          sltPlace: 'Select a place to travel', // The selected place of the list showed in the modal
          buttonDisabled: true, // Button starts disabled until the user pick a place
          buttonDisabledColor: '#73797D',
+         fabDisabled: true,
+         fabDisabledColor: '#73797D',
+         dailies: [],
        }
     }
     /*latitude: 10.00253, longitude: -84.14021,*/
@@ -110,7 +113,7 @@ export default class DiaryMap extends Component {
         }, (error) => alert(error.message),
         {enableHighAccuracy: true, timeout: 25000}
         //Mobile
-        //{enableHighAccuracy: false, timeout: 25000}
+        // {enableHighAccuracy: false, timeout: 25000}
       )
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,7 +128,7 @@ export default class DiaryMap extends Component {
         }, (error) => alert(error.message),
         {enableHighAccuracy: true, timeout: 25000}
         // Mobile
-        //{enableHighAccuracy: false, timeout: 25000}
+        // {enableHighAccuracy: false, timeout: 25000}
       )
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,8 +143,21 @@ getUrl(lat, long, radius, type){
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  touchMarker(place){
+    this.setState({
+      sltPlace: place.name,
+      buttonDisabled: false,
+      buttonDisabledColor: 'black'
+    })
+    this.getDailies(place.name);
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 /////////////////////////////////////// Get Places ////////////////////////////////////////////////////////////////////
   getPlaces(){
+    const { navigate } = this.props.navigation;
     const url = this.getUrl(this.state.region.latitude, this.state.region.longitude, this.state.radius, this.state.type)
     fetch(url)
      .then((data) => data.json())
@@ -156,8 +172,14 @@ getUrl(lat, long, radius, type){
                coordinate={{
                  latitude: place.geometry.location.lat,
                  longitude: place.geometry.location.lng
-               }}>
-               <Icon large color='black' name={icon}/>
+               }}
+               onPress={() => this.touchMarker(place)}>
+                <Icon large color='black' name={icon}/>
+                 <Callout>
+                    <View style={{width:150, alignItems:'center'}}>
+                      <Text style={{fontStyle: 'italic', fontSize: 18, fontWeight:'bold'}}>{place.name}</Text>
+                    </View>
+                 </Callout>
              </Marker>
            )
        })
@@ -165,8 +187,6 @@ getUrl(lat, long, radius, type){
          places: res.results.slice(0),
          placesLocation: placesArray
        })
-     }else{
-       //alert("DENIED")
      }
     })
   }
@@ -224,6 +244,47 @@ selectPlace(p){
     }
     this.getPlaces()
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  getDailies(place){
+    var dailies = [];
+    let refDiary = getDatabase().ref("/diary")
+    refDiary.once('value', (snap)=>{
+      snap.forEach((child) =>{
+        let refDaily = getDatabase().ref("/diary/"+child.key+"/daily")
+        dailyList = (refDaily.orderByChild("place").equalTo(place));
+        dailyList.once('value', (snap)=>{
+          snap.forEach((child)=>{
+              dailies.push({
+                key: child.key
+              })//push
+          })//forEach Daily
+          this.setState({
+            dailies: dailies.slice(0)
+          })
+        })//dailyList.once
+      })//forEach diary
+    })//ref.once
+    this.toggleFab();
+  }
+
+  toggleFab(){
+    if(this.state.dailies.length == 0){
+      this.setState({
+        fabDisabled: true,
+        fabDisabledColor: '#73797D'
+      })
+    }else{
+      this.setState({
+        fabDisabled: false,
+        fabDisabledColor: '#41BEB6'
+      })
+    }
+  }
+
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
   render() {
@@ -311,25 +372,20 @@ selectPlace(p){
                       <Icon color='white' name={this.state.arrow}/>
                       {listFabs}
                     </Fab>
-                  {/*<Fab
-                    active='false'
-                    direction="up"
-                    containerStyle={{ }}
-                    style={{backgroundColor:'#41BEB6', zIndex: 1}}
-                    position="bottomLeft"
-                    onPress={()=> navigate('newDiary')}>
-                    <Icon color='white' name="library-books" />
-                  </Fab>
-                 <Fab
-                   active='false'
-                   direction="up"
-                   containerStyle={{ }}
-                   style={{backgroundColor:'#41BEB6', zIndex: 1}}
-                   position="bottomRight"
-                   visible={true}
-                   onPress={()=> alert(this.state.region.latitude) }>
-                   <Icon color='white' name="my-location" />
-                 </Fab>*/}
+                   <Fab
+                     disabled={this.state.fabDisabled}
+                     active='false'
+                     direction="up"
+                     containerStyle={{ }}
+                     style={{backgroundColor:this.state.fabDisabledColor, zIndex: 1}}
+                     position="bottomRight"
+                     visible={true}
+                     onPress={()=> navigate('dailyMap', {listDailyKey: this.state.dailies})}>
+                     <View style={{flexDirection:'row'}}>
+                       <Icon color='white' name="satellite"/>
+                       <Text style={{fontStyle: 'italic', fontSize: 24, fontWeight:'bold', color:'white'}}>{this.state.dailies.length}</Text>
+                     </View>
+                   </Fab>
               </View>
               {/* MapView and Fabs*/}
           </Container>

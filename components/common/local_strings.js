@@ -102,6 +102,7 @@ let strings = new LocalizedStrings({
    changePhoto: "Change photo ",
    eject: "Eject",
    invite: "Invite",
+   friendsSuggest: "Suggest friends",
  },
  es:{
    home:"Inicio",
@@ -204,6 +205,8 @@ let strings = new LocalizedStrings({
   changePhoto: "Cambiar foto ",
   eject: "Expulsar",
   invite: "Invitar",
+   friendsSuggest: "Sugerir amigos",
+
 
  },
  zh:{
