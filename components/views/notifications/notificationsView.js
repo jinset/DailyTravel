@@ -34,7 +34,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
        showSpinner:false,
        showSpinnerTop:false,
        idUser: "",
-       currentPageIndex : 1,
+       currentPageIndex : 2,
        refreshing: false,
        isConnected: true,
      };
@@ -153,6 +153,9 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
       this.setState({
           dataSource: this.state.dataSource.cloneWithRows(notificationsArray)
         });
+      if (notificationsArray.length) {
+
+      }
         /*Desaparece el loading*/
         this.setState({refreshing: false});
 
@@ -178,6 +181,9 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
       this.setState({
           dataSource: this.state.dataSource.cloneWithRows(notificationsArray)
         });
+        if (notificationsArray.length) {
+
+      }
       } catch (error) {
         console.log(error.message);
       }
@@ -216,14 +222,18 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
         <View>
         {(() => {
           switch (item.type) {
-            case "follow": return <Text>{strings.theUser} {item.userNick} {strings.hasFollowed}</Text>;
+            case "follow": return <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.userIdGet})}>
+            <Text>{strings.theUser} {item.userNick} {strings.hasFollowed}</Text>
+            </TouchableHighlight>
             case "invitation":
             switch (item.status) {
               case false: return <TouchableHighlight onPress={() => this.handleOnPress(item.diaryId, item.diaryName, item._key)}>
                   <Text>{strings.theUser} {item.userNick} {strings.sendInvitation} {item.diaryName}, {strings.touchAccept} </Text>
               </TouchableHighlight>;
 
-              case true: return <Text>{strings.acceptAlreadyInvitation} {item.diaryName}</Text>
+              case true: return <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item.diaryId})}>
+              <Text>{strings.acceptAlreadyInvitation} {item.diaryName}</Text>
+              </TouchableHighlight>;
             }
           }
         })()}
@@ -258,6 +268,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
              dataSource={this.state.dataSource}
              renderRow={this._renderItem.bind(this)}
              enableEmptySections={true}
+             onEndReached={this._onRefresh.bind(this)}
+             onEndReachedThreshold={50}
              >
            </ListView>
            <DialogBox ref={dialogbox => { this.dialogbox = dialogbox }}/>

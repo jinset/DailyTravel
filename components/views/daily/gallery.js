@@ -50,7 +50,6 @@ export default class Gallery extends Component{
       this.imageDataRef.on('value', (snap) => {
         var photos=[];
         snap.forEach((child) => {
-          console.log("VVVVEEEEAAA" + child.val());
           photos.push({
             _key: child.key,
             url: child.val().url,
@@ -149,8 +148,8 @@ export default class Gallery extends Component{
                   dataSource={this.state.dataSource}
                   renderRow={this._renderItem.bind(this)}
                 />
-                <DialogBox ref={dialogbox => { this.dialogbox = dialogbox }}/>
             </CardItem>
+            <DialogBox ref={dialogbox => { this.dialogbox = dialogbox }}/>
           </Card>
       </Container>
     );

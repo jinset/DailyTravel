@@ -144,6 +144,11 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
             homeArray.push(data)
           });
         }
+        if (homeArray.length != 0) {
+          this.setState({
+              showPig: false
+            });
+        }
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(homeArray)
         });
@@ -175,6 +180,13 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
             homeArray.push(data)
           });
         }
+
+        if (homeArray.length != 0) {
+          this.setState({
+              showPig: false
+            });
+        }
+
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(homeArray)
         });
@@ -182,6 +194,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
         console.log(error.message);
       }
     }
+
     async loadHome(){
       try {
         this.setState({refreshing: true});
@@ -200,22 +213,16 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
        }
 
         let array = await this.getDiaries(this.state.currentPageIndex,arrayFollows);
-        if (array.length == 0) {
-          var current = this.state.currentPageIndex;
-          while (array.length == 0) {
-            current = current +1;
-            this.setState({
-              currentPageIndex: current
-              // showPig: true
-            });
-            array = await this.getDiaries(current,arrayFollows);
-          }
-        }
-
         for (var i in array) {
           await this.getUser(array[i]).then(data => {
             homeArray.push(data);
           });
+        }
+
+        if (homeArray.length == 0) {
+          this.setState({
+              showPig: true
+            });
         }
 
         /*Carga el home en el dataSource*/
@@ -333,9 +340,11 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
            <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
               <Text style={styles.message}>{strings.iAppearWhenHome}</Text>
               <Text style={styles.message}>{strings.touchMeToCreateHome}</Text>
+              <TouchableHighlight onPress={() => navigate('friends')}>
                 <Image
                    style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
-                   source={require('../profile/ProfilePig.jpg')} />
+                   source={require('../../common/pigs/EmptyHome.png')} />
+               </TouchableHighlight>
            </HideableView>
            <HideableView visible={this.state.showSpinner} removeWhenHidden={true} style={{backgroundColor:'transparent'}}>
               <Spinner color='#41BEB6' />
