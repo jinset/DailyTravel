@@ -29,6 +29,7 @@ import HideableView from 'react-native-hideable-view';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 import { createNotification } from '../../common/notification';
+import Moment from 'moment';
 
 export default class Profile extends Component {
 
@@ -53,6 +54,7 @@ export default class Profile extends Component {
          users: [],
          follows: [],
          txt: '',
+         showSuggest: false
        }
     }
 
@@ -82,6 +84,7 @@ async componentWillMount(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 getFollows(){
+   this.searchNewFriends();
     var that = this;
     Helper.getFollows(this.state.uid, (f) => {
           this.setState({
@@ -155,6 +158,8 @@ getFollows(){
         }
       })//checkRepeat.once
       createNotification(that.uid, that.uidCurrentUser, "follow", Moment(new Date()).format("YYYY-MM-DD"),"","");
+      this.searchNewFriends();
+
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -171,6 +176,7 @@ getFollows(){
               url: snapshot.child("url").val(),
             });
       })
+
       this.search(that.txt)
       MessageBarManager.registerMessageBar(this.refs.alert);
       MessageBarManager.showAlert({
@@ -202,6 +208,7 @@ getFollows(){
 
 ///////////////////////////////////////// Remove Followers //////////////////////////////////////////////////////
     removeFollowers(i){
+         this.searchNewFriends();
       var that = this.state;
       let ref = getDatabase().ref('/users/'+that.users[i].id+'/followers/')
       followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
@@ -269,7 +276,8 @@ getFollows(){
     async searchNewFriends() {
       try {
         this.setState({
-          showSpinner:true
+          showSpinner:true,
+          showSuggest: false
         })
         let suggestNewFriendsArray = [];
         var idUser = "";
@@ -284,10 +292,10 @@ getFollows(){
       this.setState({
           dataSource: this.state.dataSource.cloneWithRows(suggestNewFriendsArray)
         });
-      console.log(suggestNewFriendsArray);
         /*Desaparece el loading*/
         this.setState({
-          showSpinner:false
+          showSpinner:false,
+          showSuggest: true
         })
       } catch (error) {
         console.log(error.message);
@@ -369,11 +377,13 @@ getFollows(){
                 </Content>
                 <View>
                  <Text style={{textAlign: 'center',paddingTop:8, paddingBottom:8, backgroundColor: '#fff'}}>{strings.friendsSuggest}</Text>
+                  <HideableView visible={this.state.showSuggest} removeWhenHidden={true} >
                 <ListView 
                   horizontal= {true}
                   dataSource={this.state.dataSource}
                   renderRow={this._renderItem.bind(this)}>
                 </ListView>
+                </HideableView>
                 <HideableView visible={this.state.showSpinner} removeWhenHidden={true} >
                   <Spinner />
                 </HideableView>
