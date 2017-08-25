@@ -286,7 +286,7 @@ getFollows(){
           idUser = value;
         })
         let arrayFriends = await this.getArrayFriends(idUser);
-        suggestNewFriendsArray = await this.searchSuggestFriends(arrayFriends); 
+        suggestNewFriendsArray = await this.searchSuggestFriends(arrayFriends);
 
         /*Carga el home en el dataSource*/
       this.setState({
@@ -303,8 +303,7 @@ getFollows(){
 
     }
 
-/////////////////////////////////////////REnder ITem ////////////////////////////////////////
-
+/////////////////////////////////////////Render Item ////////////////////////////////////////
      _renderItem(item) {
     const { navigate } = this.props.navigation;
     return (
@@ -316,7 +315,6 @@ getFollows(){
       </View>
     );
   }
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
@@ -331,23 +329,27 @@ getFollows(){
                             small
                             source={{uri: u.url}}
                           />
-                        <View syle={styles.column}>
-                          <Text style={styles.nick} style={{padding: 10}}>{u.nickname}</Text>
+                        <View syle={{width: 80}}>
+                          <Text style={styles.nick} style={{padding: 15}}>{u.nickname}</Text>
                         </View>
+                        <View style={{paddingLeft: 60}}/>
                         </TouchableOpacity>
                         <HideableView visible={u.foll} removeWhenHidden={true} duration={100}>
-                            <Button light onPress={() => this.follow(i)} style={{padding: 100}}>
-                              <Text>{strings.follow}</Text>
-                              <Icon name='add-circle-outline' />
-                            </Button>
+                            <Right>
+                              <Button light onPress={() => this.follow(i)} style={{padding: 100}}>
+                                <Text>{strings.follow}</Text>
+                                <Icon name='add-circle-outline' />
+                              </Button>
+                            </Right>
                         </HideableView>
                         <HideableView visible={!u.foll} removeWhenHidden={true} duration={100}>
+                          <Right>
                             <Button light onPress={() => this.unfollow(i)} style={{padding: 100}}>
                               <Text>{strings.unfollow}</Text>
                               <Icon name='remove-circle-outline' />
                             </Button>
+                          </Right>
                         </HideableView>
-
                     </ListItem>
             )
       });
@@ -378,7 +380,7 @@ getFollows(){
                 <View>
                  <Text style={{textAlign: 'center',paddingTop:8, paddingBottom:8, backgroundColor: '#fff'}}>{strings.friendsSuggest}</Text>
                   <HideableView visible={this.state.showSuggest} removeWhenHidden={true} >
-                <ListView 
+                <ListView
                   horizontal= {true}
                   dataSource={this.state.dataSource}
                   renderRow={this._renderItem.bind(this)}>

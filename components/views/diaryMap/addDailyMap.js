@@ -32,7 +32,7 @@ export default class AddDailyMap extends Component {
 
 ////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
     static navigationOptions = {
-      title: "Add this place a to daily",
+      title: strings.addThisPlaceToADaily,
       headerStyle: {height: 50 },
       headerTitleStyle : {color:'#9A9DA4', fontSize:17},
     }
@@ -45,6 +45,7 @@ export default class AddDailyMap extends Component {
          diarysId: [],
          dailys: [],
          dailyAdded: [],
+         showPig: false,
        }
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,8 +109,21 @@ export default class AddDailyMap extends Component {
       this.setState({
         dailys: dailys.slice(0),
       })
+      this.checkPig()
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  checkPig(){
+    if(this.state.dailys.length == 0){
+      this.setState({
+        showPig: true
+      })
+    }else{
+      this.setState({
+        showPig: false
+      })
+    }
+  }
 
 /////////////////////////////////////// Search ////////////////////////////////////////////////////////////////
   search(text){
@@ -191,20 +205,29 @@ export default class AddDailyMap extends Component {
           <Container>
           <Content>
               <Card style={{flexDirection: 'column'}}>
-                    <Button full style={{top:40, zIndex: 2, backgroundColor: 'black'}}
+                    <Button full style={{top:20, zIndex: 2, backgroundColor: 'black'}}
                              onPress={()=> navigate('diaryMap')}>
                       <Text style={styles.sltPlace}>{params.sltPlace}</Text>
                     </Button>
                     <List>
-                       <ScrollView style={{marginTop: 100}}>
+                       <ScrollView style={{marginTop: 50}}>
                             {dailyAdded}
                         </ScrollView>
                     </List>
                     <List>
-                       <ScrollView style={{marginTop: 100}}>
+                       <ScrollView style={{marginTop: 50}}>
                             {listForAdding}
                         </ScrollView>
                     </List>
+                    <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
+                       <Text style={styles.message}>{strings.iAppearWhenAddPlaceInDaily}</Text>
+                       <Text style={styles.message}>{strings.touchMeToCreate}</Text>
+                       <TouchableOpacity onPress={()=>navigate('profile')}>
+                         <Image
+                            style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
+                            source={require('../../common/pigs/EmptyDailyInAddPlace.png')} />
+                      </TouchableOpacity>
+                    </HideableView>
               </Card>
               </Content>
           </Container>
@@ -218,6 +241,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
     padding: 5,
+  },
+  center: {
+      alignItems: 'center',
+  },
+  message: {
+    fontStyle: 'italic',
+    textAlign: 'justify',
+    fontSize: 18,
+    textDecorationStyle: 'solid',
+    color: '#000000',
+    paddingLeft: 20,
   },
 });
 

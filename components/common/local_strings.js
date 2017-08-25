@@ -88,6 +88,7 @@ let strings = new LocalizedStrings({
    noInternet: "Internet connection not found",
    iAppearWhenHome: "I appear when you don't follow no one",
    touchMeToCreateHome: "Touch me to follow new friends",
+   iAppearWhenAddPlaceInDaily: "I appear when you don't have dailies",
    restaurant: "restaurants",
    establishment: "establishments",
    coffe: "coffee shops",
@@ -103,6 +104,8 @@ let strings = new LocalizedStrings({
    eject: "Eject",
    invite: "Invite",
    friendsSuggest: "Suggest friends",
+   addThisPlaceToADaily: "Add this place a to daily",
+   visitTheDailies: "Visit the dailies here!",
  },
  es:{
    home:"Inicio",
@@ -205,9 +208,9 @@ let strings = new LocalizedStrings({
   changePhoto: "Cambiar foto ",
   eject: "Expulsar",
   invite: "Invitar",
-   friendsSuggest: "Sugerir amigos",
-
-
+  friendsSuggest: "Sugerir amigos",
+  addThisPlaceToADaily: "Agregar este lugar a la vivencia",
+  visitTheDailies: "Visita las vivencias aquí!",
  },
  zh:{
    home:"首頁",

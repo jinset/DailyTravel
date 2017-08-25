@@ -222,11 +222,14 @@ export default class Followers extends Component {
                     <ListItem>
                         <TouchableOpacity onPress={() => navigate(this.state.nav[i], {uid:u.id})} style={styles.row}>
                           <Thumbnail
+                            style={{padding: 25}}
                             small
                             source={{uri: u.url}}
                           />
-                        <Text style={styles.nick}>{u.nickname}</Text>
-                        <Text style={styles.name}>{u.name} {u.lastName}</Text>
+                        <View syle={{width: 80}}>
+                            <Text style={styles.nick} style={{padding: 15}}>{u.nickname}</Text>
+                        </View>
+                        <View style={{paddingLeft: 60}}/>
                         </TouchableOpacity>
                             <HideableView visible={that.follList[i]} removeWhenHidden={true} duration={100}>
                                 <Button light onPress={() => this.follow(i)}>

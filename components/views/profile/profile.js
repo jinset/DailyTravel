@@ -38,8 +38,8 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 
 let diarys = [{id: '', name: '', description: '', url: ''}]
-let follows = [{id: null, nickname: null, name: null, lastName: null, url: null}]
-let followers = [{id: null, nickname: null, name: null, lastName: null, url: null}]
+let follows = [{id: '', nickname: '', name: '', lastName: '', url: ''}]
+let followers = [{id: '', nickname: '', name: '', lastName: '', url: ''}]
 
 export default class Profile extends Component {
 
@@ -297,7 +297,7 @@ logout() {
 
     return (
           <Container>
-            <Content   refreshControl={
+            <Content  refreshControl={
                               <RefreshControl
                                       refreshing={this.state.refreshing}
                                       onRefresh={this._onRefresh.bind(this)}
@@ -306,8 +306,8 @@ logout() {
                                       progressBackgroundColor="#FCFAFA"
                                   />
                               }>
-              <Card fixed>
-                <CardItem>
+              <Card full>
+                <CardItem full>
                   <Left>
                     <View style={styles.column}>
                         <CameraProfileComponent />
