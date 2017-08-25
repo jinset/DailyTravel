@@ -202,6 +202,37 @@ static getFollows(userId, callback){
 }
 ////////////////////////////////////////////////////
 
+
+/////////////////// DairysByUserGuest ///////////////////
+  static getDairysByUserGuest(userId, callback){
+    let ref= getDatabase().ref('userDiary/');
+    i=0
+    userList = (ref.orderByChild("date"));
+       userList.on('value', (snap) => {
+           var diarys = [];
+           // alert('entra1')
+         snap.forEach((child) => {
+           if(child.val().invitationStatus==true && child.val().idUser=== userId ){
+           firebase.database().ref('/diary/'+child.val().idDiary).on('value', (snap) => {
+             if(snap.val().status==true){
+            diarys.push({
+              id: snap.key,
+              name: snap.val().name,
+              description: snap.val().description,
+              url: snap.val().url,
+              idOwner:snap.val().idOwner,
+            });
+            }
+            callback(diarys)
+          });
+        }
+      });
+
+        callback(diarys)
+    });
+
+  }
+//////////////////////////////////////////////////////
 }
 
 module.exports = Helper

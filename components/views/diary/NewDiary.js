@@ -154,6 +154,7 @@ openImagePicker(){
      }
    }
    addDiaryUsers(elemento){
+     var date = new Date();
       var that = this.state;
       if(that.uidCurrentUser!=elemento.id){
          var myRef = getDatabase().ref().child('userDiary/');
@@ -162,6 +163,7 @@ openImagePicker(){
               idDiary: this.state.key,
               invitationStatus:false,
               userDiary:elemento.id+'-'+ this.state.key,
+              date:date.toLocaleDateString()+' '+date.toLocaleTimeString(),
           }).catch(function(error) {
               alert(error);
          });
@@ -173,6 +175,7 @@ openImagePicker(){
               idDiary: this.state.key,
               invitationStatus:true,
               userDiary:elemento.id+'-'+ this.state.key,
+              date:new Date().toLocaleDateString(),
           }).catch(function(error) {
               alert(error);
          });
@@ -443,6 +446,7 @@ openImagePicker(){
   //      status:this.state.status,
   //  }).catch(function(error) {
   //      alert(error);
+  date:new Date().toLocaleDateString(),
   // });
 
   class ListAvatarExample extends Component {

@@ -203,14 +203,16 @@ static getFollows(userId, callback){
 }
 ////////////////////////////////////////////////////
 
-/////////////////// DairysByUser ///////////////////
+/////////////////// DairysByUserGuest ///////////////////
   static getDairysByUserGuest(userId, callback){
-    var diarys = [];
     let ref= getDatabase().ref('userDiary/');
-    userList = (ref.orderByChild("idUser").equalTo(userId));
+    i=0
+    userList = (ref.orderByChild("date"));
        userList.on('value', (snap) => {
+           var diarys = [];
+           // alert('entra1')
          snap.forEach((child) => {
-           if(child.val().invitationStatus==true ){
+           if(child.val().invitationStatus==true && child.val().idUser=== userId ){
            firebase.database().ref('/diary/'+child.val().idDiary).on('value', (snap) => {
              if(snap.val().status==true){
             diarys.push({
@@ -221,11 +223,14 @@ static getFollows(userId, callback){
               idOwner:snap.val().idOwner,
             });
             }
+            callback(diarys)
           });
         }
-        })
-    })
-    callback(diarys)
+      });
+
+        callback(diarys)
+    });
+
   }
 //////////////////////////////////////////////////////
 }

@@ -128,6 +128,14 @@ export const DailyTravelTabs = TabNavigator({
               />
             ),
         }},
+    diaryMapTab: { screen: DTDiaryMap,
+      navigationOptions:{
+        tabBarIcon: ({ tintColor }) => (
+          <Image style={{width:30, height: 30}}
+            source={require('../common/icons/map.png')}
+          />
+        ),
+    }},
         notificationsTab: { screen: DTNotificatios,
           navigationOptions:{
 
@@ -137,14 +145,6 @@ export const DailyTravelTabs = TabNavigator({
                 />
               ),
         }},
-    diaryMapTab: { screen: DTDiaryMap,
-      navigationOptions:{
-        tabBarIcon: ({ tintColor }) => (
-          <Image style={{width:30, height: 30}}
-            source={require('../common/icons/map.png')}
-          />
-        ),
-    }},
     profileTab: { screen: DTProfile,
       navigationOptions:{
 
