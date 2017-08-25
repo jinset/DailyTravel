@@ -256,9 +256,11 @@ selectPlace(p){
         dailyList = (refDaily.orderByChild("place").equalTo(place));
         dailyList.once('value', (snap)=>{
           snap.forEach((child)=>{
+            if(child.val().status == true){
               dailies.push({
                 key: child.key
               })//push
+            }//if
           })//forEach Daily
           this.setState({
             dailies: dailies.slice(0)

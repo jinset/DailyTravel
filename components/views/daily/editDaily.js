@@ -73,6 +73,7 @@ export default class EditDaily extends Component{
           date: snap.val().date,
           experience: snap.val().experience,
           tips: snap.val().tips,
+          place: snap.val().place,
           imageName: new Date().toString(),
           status: true,
           imageArray:null,
@@ -211,6 +212,9 @@ export default class EditDaily extends Component{
                   renderRow={this.renderImages.bind(this)}
                 />
               </ScrollView>
+
+              <Label>{strings.place}</Label>
+              <Text style={{marginTop:10, marginBottom:10, fontSize: 18}}>{this.state.place}</Text>
 
               <Label>{strings.experiences}</Label>
               <AutoGrowingTextInput

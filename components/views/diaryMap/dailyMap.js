@@ -68,11 +68,13 @@ export default class DailyMap extends Component {
           let refDiary = getDatabase().ref(`/diary`)
           refDiary.once('value', (snap)=>{
               snap.forEach((child) =>{
+                  let idDiary= child.key
                   let refDaily = getDatabase().ref(`/diary/${child.key}/daily`)
                   dailyList = (refDaily.orderByKey().equalTo(dailyKey));
                   dailyList.once('value', (snap)=>{
                     snap.forEach((child)=>{
                         dailies.push({
+                          idDiary: idDiary,
                           key: child.key,
                           name: child.val().name,
                           date: child.val().date,
@@ -109,14 +111,15 @@ export default class DailyMap extends Component {
      }
 
      _renderItem(daily) {
-         const { params } = this.props.navigation.state;
+         const { navigate } = this.props.navigation;
          return (
            <ListItem
                roundAvatar
                key={daily.key}
                avatar={{uri:daily.url}}
                title={daily.name}
-               subtitle={daily.date}>
+               subtitle={daily.date}
+               onPress={() => navigate('showDaily', {idDaily: daily.key, idDiary: daily.idDiary})}>
            </ListItem>
          );
      }

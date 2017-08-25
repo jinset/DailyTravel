@@ -44,6 +44,8 @@ import {getAuth} from '../common/database';
 import DiaryMap from './diaryMap/diaryMap.js';
 import DailyMap from './diaryMap/dailyMap.js';
 import AddDailyMap from './diaryMap/addDailyMap.js';
+import ShowDaily from './diaryMap/showDaily';
+import ShowGallery from './diaryMap/showGallery';
 
 //Import Icons
 import { Icon } from 'react-native-elements';
@@ -60,6 +62,9 @@ export const DTDiaryMap = StackNavigator({
     //DailyMap
       dailyMap: {screen: DailyMap},
       addDailyMap: {screen: AddDailyMap},
+    //ShowDailies
+      showDaily: { screen: ShowDaily },
+      showGallery: { screen: ShowGallery },
 });
 export const DTProfile = StackNavigator({
   //Profile
