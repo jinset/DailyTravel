@@ -136,7 +136,6 @@ export default class AddDailyMap extends Component {
 
 /////////////////////////////////////// Removed ////////////////////////////////////////////////////////////////
   addPlaceToDaily(daily, place){
-    alert(daily.diaryKey)
     var that = this.state;
     var tthat = this;
     /*let checkRepeat = getDatabase().ref('diary/'+daily.diaryKey+'/daily/'+daily.dailyKey+'/place/').orderByChild("uid").equalTo(that.users[i].id);
