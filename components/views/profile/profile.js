@@ -33,6 +33,8 @@ import HideableView from 'react-native-hideable-view';
 import ModalDropdown from 'react-native-modal-dropdown';
 import { createNotification } from '../../common/notification';
 import Moment from 'moment';
+import DialogBox from 'react-native-dialogbox';
+
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
@@ -283,6 +285,21 @@ export default class Profile extends Component {
        }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+     handleOnPress = () => {
+       this.dialogbox.confirm({
+           content: strings.wantLogout,
+           ok: {
+              text: strings.yes,
+               callback: () => {
+                   this.logout();
+               },
+           },
+           cancel: {
+            text:  strings.no,
+           }
+       });
+     }
+
 /////////////////////////////////////////// Log out ///////////////////////////////////////////////////////////////
 logout() {
   const { navigate } = this.props.navigation;
@@ -330,7 +347,7 @@ logout() {
                           </View>
                     </View>
                  </Left>
-                 <Button transparent small onPress={this.logout.bind(this)}>
+                 <Button transparent small onPress={this.handleOnPress.bind(this)}>
                      <Icon active name='exit-to-app' />
                  </Button>
 
@@ -368,6 +385,8 @@ logout() {
                     </HideableView>
                </Card>
           </Content>
+                          <DialogBox ref={dialogbox => { this.dialogbox = dialogbox }}/>
+
               <View>
            <Fab
              active='false'

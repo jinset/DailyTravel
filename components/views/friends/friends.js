@@ -390,19 +390,6 @@ getFollows(){
                   <Spinner />
                 </HideableView>
                 </View>
-
-                <View>
-                  <Fab
-                    active='false'
-                    direction="up"
-                    containerStyle={{ }}
-                    style={{  backgroundColor:'#41BEB6'}}
-                    position="bottomRight"
-                    onPress={()=> navigate('newDiary')}>
-                    <Icon color='white' name="library-books" />
-                  </Fab>
-                </View>
-
                 <MessageBarAlert ref="alert"/>
           </Container>
     );

@@ -56,12 +56,16 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
        this.dialogbox.confirm({
            content: strings.acceptInvitation + " " + name + '?',
            ok: {
+              text: strings.yes,
                callback: () => {
                    this.updateNotification(key);
                    this.updateUserDiary(idDiary);
                    this._onRefresh();
                },
            },
+           cancel: {
+            text:  strings.no,
+           }
        });
      }
 

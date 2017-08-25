@@ -106,6 +106,7 @@ let strings = new LocalizedStrings({
    friendsSuggest: "Suggest friends",
    addThisPlaceToADaily: "Add this place a to daily",
    visitTheDailies: "Visit the dailies here!",
+   wantLogout: 'Do you want to log out?'
  },
  es:{
    home:"Inicio",
@@ -211,6 +212,8 @@ let strings = new LocalizedStrings({
   friendsSuggest: "Sugerir amigos",
   addThisPlaceToADaily: "Agregar este lugar a la vivencia",
   visitTheDailies: "Visita las vivencias aquí!",
+   wantLogout: '¿Deseas cerrar sesión?'
+
  },
  zh:{
    home:"首頁",
