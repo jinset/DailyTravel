@@ -57,9 +57,7 @@ export default class Gallery extends Component{
         });
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(photos)
-        }, ()=>
-          console.log(this.state.dataSource)
-        );
+        });
         console.log(photos);
       })
     }

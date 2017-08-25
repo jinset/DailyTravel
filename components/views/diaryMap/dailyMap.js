@@ -62,11 +62,13 @@ export default class DailyMap extends Component {
           let refDiary = getDatabase().ref(`/diary`)
           refDiary.once('value', (snap)=>{
               snap.forEach((child) =>{
+                  let idDiary= child.key
                   let refDaily = getDatabase().ref(`/diary/${child.key}/daily`)
                   dailyList = (refDaily.orderByKey().equalTo(dailyKey));
                   dailyList.once('value', (snap)=>{
                     snap.forEach((child)=>{
                         dailies.push({
+                          idDiary: idDiary,
                           key: child.key,
                           name: child.val().name,
                           date: child.val().date,
@@ -100,7 +102,9 @@ export default class DailyMap extends Component {
                       <Text>{d.data}</Text>
                   </Body>
                   <Right>
-
+                    <TouchableOpacity onPress={()=> navigate('showGallery', {idDaily:this.state.idDaily, idDiary:this.state.idDiary})}>
+                      <Icon active name='visibility' />
+                    </TouchableOpacity>
                   </Right>
               </ListItem>
       )
