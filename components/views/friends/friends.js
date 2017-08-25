@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Container, Content, Header, Form, Segment, Item,View,Fab, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, List, ListItem} from 'native-base';
+import { Container, Content, Header, Form, Segment, Item,View,Fab, Separator, Input, Label, Button,Body, Right, Switch, Card, CardItem, Thumbnail, Left, Footer, FooterTab, Badge, List, ListItem,Spinner,Grid,Col} from 'native-base';
 import strings from '../../common/local_strings.js';
 import { getDatabase } from '../../common/database';
 import FooterNav from  '../../common/footerNav.js';
@@ -29,6 +29,7 @@ import HideableView from 'react-native-hideable-view';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 import { createNotification } from '../../common/notification';
+import Moment from 'moment';
 
 export default class Profile extends Component {
 
@@ -42,18 +43,26 @@ export default class Profile extends Component {
    constructor(props) {
        super(props);
        this.state = {
+        dataSource: new ListView.DataSource({
+         rowHasChanged: (row1, row2) => row1 !== row2,
+        }),
+        showSpinner:false,
+        idUser: "",
          uidCurrentUser: '',
          uid: '',
          inputSearch: '',
          users: [],
          follows: [],
          txt: '',
+         showSuggest: false
        }
     }
 
 ///////////////////////////////////////// Component Will Mount ///////////////////////////////////////////////////
 async componentWillMount(){
   try{
+    this.searchNewFriends();
+
     var that = this;
     AsyncStorage.getItem("user").then((value) => {
           this.setState({
@@ -75,6 +84,7 @@ async componentWillMount(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 getFollows(){
+   this.searchNewFriends();
     var that = this;
     Helper.getFollows(this.state.uid, (f) => {
           this.setState({
@@ -148,6 +158,8 @@ getFollows(){
         }
       })//checkRepeat.once
       createNotification(that.uid, that.uidCurrentUser, "follow", Moment(new Date()).format("YYYY-MM-DD"),"","");
+      this.searchNewFriends();
+
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -164,6 +176,7 @@ getFollows(){
               url: snapshot.child("url").val(),
             });
       })
+
       this.search(that.txt)
       MessageBarManager.registerMessageBar(this.refs.alert);
       MessageBarManager.showAlert({
@@ -195,6 +208,7 @@ getFollows(){
 
 ///////////////////////////////////////// Remove Followers //////////////////////////////////////////////////////
     removeFollowers(i){
+         this.searchNewFriends();
       var that = this.state;
       let ref = getDatabase().ref('/users/'+that.users[i].id+'/followers/')
       followersList = (ref.orderByChild("uid").equalTo(that.uidCurrentUser))
@@ -215,6 +229,94 @@ getFollows(){
          stylesheetInfo: { backgroundColor: 'black', strokeColor: 'grey' }
       });
     }
+//////////////////////////////////////////////////////////////suggest friends stuff  ///////////////////////////////////////
+    async searchSuggestFriends(arrayFriends) {
+      return new Promise((resolve, reject) => {
+        var url = getDatabase().ref('users');
+        url.on('value', (snap) => {
+          var newFriends = [];
+          snap.forEach((child) => {
+            if (!arrayFriends.includes(child.key) && child.val().status == 'act' &&  newFriends.length < 5) {
+              newFriends.push({
+                _key: child.key,
+                nickname: child.val().nickname,
+                url: child.val().url
+              })
+            }
+          });
+          resolve(newFriends)
+        })
+      })
+    }
+///////////////////////////////////////////////////////////// //////////////////////////////////
+    async getArrayFriends(idUser) {
+      try {
+        return new Promise((resolve, reject) => {
+            var friends = [];
+            array = [];
+            friends.push(idUser);
+            var ref = getDatabase().ref("users/" + idUser);
+            ref.once("value", (snapshot) => {
+              var val = snapshot.val();
+              console.log(val);
+              for (var i in val.follows) {
+                array.push(val.follows[i].uid);
+              }
+              friends = friends.concat(array);
+              resolve(friends);
+            })
+        });
+      } catch (e) {
+        console.log(e);
+      } finally {
+
+      }
+
+    };
+    async searchNewFriends() {
+      try {
+        this.setState({
+          showSpinner:true,
+          showSuggest: false
+        })
+        let suggestNewFriendsArray = [];
+        var idUser = "";
+        await AsyncStorage.getItem("user").then((value) => {
+          this.state.idUser = value;
+          idUser = value;
+        })
+        let arrayFriends = await this.getArrayFriends(idUser);
+        suggestNewFriendsArray = await this.searchSuggestFriends(arrayFriends); 
+
+        /*Carga el home en el dataSource*/
+      this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(suggestNewFriendsArray)
+        });
+        /*Desaparece el loading*/
+        this.setState({
+          showSpinner:false,
+          showSuggest: true
+        })
+      } catch (error) {
+        console.log(error.message);
+      }
+
+    }
+
+/////////////////////////////////////////REnder ITem ////////////////////////////////////////
+
+     _renderItem(item) {
+    const { navigate } = this.props.navigation;
+    return (
+      <View key={item._key} style={{margin:10}}>
+        <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item._key})}>
+          <Thumbnail large source={{uri: item.url}} />
+        </TouchableHighlight>
+        <Text style={{textAlign: 'center'}}>{item.nickname}</Text>
+      </View>
+    );
+  }
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
@@ -245,6 +347,7 @@ getFollows(){
                               <Icon name='remove-circle-outline' />
                             </Button>
                         </HideableView>
+
                     </ListItem>
             )
       });
@@ -273,6 +376,20 @@ getFollows(){
 
                 </Content>
                 <View>
+                 <Text style={{textAlign: 'center',paddingTop:8, paddingBottom:8, backgroundColor: '#fff'}}>{strings.friendsSuggest}</Text>
+                  <HideableView visible={this.state.showSuggest} removeWhenHidden={true} >
+                <ListView 
+                  horizontal= {true}
+                  dataSource={this.state.dataSource}
+                  renderRow={this._renderItem.bind(this)}>
+                </ListView>
+                </HideableView>
+                <HideableView visible={this.state.showSpinner} removeWhenHidden={true} >
+                  <Spinner />
+                </HideableView>
+                </View>
+
+                <View>
                   <Fab
                     active='false'
                     direction="up"
@@ -283,6 +400,7 @@ getFollows(){
                     <Icon color='white' name="library-books" />
                   </Fab>
                 </View>
+
                 <MessageBarAlert ref="alert"/>
           </Container>
     );
