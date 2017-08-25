@@ -65,6 +65,7 @@ export default class CreateDaily extends Component{
       name: '',
       experience: '',
       tips: '',
+      place: strings.notPlace,
       date: new Date().toLocaleDateString(),
       imageName: new Date().toString(),
       status: true,
@@ -149,6 +150,7 @@ export default class CreateDaily extends Component{
         date: this.state.date,
         experience: this.state.experience,
         tips: this.state.tips,
+        place: this.state.place,
         status: this.state.status,
       });
       this.saveImage()

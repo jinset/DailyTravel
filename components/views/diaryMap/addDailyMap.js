@@ -90,19 +90,21 @@ export default class AddDailyMap extends Component {
           })
           ref1.on('value', (snap) => {
             snap.forEach((child) => {
-               var place = child.val().place
+               {/*var place = child.val().place
                if(place == undefined){
-                 place = 'Sin lugar'
-               }
-               dailys.push({
-                 diaryKey: d.id,
-                 dailyKey: child.key,
-                 diaryName: diaryName,
-                 dailyName: child.val().name,
-                 dailyPlace: place,
-                 dailyDate: child.val().date,
-                 added: false,
-               })
+                 place = string.notPlace
+               }*/}
+               if(child.val().status == true){
+                 dailys.push({
+                   diaryKey: d.id,
+                   dailyKey: child.key,
+                   diaryName: diaryName,
+                   dailyName: child.val().name,
+                   dailyPlace: child.val().place,
+                   dailyDate: child.val().date,
+                   added: false,
+                 })
+               }//if
             });//forEach
           })//ref.once
       })//diarysId.forEach
@@ -149,6 +151,7 @@ export default class AddDailyMap extends Component {
 
 /////////////////////////////////////// Removed ////////////////////////////////////////////////////////////////
   addPlaceToDaily(daily, place){
+    const { goBack } = this.props.navigation;
     var that = this.state;
     var tthat = this;
     /*let checkRepeat = getDatabase().ref('diary/'+daily.diaryKey+'/daily/'+daily.dailyKey+'/place/').orderByChild("uid").equalTo(that.users[i].id);
@@ -157,6 +160,7 @@ export default class AddDailyMap extends Component {
       }
     })//checkRepeat.once*/
     getDatabase().ref().child('diary/'+daily.diaryKey+'/daily/'+daily.dailyKey+'/place').set(place);
+    goBack();
   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

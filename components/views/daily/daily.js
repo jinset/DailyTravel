@@ -31,6 +31,7 @@ export default class Daily extends Component{
       date: null,
       experience: null,
       tips: null,
+      place: null,
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       })
@@ -56,6 +57,7 @@ export default class Daily extends Component{
             idDaily: snap.key,
             name: snap.val().name,
             date: snap.val().date,
+            place: snap.val().place,
             experience: snap.val().experience,
             tips: snap.val().tips,
           });
@@ -172,6 +174,13 @@ export default class Daily extends Component{
                   renderRow={this._renderItem.bind(this)}
                 />
               </ScrollView>
+            </CardItem>
+
+            <CardItem>
+              <Body>
+                <Label>{strings.place}</Label>
+                <Text>{this.state.place}</Text>
+              </Body>
             </CardItem>
 
             <CardItem>
