@@ -74,6 +74,9 @@ export default class DiaryMap extends Component {
          sltPlace: 'Select a place to travel', // The selected place of the list showed in the modal
          buttonDisabled: true, // Button starts disabled until the user pick a place
          buttonDisabledColor: '#73797D',
+         fabDisabled: true,
+         fabDisabledColor: '#73797D',
+         dailies: [],
        }
     }
     /*latitude: 10.00253, longitude: -84.14021,*/
@@ -175,7 +178,6 @@ getUrl(lat, long, radius, type){
                  <Callout>
                     <View style={{width:150, alignItems:'center'}}>
                       <Text style={{fontStyle: 'italic', fontSize: 18, fontWeight:'bold'}}>{place.name}</Text>
-                      <Text>Dailies: 3</Text>
                     </View>
                  </Callout>
              </Marker>
@@ -253,19 +255,32 @@ selectPlace(p){
         let refDaily = getDatabase().ref("/diary/"+child.key+"/daily")
         dailyList = (refDaily.orderByChild("place").equalTo(place));
         dailyList.once('value', (snap)=>{
-          alert(JSON.stringify(snap))
           snap.forEach((child)=>{
-            alert(child.val().name +"    "+ child.val().place)
-            dailies.push({
-              key: child.key
-            })//push
+              dailies.push({
+                key: child.key
+              })//push
           })//forEach Daily
+          this.setState({
+            dailies: dailies.slice(0)
+          })
         })//dailyList.once
       })//forEach diary
     })//ref.once
-    this.setState({
-      dailies: dailies.slice(0)
-    })
+    this.toggleFab();
+  }
+
+  toggleFab(){
+    if(this.state.dailies.length == 0){
+      this.setState({
+        fabDisabled: true,
+        fabDisabledColor: '#73797D'
+      })
+    }else{
+      this.setState({
+        fabDisabled: false,
+        fabDisabledColor: '#41BEB6'
+      })
+    }
   }
 
 
@@ -358,16 +373,17 @@ selectPlace(p){
                       {listFabs}
                     </Fab>
                    <Fab
+                     disabled={this.state.fabDisabled}
                      active='false'
                      direction="up"
                      containerStyle={{ }}
-                     style={{backgroundColor:'#41BEB6', zIndex: 1}}
+                     style={{backgroundColor:this.state.fabDisabledColor, zIndex: 1}}
                      position="bottomRight"
                      visible={true}
-                     onPress={()=> navigate('') }>
+                     onPress={()=> navigate('dailyMap', {listDailyKey: this.state.dailies})}>
                      <View style={{flexDirection:'row'}}>
-                       <Icon color='white' name="book"/>
-                       <Text style={{fontStyle: 'italic', fontSize: 18, fontWeight:'bold', color:'white'}}>5</Text>
+                       <Icon color='white' name="satellite"/>
+                       <Text style={{fontStyle: 'italic', fontSize: 24, fontWeight:'bold', color:'white'}}>{this.state.dailies.length}</Text>
                      </View>
                    </Fab>
               </View>
