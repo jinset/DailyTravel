@@ -159,7 +159,6 @@ getFollows(){
       })//checkRepeat.once
       createNotification(that.uid, that.uidCurrentUser, "follow", Moment(new Date()).format("YYYY-MM-DD"),"","");
       this.searchNewFriends();
-
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -324,32 +323,39 @@ getFollows(){
       return (
                     <ListItem>
                         <TouchableOpacity onPress={() => navigate('visitProfile', {uid:u.id})} style={styles.row}>
-                          <Thumbnail
-                            style={{padding: 25}}
-                            small
-                            source={{uri: u.url}}
-                          />
-                        <View syle={{width: 80}}>
-                          <Text style={styles.nick} style={{padding: 15}}>{u.nickname}</Text>
-                        </View>
-                        <View style={{paddingLeft: 60}}/>
-                        </TouchableOpacity>
+                          <Left>
+                              <Thumbnail
+                                large
+                                source={{uri: u.url}}
+                              />
+                          </Left>
+                          <Body>
+                              <View style={{paddingTop: 20}}>
+                                  <Text style={styles.nick}>{u.nickname}</Text>
+                              </View>
+                          </Body>
+
                         <HideableView visible={u.foll} removeWhenHidden={true} duration={100}>
                             <Right>
-                              <Button light onPress={() => this.follow(i)} style={{padding: 100}}>
-                                <Text>{strings.follow}</Text>
-                                <Icon name='add-circle-outline' />
-                              </Button>
+                              <View style={{paddingTop: 15}}>
+                                <Button light onPress={() => this.follow(i)} style={{width: 120}}>
+                                  <Text>{strings.follow}</Text>
+                                  <Icon name='add-circle-outline' />
+                                </Button>
+                              </View>
                             </Right>
                         </HideableView>
                         <HideableView visible={!u.foll} removeWhenHidden={true} duration={100}>
                           <Right>
-                            <Button light onPress={() => this.unfollow(i)} style={{padding: 100}}>
-                              <Text>{strings.unfollow}</Text>
-                              <Icon name='remove-circle-outline' />
-                            </Button>
+                            <View style={{paddingTop: 15}}>
+                              <Button light onPress={() => this.unfollow(i)} style={{width: 120}}>
+                                <Text>{strings.unfollow}</Text>
+                                <Icon name='remove-circle-outline' />
+                              </Button>
+                            </View>
                           </Right>
                         </HideableView>
+                        </TouchableOpacity>
                     </ListItem>
             )
       });
@@ -390,19 +396,6 @@ getFollows(){
                   <Spinner />
                 </HideableView>
                 </View>
-
-                <View>
-                  <Fab
-                    active='false'
-                    direction="up"
-                    containerStyle={{ }}
-                    style={{  backgroundColor:'#41BEB6'}}
-                    position="bottomRight"
-                    onPress={()=> navigate('newDiary')}>
-                    <Icon color='white' name="library-books" />
-                  </Fab>
-                </View>
-
                 <MessageBarAlert ref="alert"/>
           </Container>
     );

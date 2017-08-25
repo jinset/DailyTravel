@@ -116,9 +116,7 @@ export default class Profile extends Component {
                                    />
                                    <Text style={styles.description}> {d.description} </Text>
                               </Left>
-
                             </TouchableHighlight>
-
                            </Body>
                        </CardItem>
                        <Separator></Separator>
@@ -357,7 +355,6 @@ logout() {
                   </Card>
               <Card>
                     <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
-
                        <Text style={styles.message}>{strings.iAppearWhen}</Text>
                        <Text style={styles.message}>{strings.touchMeToCreate}</Text>
                        <TouchableOpacity onPress={()=>navigate('newDiary')}>

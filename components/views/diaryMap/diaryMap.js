@@ -379,7 +379,7 @@ selectPlace(p){
                      active='false'
                      direction="up"
                      containerStyle={{ }}
-                     style={{backgroundColor:this.state.fabDisabledColor, zIndex: 1}}
+                     style={{backgroundColor:this.state.fabDisabledColor, zIndex: 0}}
                      position="bottomRight"
                      visible={true}
                      onPress={()=> navigate('dailyMap', {listDailyKey: this.state.dailies})}>
