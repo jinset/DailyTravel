@@ -73,10 +73,10 @@ export default class DiaryMap extends Component {
          icon: '', // List to switch icons
          sltPlace: 'Select a place to travel', // The selected place of the list showed in the modal
          buttonDisabled: true, // Button starts disabled until the user pick a place
-         buttonDisabledColor: '#73797D',
-         fabDisabled: true,
-         fabDisabledColor: '#73797D',
-         dailies: [],
+         buttonDisabledColor: '#73797D', // Button starts grey until the user pick a place
+         fabDisabled: true, // Fab starts disabled until the user pick a place
+         fabDisabledColor: '#73797D', // Fab starts grey until the user pick a place
+         dailies: [], // List of Ids of dailies
        }
     }
     /*latitude: 10.00253, longitude: -84.14021,*/
@@ -110,7 +110,7 @@ export default class DiaryMap extends Component {
           const lon = position.coords.longitude
           this.setRegion(lat, lon)
           this.getPlaces()
-        }, (error) => alert(error.message),
+        }, (error) => console.log(error.message),
         {enableHighAccuracy: true, timeout: 25000}
         //Mobile
         // {enableHighAccuracy: false, timeout: 25000}
@@ -125,7 +125,7 @@ export default class DiaryMap extends Component {
           const lat = position.coords.latitude
           const lon = position.coords.longitude
           this.setRegion(lat, lon)
-        }, (error) => alert(error.message),
+        }, (error) => console.log(error.message),
         {enableHighAccuracy: true, timeout: 25000}
         // Mobile
         // {enableHighAccuracy: false, timeout: 25000}

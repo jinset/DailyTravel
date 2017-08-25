@@ -32,9 +32,9 @@ import { createNotification } from '../../common/notification';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
-let diarys = [{id: null, name: null, description: null, url: null}]
-let follows = [{id: null, nickname: null, name: null, lastName: null, url: null}]
-let followers = [{id: null, nickname: null, name: null, lastName: null, url: null}]
+let diarys = [{id: '', name: '', description: '', url: ''}]
+let follows = [{id: '', nickname: '', name: '', lastName: '', url: ''}]
+let followers = [{id: '', nickname: '', name: '', lastName: '', url: ''}]
 
 export default class EditProfile extends Component {
 

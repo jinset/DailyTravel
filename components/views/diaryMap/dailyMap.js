@@ -32,7 +32,7 @@ export default class DailyMap extends Component {
 
 /////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
       static navigationOptions = {
-        title: 'Visita a las vivencias weed!',
+        title: strings.visitTheDailies,
         headerStyle: {height: 50 },
         headerTitleStyle : {color:'#9A9DA4',fontSize:17},
       }
@@ -41,18 +41,53 @@ export default class DailyMap extends Component {
 /////////////////////////////////////// Constructor ///////////////////////////////////////////////////////////
    constructor() {
        super();
+       this.state = {
+         dailies: [], // List of data from dailies
+       }
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
     async componentWillMount(){
       const { params } = this.props.navigation.state;
-      alert(params.listDailyKey)
+      this.getDailies(params.listDailyKey);
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////// Get Dailies //////////////////////////////////////////////////////////
+    getDailies(listDailyKey){
+      var dailies = [];
+      listDailyKey.forEach((d) =>{
+          var dailyKey = d.key
+          let refDiary = getDatabase().ref(`/diary`)
+          refDiary.once('value', (snap)=>{
+              snap.forEach((child) =>{
+                  let refDaily = getDatabase().ref(`/diary/${child.key}/daily`)
+                  dailyList = (refDaily.orderByKey().equalTo(dailyKey));
+                  dailyList.once('value', (snap)=>{
+                    snap.forEach((child)=>{
+                        dailies.push({
+                          key: child.key,
+                          name: child.val().name,
+                          date: child.val().date,
+                          experience: child.val().experience,
+                          tips: child.val().tips,
+                          url: child.val().url,
+                        })//push
+                    })//forEach Daily
+                    this.setState({
+                      dailies: dailies.slice(0)
+                    })
+                  })//dailyList.once
+              })//forEach refDiary
+          })//refDiary.once
+      })//listDailyKey.forEach
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render() {
     const { navigate } = this.props.navigation;
+    const { params } = this.props.navigation.state;
 
     return (
           <Container>
