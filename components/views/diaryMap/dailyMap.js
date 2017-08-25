@@ -89,8 +89,34 @@ export default class DailyMap extends Component {
     const { navigate } = this.props.navigation;
     const { params } = this.props.navigation.state;
 
+    let listDailies = this.state.dailies.map((d,i) => {
+      return(
+              <ListItem
+                onPress={() => alert("ni merga")}>
+                  <Left>
+                      <Text>{d.name}</Text>
+                  </Left>
+                  <Body>
+                      <Text>{d.data}</Text>
+                  </Body>
+                  <Right>
+
+                  </Right>
+              </ListItem>
+      )
+    })
+
     return (
           <Container>
+              <Content>
+                  <Card style={{flexDirection: 'column', height: Dimensions.get('window').height}}>
+                    <List>
+                         <ScrollView style={{marginTop: 50}}>
+                            {listDailies}
+                         </ScrollView>
+                   </List>
+                  </Card>
+              </Content>
           </Container>
     );
   }
