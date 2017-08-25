@@ -142,7 +142,7 @@ export default class ListDaily extends Component{
                   <Button transparent
                     onPress={this.addDaily.bind(this)}>
                       <Icon active name='add' />
-                      <Icon active name='book'/>
+                      <Icon active name='satellite'/>
                   </Button>
                   </HideableView>
                 </Item>

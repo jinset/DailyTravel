@@ -205,7 +205,8 @@ static navigationOptions = ({ navigation }) => ({
         <View  style={{zIndex: -1}}>
           <Button light full
             onPress={()=> navigate('listDaily', {diaryKey:params.diaryKey,isMe:this.state.isMe})}>
-              <Text>{strings.daily}</Text>
+              <Icon color='black' name="satellite"/>
+              <Text>{' '+strings.daily}</Text>
           </Button>
         </View>
         <DialogBox ref={dialogbox => { this.dialogbox = dialogbox }}/>
