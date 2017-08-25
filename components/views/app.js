@@ -121,7 +121,7 @@ export const DailyTravelTabs = TabNavigator({
       navigationOptions:{
         tabBarIcon: ({ tintColor }) => (
           <Image style={{width: 30, height: 30}}
-            source={require('../common/Icons/home.png')}
+            source={require('../common/icons/home.png')}
           />
         ),
       }},
@@ -130,7 +130,7 @@ export const DailyTravelTabs = TabNavigator({
 
             tabBarIcon: ({ tintColor }) => (
               <Image  style={{width:30, height: 30}}
-                source={require('../common/Icons/friends.png')}
+                source={require('../common/icons/friends.png')}
               />
             ),
         }},
@@ -138,7 +138,7 @@ export const DailyTravelTabs = TabNavigator({
       navigationOptions:{
         tabBarIcon: ({ tintColor }) => (
           <Image style={{width:30, height: 30}}
-            source={require('../common/Icons/map.png')}
+            source={require('../common/icons/map.png')}
           />
         ),
     }},
@@ -147,7 +147,7 @@ export const DailyTravelTabs = TabNavigator({
 
               tabBarIcon: ({ tintColor }) => (
                 <Image  style={{width:30, height: 30}}
-                  source={require('../common/Icons/notification.png')}
+                  source={require('../common/icons/notification.png')}
                 />
               ),
         }},
@@ -156,7 +156,7 @@ export const DailyTravelTabs = TabNavigator({
 
           tabBarIcon: ({ tintColor }) => (
             <Image style={{width:30, height: 30}}
-              source={require('../common/Icons/profile.png')}
+              source={require('../common/icons/profile.png')}
             />
           ),
       }},
