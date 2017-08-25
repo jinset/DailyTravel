@@ -64,7 +64,6 @@ export default class AddDailyMap extends Component {
               var diarysId = [];
               snap.forEach((child) => {
                 if(child.val().invitationStatus === true){
-                  alert("Id: "+child.val().idDiary)
                   diarysId.push({
                     id: child.val().idDiary,
                   });
@@ -136,7 +135,6 @@ export default class AddDailyMap extends Component {
 
 /////////////////////////////////////// Removed ////////////////////////////////////////////////////////////////
   addPlaceToDaily(daily, place){
-    alert(daily.diaryKey)
     var that = this.state;
     var tthat = this;
     /*let checkRepeat = getDatabase().ref('diary/'+daily.diaryKey+'/daily/'+daily.dailyKey+'/place/').orderByChild("uid").equalTo(that.users[i].id);
@@ -148,15 +146,15 @@ export default class AddDailyMap extends Component {
   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   render() {
     const { navigate } = this.props.navigation;
     const { params } = this.props.navigation.state;
 
     let listForAdding = this.state.dailys.map((d,i) => {
       return (
-        <TouchableOpacity>
-          <List>
-              <ListItem onPress={() => this.added(d, i)}>
+              <ListItem
+                onPress={() => this.added(d, i)}>
                   <Left>
                       <Text>{d.dailyName}</Text>
                   </Left>
@@ -167,16 +165,13 @@ export default class AddDailyMap extends Component {
                       <Text>{d.dailyDate}</Text>
                   </Body>
               </ListItem>
-          </List>
-          </TouchableOpacity>
             )
       });
 
       let dailyAdded = this.state.dailyAdded.map((d,i) => {
         return(
-          <TouchableOpacity>
-            <List>
-                <ListItem onPress={() => this.added(d)}>
+                <ListItem
+                  onPress={() => this.added(d)}>
                     <Left>
                         <Text>{d.dailyName}</Text>
                     </Left>
@@ -189,14 +184,13 @@ export default class AddDailyMap extends Component {
                       </Button>
                     </Right>
                 </ListItem>
-            </List>
-            </TouchableOpacity>
         )
       })
 
     return (
           <Container>
-              <Card>
+          <Content>
+              <Card style={{flexDirection: 'column'}}>
                     <Button full style={{top:40, zIndex: 2, backgroundColor: 'black'}}
                              onPress={()=> navigate('diaryMap')}>
                       <Text style={styles.sltPlace}>{params.sltPlace}</Text>
@@ -212,6 +206,7 @@ export default class AddDailyMap extends Component {
                         </ScrollView>
                     </List>
               </Card>
+              </Content>
           </Container>
     );
   }

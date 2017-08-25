@@ -140,8 +140,21 @@ getUrl(lat, long, radius, type){
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  touchMarker(place){
+    this.setState({
+      sltPlace: place.name,
+      buttonDisabled: false,
+      buttonDisabledColor: 'black'
+    })
+    this.getDailies(place.name);
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 /////////////////////////////////////// Get Places ////////////////////////////////////////////////////////////////////
   getPlaces(){
+    const { navigate } = this.props.navigation;
     const url = this.getUrl(this.state.region.latitude, this.state.region.longitude, this.state.radius, this.state.type)
     fetch(url)
      .then((data) => data.json())
@@ -156,12 +169,14 @@ getUrl(lat, long, radius, type){
                coordinate={{
                  latitude: place.geometry.location.lat,
                  longitude: place.geometry.location.lng
-               }}>
+               }}
+               onPress={() => this.touchMarker(place)}>
                 <Icon large color='black' name={icon}/>
                  <Callout>
-                  <View style={{width:150, alignItems:'center'}}>
-                    <Text style={{fontStyle: 'italic', fontSize: 18, fontWeight:'bold'}}>{place.name}</Text>
-                  </View>
+                    <View style={{width:150, alignItems:'center'}}>
+                      <Text style={{fontStyle: 'italic', fontSize: 18, fontWeight:'bold'}}>{place.name}</Text>
+                      <Text>Dailies: 3</Text>
+                    </View>
                  </Callout>
              </Marker>
            )
@@ -227,6 +242,34 @@ selectPlace(p){
     }
     this.getPlaces()
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  getDailies(place){
+    var dailies = [];
+    let refDiary = getDatabase().ref("/diary")
+    refDiary.once('value', (snap)=>{
+      snap.forEach((child) =>{
+        let refDaily = getDatabase().ref("/diary/"+child.key+"/daily")
+        dailyList = (refDaily.orderByChild("place").equalTo(place));
+        dailyList.once('value', (snap)=>{
+          alert(JSON.stringify(snap))
+          snap.forEach((child)=>{
+            alert(child.val().name +"    "+ child.val().place)
+            dailies.push({
+              key: child.key
+            })//push
+          })//forEach Daily
+        })//dailyList.once
+      })//forEach diary
+    })//ref.once
+    this.setState({
+      dailies: dailies.slice(0)
+    })
+  }
+
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
   render() {
@@ -314,25 +357,19 @@ selectPlace(p){
                       <Icon color='white' name={this.state.arrow}/>
                       {listFabs}
                     </Fab>
-                  {/*<Fab
-                    active='false'
-                    direction="up"
-                    containerStyle={{ }}
-                    style={{backgroundColor:'#41BEB6', zIndex: 1}}
-                    position="bottomLeft"
-                    onPress={()=> navigate('newDiary')}>
-                    <Icon color='white' name="library-books" />
-                  </Fab>
-                 <Fab
-                   active='false'
-                   direction="up"
-                   containerStyle={{ }}
-                   style={{backgroundColor:'#41BEB6', zIndex: 1}}
-                   position="bottomRight"
-                   visible={true}
-                   onPress={()=> alert(this.state.region.latitude) }>
-                   <Icon color='white' name="my-location" />
-                 </Fab>*/}
+                   <Fab
+                     active='false'
+                     direction="up"
+                     containerStyle={{ }}
+                     style={{backgroundColor:'#41BEB6', zIndex: 1}}
+                     position="bottomRight"
+                     visible={true}
+                     onPress={()=> navigate('') }>
+                     <View style={{flexDirection:'row'}}>
+                       <Icon color='white' name="book"/>
+                       <Text style={{fontStyle: 'italic', fontSize: 18, fontWeight:'bold', color:'white'}}>5</Text>
+                     </View>
+                   </Fab>
               </View>
               {/* MapView and Fabs*/}
           </Container>

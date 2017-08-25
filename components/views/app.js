@@ -60,6 +60,8 @@ export const DTDiaryMap = StackNavigator({
     //DailyMap
       dailyMap: {screen: DailyMap},
       addDailyMap: {screen: AddDailyMap},
+
+      home: { screen: Home },
 });
 export const DTProfile = StackNavigator({
   //Profile
