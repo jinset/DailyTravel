@@ -129,7 +129,7 @@ export default class Profile extends Component {
     componentWillMount(){
       NetInfo.isConnected.fetch().done(isConnected => {
           if(isConnected === true) {
-            this.getData();
+              this.getData()
           }else{
               this.getData();
               MessageBarManager.registerMessageBar(this.refs.alert);
@@ -150,6 +150,7 @@ export default class Profile extends Component {
     getData(){
       try{
         var that = this;
+        var diaries = [];
         AsyncStorage.getItem("user").then((value) => {
               this.setState({
                 uid: value
@@ -185,15 +186,15 @@ export default class Profile extends Component {
                })
              })
              Helper.getDairysByUserGuest(this.state.uid, (d) => {
-               var diarys=d.reverse();
+               diaries = d.reverse().slice(0);
                this.setState({
                    diarys: d.reverse(),
-                   dataSource: this.state.dataSource.cloneWithRows(diarys)
+                   dataSource: this.state.dataSource.cloneWithRows(d.reverse())
                 })
                  if(d.length === 0){
-                     this.setState({
-                         showPig: true,
-                      })
+                  this.setState({
+                        showPig: true,
+                   })
                  }else{
                    this.setState({
                        showPig: false,
@@ -210,6 +211,7 @@ export default class Profile extends Component {
                   follows: f,
                 })
               })
+              return diaries;
         })
       } catch(error){
         alert("error: " + error)
