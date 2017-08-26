@@ -1,7 +1,7 @@
 import { TouchableHighlight, Alert ,Dimensions,Platform,Image,AsyncStorage,ListView,
 TouchableOpacity,ScrollView } from 'react-native';
 import React, {Component} from 'react';
-import { Container, Content, Form,List,Toast,ListItem,Radio, Item, Input,View, Label, Button ,Text,Body , Right, Switch, Card,
+import { Container, Content, Form,List,Toast,ListItem,Radio, Item, Input,View,Spinner, Label, Button ,Text,Body , Right, Switch, Card,
    CardItem, Thumbnail, Left  } from 'native-base';
 import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
@@ -50,13 +50,15 @@ var usuario ='';
       isOpen: false,
      isDisabled: false,
      swipeToClose: true,
-sliderValue: 0.3
+      sliderValue: 0.3,
+      showSpinnerTop:true,
     }
   }
 
 ////////////////////////////////////////////OBTIENE USUARIO LOGGEADO//////////////////////////
    async componentDidMount(){
      try{
+       this.setState({showSpinnerTop: true});
        AsyncStorage.getItem("user").then((value) => {
           this.setState({
             idOwner:value,
@@ -70,6 +72,7 @@ sliderValue: 0.3
      userList = (ref.orderByChild("nickname"))
      var that = this
      userList.on('value', (snap) => {
+       this.setState({showSpinnerTop: true});
          var users = [];
          var diaryUsers = [];
          AsyncStorage.getItem("user").then((value) => {
@@ -107,6 +110,7 @@ sliderValue: 0.3
                            })//setState
                        })//checkRepeat.once
                    });//snap.forEach
+                   this.setState({showSpinnerTop: false});
         })//AsyncStorage
    })//userList.on
   }
@@ -194,6 +198,7 @@ openImagePicker(){
          stylesheetInfo: { backgroundColor: '#808080', strokeColor: 'grey' }
       });
     }else{
+      this.setState({showSpinnerTop: true});
      getDatabase().ref().child('diary/').push({
       idOwner:this.state.idOwner,
        name:this.state.name,
@@ -215,10 +220,9 @@ openImagePicker(){
       diaryUsers.forEach(function(elemento) {
           tthat.addDiaryUsers(elemento);
       });
+      this.setState({showSpinnerTop: false});
   });
-
-    const { navigate } = this.props.navigation;
-     navigate('profile');
+   this.props.navigation.goBack();
    }
 }
 
@@ -277,7 +281,6 @@ openImagePicker(){
   static navigationOptions = {
     title: strings.createDiary,
     headerStyle: {height: 50 },
-    headerTitleStyle : {color:'#808080',fontSize:17},
      }
   render() {  const { navigate } = this.props.navigation;
    var BContent = <Button onPress={() => this.setState({isOpen: false})} >X</Button>;
@@ -343,17 +346,21 @@ openImagePicker(){
                </ListItem>
                {listTable2}
              </List>
-          </View>
+          </View><List>
+            <ListItem itemDivider>
+              <Text>{strings.friends}</Text>
+            </ListItem>
+            </List>
           <ScrollView>
             <List>
-              <ListItem itemDivider>
-                <Text>{strings.friends}</Text>
-              </ListItem>
               {listTable}
             </List>
           </ScrollView>
         </Modal>
           <Content  style={{ backgroundColor:'white'}}>
+          <HideableView visible={this.state.showSpinnerTop} removeWhenHidden={true} >
+            <Spinner style={{zIndex:4}} />
+          </HideableView>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
             <Thumbnail
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
@@ -397,7 +404,7 @@ openImagePicker(){
                         <MessageBarAlert ref="alert" />
 
           </Content>
-        <Button full dark style= {{backgroundColor: '#41BEB6', zIndex: -1}}
+        <Button full light style= {{ zIndex: -1}}
          onPress={() => this.add()} >
          <Text>{strings.save }</Text>
         </Button>
@@ -406,7 +413,7 @@ openImagePicker(){
   }
 }
 
-
+//<Button full dark style= {{backgroundColor: '#808080', zIndex: -1}}
 
 
   ///////////////////////////////////////////////VARIABLE IMAGEN////////////////////////////////////////////////////////////////////

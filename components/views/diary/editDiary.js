@@ -1,6 +1,6 @@
 import { TouchableHighlight, Alert ,AsyncStorage,Dimensions,Platform,Image,ScrollView } from 'react-native';
 import React, {Component} from 'react';
-import { Container, Content, Form,List,Toast,ListItem,Radio,View, Item, Input, Label, Button ,Text,Body , Right, Switch, Card,
+import { Container, Content, Form,List,Toast,ListItem,Radio,View, Item, Input, Label,Spinner, Button ,Text,Body , Right, Switch, Card,
    CardItem, Thumbnail, Left  } from 'native-base';
 import strings from '../../common/local_strings.js';
 import HideableView from 'react-native-hideable-view';
@@ -57,6 +57,7 @@ let ref='';
               users: [],
               uidCurrentUser:'',
               isOwner:false,
+              showSpinnerTop:true,
             }
 
         });
@@ -66,8 +67,8 @@ let ref='';
               position: 'bottom',
               buttonText: 'Okay'
             })
-           const { navigate } = this.props.navigation;
-           navigate('profile');
+
+           this.props.navigation.goBack();
         }
   }
 
@@ -82,7 +83,7 @@ let ref='';
      userList.on('value', (snap) => {
          var users = [];
          AsyncStorage.getItem("user").then((value) => {
-
+           this.setState({showSpinnerTop: true});
                 var diaryUsers = [];
                   snap.forEach((child) => {
                       let checkRepeat = getDatabase().ref('userDiary/').orderByChild("userDiary").equalTo(child.key+'-'+key);
@@ -157,6 +158,7 @@ let ref='';
                    })//setState
                })//checkRepeat.once
            });//snap.forEach
+           this.setState({showSpinnerTop: false});
 })//AsyncStorage
 })//userList.on
     //alert(diaryUsers.length)
@@ -164,6 +166,8 @@ let ref='';
 ///////////////////////////////////////////////////////OBTIENE IMAGEN////////////////////////////////////////////////////////////////
    getImageUrl(){
      try{
+
+         this.setState({showSpinnerTop: true});
        HelperDiary.getImageUrl(key, (url) => {
          this.setState({
            url: url,
@@ -172,6 +176,8 @@ let ref='';
        this.setState({
          key: key,
        })
+
+         this.setState({showSpinnerTop: false});
      } catch(error){
        console.log(error)
      }
@@ -204,10 +210,12 @@ let ref='';
        createImage(){
          if(key){
              try{
+                 this.setState({showSpinnerTop: true});
                 this.state.imagePath ?
                     uploadImage(this.state.imagePath, `${key}.jpg`)
                         .then((responseData) => {
                           HelperDiary.setImageUrl(key, responseData)
+                          this.setState({showSpinnerTop: false});
                         })
                         .done()
                     : null
@@ -235,6 +243,8 @@ let ref='';
          stylesheetInfo: { backgroundColor: '#808080', strokeColor: 'grey' }
       });
     }else{
+
+        this.setState({showSpinnerTop: true});
      getDatabase().ref().child(ref).set({
       idOwner:this.state.idOwner,
        name:this.state.name,
@@ -244,6 +254,8 @@ let ref='';
        url:this.state.url,
        status:this.state.status,
    })
+
+     this.setState({showSpinnerTop: false});
        this.props.navigation.goBack()
      }
 }
@@ -251,6 +263,7 @@ let ref='';
    addDiaryUsers(userId,userstatus){
      var date = new Date();
      var that = this.state;
+       this.setState({showSpinnerTop: true});
      var myRef = getDatabase().ref().child('userDiary/');
           myRef.child(userId+'-'+ key).set({
           idUser:userId,
@@ -264,6 +277,8 @@ let ref='';
      if(userId!=that.uidCurrentUser){
        createNotification( userId,that.uidCurrentUser, "invitation", Moment(new Date()).format("YYYY-MM-DD"),key,that.name);
      }
+
+       this.setState({showSpinnerTop: false});
    }
 ///////////////////////////////////////// addGuest /////////////////////////////////////////////////////////////
     addGuest(i){
@@ -292,6 +307,7 @@ let ref='';
     removeGuest(i){
         var that = this.state;
         var tthat = this;
+          this.setState({showSpinnerTop: true});
         let ref = getDatabase().ref('/userDiary/')
         followersList = (ref.orderByChild("userDiary").equalTo(this.state.diaryUsers[i].id+'-'+key))
         followersList.once('value', (snap) => {
@@ -313,8 +329,7 @@ let ref='';
                 var diaryUsers = [];
                 diaryUsers=this.state.diaryUsers;
                 diaryUsers.splice(i, 1);
-
-
+        this.setState({showSpinnerTop: false});
         this.setState({
             users: users,
             diaryUsers:diaryUsers,
@@ -402,6 +417,9 @@ let ref='';
           </ScrollView>
         </Modal>
           <Content  style={{ backgroundColor:'white'}}>
+          <HideableView visible={this.state.showSpinnerTop} removeWhenHidden={true} >
+            <Spinner style={{zIndex:4}} />
+          </HideableView>
             <TouchableHighlight onPress={this.openImagePicker.bind(this)}>
             <Thumbnail
               style={{width: 300, height: 100,alignSelf:'center', borderStyle: 'solid', borderWidth: 2,  }}
@@ -444,7 +462,7 @@ let ref='';
           </Form>
                         <MessageBarAlert ref="alert" />
         </Content>
-                  <Button full dark style= {{backgroundColor: '#41BEB6'}}
+                    <Button full light style= {{ zIndex: -1}}
                     onPress={() => this.add()} >
                       <Text>{strings.save }</Text>
                   </Button>
