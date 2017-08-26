@@ -51,6 +51,16 @@ import { Icon } from 'react-native-elements';
 export const DTHome = StackNavigator({
   //Home
     home: { screen: Home },
+    //Diary
+    newDiary: { screen: NewDiary, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+    editDiary: { screen: EditDiary, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+    DairyView: { screen: DairyView , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+      //Daily
+      listDaily: { screen: ListDaily , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+      createDaily: { screen: CreateDaily , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+      editDaily: { screen: EditDaily , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+      daily: { screen: Daily , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+      gallery: { screen: Gallery , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
 });
 
 
@@ -58,23 +68,23 @@ export const DTDiaryMap = StackNavigator({
   //Map
     diaryMap: { screen: DiaryMap },
     //DailyMap
-      dailyMap: {screen: DailyMap},
-      addDailyMap: {screen: AddDailyMap},
+    dailyMap: {screen: DailyMap, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+    addDailyMap: {screen: AddDailyMap, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
 });
 export const DTProfile = StackNavigator({
   //Profile
     profile: { screen: Profile },
-    editProfile: {screen: EditProfile},
+  editProfile: {screen: EditProfile, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
         //Diary
-        newDiary: { screen: NewDiary },
-        editDiary: { screen: EditDiary },
-        DairyView: { screen: DairyView },
+      newDiary: { screen: NewDiary , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+      editDiary: { screen: EditDiary , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+      DairyView: { screen: DairyView , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
         //Daily
-          listDaily: { screen: ListDaily },
-          createDaily: { screen: CreateDaily },
-          editDaily: { screen: EditDaily },
-          daily: { screen: Daily },
-          gallery: { screen: Gallery },
+        listDaily: { screen: ListDaily , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+        createDaily: { screen: CreateDaily , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+        editDaily: { screen: EditDaily , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+        daily: { screen: Daily , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+        gallery: { screen: Gallery , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
           //NotificationsView
 
 
@@ -83,17 +93,22 @@ export const DTProfile = StackNavigator({
 export const DTNotificatios = StackNavigator({
   //Notifications
   notifications: { screen: NotificationsView },
+visitProfile: {screen: VisitProfile, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+  follows: {screen: Follows, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+  followers: {screen: Followers, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+  fprofile: { screen: Profile , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+  fDairyView: { screen: DairyView , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
 
 });
 
 export const DTFriends = StackNavigator({
   //Friends
     friends: { screen: Friends },
-    visitProfile: {screen: VisitProfile},
-    follows: {screen: Follows},
-    followers: {screen: Followers},
-    fprofile: { screen: Profile },
-    fDairyView: { screen: DairyView },
+  visitProfile: {screen: VisitProfile, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+  follows: {screen: Follows, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+  followers: {screen: Followers, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+  fprofile: { screen: Profile , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+  fDairyView: { screen: DairyView , navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
 });
 
 export const DTNewDiary = StackNavigator({
@@ -167,11 +182,12 @@ export const DailyTravelTabs = TabNavigator({
       showIcon: true,
       showLabel :false,
       style: {
-        backgroundColor: '#41BEB6',
+       backgroundColor: '#41BEB6',
       },
       tabStyle: {
         height: 50,
       },
+
     },
     swipeEnabled: false,
     tabBarPosition: 'bottom',
