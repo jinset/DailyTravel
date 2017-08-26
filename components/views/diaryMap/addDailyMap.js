@@ -204,7 +204,7 @@ export default class AddDailyMap extends Component {
     return (
           <Container>
           <Content>
-              <Card style={{flexDirection: 'column'}}>
+              <Card style={{flexDirection: 'column', height: Dimensions.get('window').height}}>
                     <Button full style={{top:20, zIndex: 2, backgroundColor: 'black'}}
                              onPress={()=> navigate('diaryMap')}>
                       <Text style={styles.sltPlace}>{params.sltPlace}</Text>

@@ -8,7 +8,7 @@ class Helper {
 /////////////////// Image Url ////////////////////////////
   static getImageUrl(userId, callback){
       let ref = "/users/"+userId+"/url"
-      firebase.database().ref(ref).on('value', (snap) => {
+      firebase.database().ref(ref).once('value', (snap) => {
         let url = ''
         if(snap.val()){
           url = snap.val()
@@ -28,7 +28,7 @@ class Helper {
 ///////////////////// Name /////////////////////////////
   static getUserName(userId, callback){
       let ref = "/users/"+userId+"/name"
-      firebase.database().ref(ref).on('value', (snap) => {
+      firebase.database().ref(ref).once('value', (snap) => {
         let name = ''
         if(snap.val()){
           name = snap.val()
@@ -46,7 +46,7 @@ class Helper {
 ///////////////////// LastName /////////////////////////
   static getUserLastName(userId, callback){
       let ref = "/users/"+userId+"/lastName"
-      firebase.database().ref(ref).on('value', (snap) => {
+      firebase.database().ref(ref).once('value', (snap) => {
         let lastName = ''
         if(snap.val()){
           lastName = snap.val()
@@ -91,7 +91,7 @@ class Helper {
 /////////////////////// Nickname /////////////////////
 static getUserNickname(userId, callback){
     let ref = "/users/"+userId+"/nickname"
-    firebase.database().ref(ref).on('value', (snap) => {
+    firebase.database().ref(ref).once('value', (snap) => {
       let nickname = ''
       if(snap.val()){
         nickname = snap.val()
@@ -128,7 +128,7 @@ static getRepeat(){
 /////////////////////// BirthDay ////////////////////
 static getUserBirthDay(userId, callback){
     let ref = "/users/"+userId+"/bornDay"
-    firebase.database().ref(ref).on('value', (snap) => {
+    firebase.database().ref(ref).once('value', (snap) => {
       let birthday = ''
       if(snap.val()){
         birthday = snap.val()
@@ -147,7 +147,7 @@ static setUserBirthDay(userId, birthday){
   static getDairysByUser(userId, callback){
     let ref = getDatabase().ref("/diary")
     diaryList = (ref.orderByChild("idOwner").equalTo(userId))
-    diaryList.on('value', (snap) => {
+    diaryList.once('value', (snap) => {
         var diarys = [];
         snap.forEach((child) => {
           if(child.val().status===true){
@@ -167,7 +167,7 @@ static setUserBirthDay(userId, birthday){
 /////////////////// Followers ////////////////////////
 static getFollowers(userId, callback){
   let followersList = getDatabase().ref('users/'+userId+'/followers/').orderByChild("uid")
-  followersList.on('value', (snap) => {
+  followersList.once('value', (snap) => {
     var f = [];
     snap.forEach((child) => {
       f.push({
@@ -186,7 +186,7 @@ static getFollowers(userId, callback){
 /////////////////// Follows //////////////////////
 static getFollows(userId, callback){
   let followsList = getDatabase().ref('users/'+userId+'/follows/').orderByChild("uid")
-  followsList.on('value', (snap) => {
+  followsList.once('value', (snap) => {
     var f = [];
     snap.forEach((child) => {
       f.push({
