@@ -84,37 +84,47 @@ export default class DiaryMap extends Component {
 
 /////////////////////////////////////// Component Did Mount ////////////////////////////////////////////////////
     async componentWillMount(){
-        this.doCurrent()
-        this.selectType(0)
+        var getUbication = await this.doCurrent();
+        if(getUbication == true){
+          this.selectType(0);
+        }
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////// Set Region //////////////////////////////////////////////////////////////
-  setRegion(lat, lon){
-    this.setState({
-      region: {
-        latitude: lat,
-        longitude: lon,
-        latitudeDelta: 0.0722,
-        longitudeDelta: 0.0221,
-      },
+  async setRegion(lat, lon){
+    return new Promise((resolve, reject) => {
+      this.setState({
+        region: {
+          latitude: lat,
+          longitude: lon,
+          latitudeDelta: 0.0722,
+          longitudeDelta: 0.0221,
+        },
+      })
+      resolve(true)
     })
   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////// Do Current ////////////////////////////////////////////////////
     doCurrent(){
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude
-          const lon = position.coords.longitude
-          this.setRegion(lat, lon)
-          this.getPlaces()
-        }, (error) => console.log(error.message),
-        {enableHighAccuracy: true, timeout: 25000}
-        //Mobile
-        // {enableHighAccuracy: false, timeout: 25000}
-      )
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          async(position) => {
+            const lat = position.coords.latitude
+            const lon = position.coords.longitude
+            var region = await this.setRegion(lat, lon);
+            if(region == true){
+              this.getPlaces()
+            }
+          }, (error) => console.log(error.message),
+          {enableHighAccuracy: true, timeout: 25000}
+          //Mobile
+          // {enableHighAccuracy: false, timeout: 25000}
+        )
+        resolve(true)
+      })
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -154,41 +164,46 @@ getUrl(lat, long, radius, type){
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 /////////////////////////////////////// Get Places ////////////////////////////////////////////////////////////////////
-  getPlaces(){
-    const { navigate } = this.props.navigation;
-    const url = this.getUrl(this.state.region.latitude, this.state.region.longitude, this.state.radius, this.state.type)
-    fetch(url)
-     .then((data) => data.json())
-     .then((res) => {
-       if(res.status === "OK"){
-       var placesArray = [];
-       var icon = this.state.icon;
-       res.results.map((place, i) =>{
-           placesArray.push(
-             <Marker
-               key={i}
-               coordinate={{
-                 latitude: place.geometry.location.lat,
-                 longitude: place.geometry.location.lng
-               }}
-               onPress={() => this.touchMarker(place)}>
-                <Icon large color='black' name={icon}/>
-                 <Callout>
-                    <View style={{width:150, alignItems:'center'}}>
-                      <Text style={{fontStyle: 'italic', fontSize: 18, fontWeight:'bold'}}>{place.name}</Text>
-                    </View>
-                 </Callout>
-             </Marker>
-           )
-       })
-       this.setState({
-         places: res.results.slice(0),
-         placesLocation: placesArray
-       })
-     }
-    })
+  async getPlaces(){
+    try{
+        const { navigate } = this.props.navigation;
+        const url = this.getUrl(this.state.region.latitude, this.state.region.longitude, this.state.radius, this.state.type)
+        fetch(url)
+         .then((data) => data.json())
+         .then(async(res) => {
+           if(res.status === "OK"){
+             var placesArray = [];
+             var icon = this.state.icon;
+             res.results.map((place, i) =>{
+                 placesArray.push(
+                   <Marker
+                     key={i}
+                     coordinate={{
+                       latitude: place.geometry.location.lat,
+                       longitude: place.geometry.location.lng
+                     }}
+                     onPress={() => this.touchMarker(place)}>
+                      <Icon large color='black' name={icon}/>
+                       <Callout>
+                          <View style={{width:150, alignItems:'center'}}>
+                            <Text style={{fontStyle: 'italic', fontSize: 18, fontWeight:'bold'}}>{place.name}</Text>
+                          </View>
+                       </Callout>
+                   </Marker>
+                 )
+             })
+             this.setState({
+               places: res.results.slice(0),
+               placesLocation: placesArray
+             })
+           }
+        })
+    } catch (e) {
+      console.log(e);
+    } finally {
+
+    }
   }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -200,6 +215,7 @@ selectPlace(p){
     buttonDisabled: false,
     buttonDisabledColor: 'black'
   })
+  this.getDailies(p.name)
   this.refs.modal1.close()
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -222,54 +238,73 @@ selectPlace(p){
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////// Select Type ////////////////////////////////////////////////////////////////////
-  selectType(i){
-    var type = colors[i].type;
-    var name = colors[i].name;
-    var icon = colors[i].icon;
-    this.setState({type: type,
-                   typeName: name,
-                   icon: icon})
-    for(j=0; j<colors.length; j++){
-      if(i == j){
-        colors[j].bg = '#41BEB6';
-        colors[j].color = 'white';
-        colors[j].selected = true;
-        this.setState({ colors: colors})
-      }else{
-        colors[j].bg = 'white';
-        colors[j].color = '#808080';
-        colors[j].selected = false;
+  async changeFabColors(i){
+    return new Promise((resolve, reject) => {
+      var type = colors[i].type;
+      var name = colors[i].name;
+      var icon = colors[i].icon;
+      this.setState({
+        type: type,
+        typeName: name,
+        icon: icon
+      })
+      for(j=0; j<colors.length; j++){
+        if(i == j){
+          colors[j].bg = '#41BEB6';
+          colors[j].color = 'white';
+          colors[j].selected = true;
+          this.setState({ colors: colors})
+        }else{
+          colors[j].bg = 'white';
+          colors[j].color = '#808080';
+          colors[j].selected = false;
+        }
       }
-    }
-    this.getPlaces()
+      resolve(true)
+    })
+  }
+
+/////////////////////////////////////// Select Type ////////////////////////////////////////////////////////////////////
+  async selectType(i){
+      var changeFabColors = await this.changeFabColors(i);
+      if(changeFabColors == true){
+        this.getPlaces();
+      }
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  setDailies(dailies){
+   return new Promise((resolve, reject) => {
+     this.setState({
+       dailies: dailies.slice(0)
+     })
+     resolve(true)
+   })
+ }
 
-  getDailies(place){
-    var dailies = [];
-    let refDiary = getDatabase().ref("/diary")
-    refDiary.once('value', (snap)=>{
-      snap.forEach((child) =>{
-        let refDaily = getDatabase().ref("/diary/"+child.key+"/daily")
-        dailyList = (refDaily.orderByChild("place").equalTo(place));
-        dailyList.once('value', (snap)=>{
-          snap.forEach((child)=>{
-            if(child.val().status == true){
-              dailies.push({
-                key: child.key
-              })//push
-            }//if
-          })//forEach Daily
-          this.setState({
-            dailies: dailies.slice(0)
-          })
-        })//dailyList.once
-      })//forEach diary
-    })//ref.once
-    this.toggleFab();
-  }
+ async getDailies(place){
+   var dailies = [];
+   let refDiary = getDatabase().ref("/diary")
+   refDiary.once('value', async(snap)=>{
+     snap.forEach((child) =>{
+       let refDaily = getDatabase().ref("/diary/"+child.key+"/daily")
+       dailyList = (refDaily.orderByChild("place").equalTo(place));
+       dailyList.once('value', (snap)=>{
+         snap.forEach((child)=>{
+           if(child.val().status == true){
+             dailies.push({
+               key: child.key
+             })//push
+           }//if
+         })//forEach Daily
+       })//dailyList.once
+     })//forEach diary
+     let setDailies = await this.setDailies(dailies)
+     if(setDailies == true){
+       this.toggleFab();
+     }
+   })//ref.once
+ }
 
   toggleFab(){
     if(this.state.dailies.length == 0){

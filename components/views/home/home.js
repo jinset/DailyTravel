@@ -118,7 +118,6 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
       } finally {
 
       }
-
     };
 
     async load() {

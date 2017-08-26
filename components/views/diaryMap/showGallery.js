@@ -15,6 +15,7 @@ import { getDatabase } from '../../common/database';
 import strings from '../../common/local_strings.js';
 import { Icon } from 'react-native-elements';
 import ZoomImage from 'react-native-zoom-image';
+import HideableView from 'react-native-hideable-view';
 
 
 export default class ShowGallery extends Component{
@@ -25,6 +26,7 @@ export default class ShowGallery extends Component{
     this.state={
       idDiary: params.idDiary,
       idDaily: params.idDaily,
+      showPig: false,
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       })
@@ -53,6 +55,11 @@ export default class ShowGallery extends Component{
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(photos)
         });
+        if(photos.length == 0){
+          this.setState({
+            showPig: true
+          })
+        }
         console.log(photos);
       })
     }
@@ -85,12 +92,29 @@ export default class ShowGallery extends Component{
                   dataSource={this.state.dataSource}
                   renderRow={this._renderItem.bind(this)}
                 />
+                <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
+                   <Text style={styles.message}>{strings.iAppearWhen}</Text>
+                     <Image
+                        style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
+                        source={require('../../common/pigs/InCaseWeFoundOtherThingIsEmpty.png')} />
+                </HideableView>
             </CardItem>
           </Card>
       </Container>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  message: {
+    fontStyle: 'italic',
+    textAlign: 'justify',
+    fontSize: 18,
+    textDecorationStyle: 'solid',
+    color: '#000000',
+    paddingLeft: 20,
+  },
+});
 
 
 AppRegistry.registerComponent('ShowGallery', () => ShowGallery);
