@@ -16,6 +16,7 @@ let strings = new LocalizedStrings({
    culture:"Culture",
    guest:"Guest",
    place:"Place",
+   notPlace:"The locale has not been placed",
    date:"Date",
    photos:"Photos",
    experiences:"Experiences",
@@ -106,7 +107,9 @@ let strings = new LocalizedStrings({
    friendsSuggest: "Suggest friends",
    addThisPlaceToADaily: "Add this place a to daily",
    visitTheDailies: "Visit the dailies here!",
-   wantLogout: 'Do you want to log out?'
+   wantLogout: 'Do you want to log out?',
+   thisUserHasNoDiaries: "This user has no diaries",
+   nothingToSeeHere: "Nothing to see here",
  },
  es:{
    home:"Inicio",
@@ -123,6 +126,7 @@ let strings = new LocalizedStrings({
    culture:"Cultura",
    guest:"Invitado",
    place:"Lugar",
+   notPlace:"La ubicación no ha sido colocada",
    date:"Fecha",
    photos:"Fotos",
    experiences:"Experiencias",
@@ -212,8 +216,9 @@ let strings = new LocalizedStrings({
   friendsSuggest: "Sugerir amigos",
   addThisPlaceToADaily: "Agregar este lugar a la vivencia",
   visitTheDailies: "Visita las vivencias aquí!",
-   wantLogout: '¿Deseas cerrar sesión?'
-
+   wantLogout: '¿Deseas cerrar sesión?',
+  thisUserHasNoDiaries: "Este usuario no tiene diarios",
+  nothingToSeeHere: "Nada que ver aquí",
  },
  zh:{
    home:"首頁",
@@ -230,6 +235,7 @@ let strings = new LocalizedStrings({
    culture:"文化",
    guest:"來賓",
    place:"地點",
+   notPlace: "還沒選地點",
    date:"日期",
    photos:"相片",
    experiences:"經驗",
