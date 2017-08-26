@@ -166,18 +166,21 @@ static setUserBirthDay(userId, birthday){
 
 /////////////////// Followers ////////////////////////
 static getFollowers(userId, callback){
+  var f = [];
   let followersList = getDatabase().ref('users/'+userId+'/followers/').orderByChild("uid")
-  followersList.on('value', (snap) => {
-    var f = [];
+  followersList.once('value', (snap) => {
     snap.forEach((child) => {
-      f.push({
-        id: child.val().uid,
-        nickname: child.val().nickname,
-        name: child.val().name,
-        lastName: child.val().lastName,
-        url: child.val().url,
-      });
-      alert(child.val().nickname)
+      var idUser = child.val().uid
+      let usersfollowsList = getDatabase().ref('users/'+child.val().uid).orderByChild("name")
+      usersfollowsList.once('value', (snap) => {
+            f.push({
+              id: idUser,
+              nickname: snap.val().nickname,
+              name: snap.val().name,
+              lastName: snap.val().lastName,
+              url: snap.val().url,
+            });
+      })
     })
     callback(f)
   })
@@ -186,23 +189,26 @@ static getFollowers(userId, callback){
 
 /////////////////// Follows //////////////////////
 static getFollows(userId, callback){
+  var f = [];
   let followsList = getDatabase().ref('users/'+userId+'/follows/').orderByChild("uid")
   followsList.once('value', (snap) => {
-    var f = [];
     snap.forEach((child) => {
-      f.push({
-        id: child.val().uid,
-        nickname: child.val().nickname,
-        name: child.val().name,
-        lastName: child.val().lastName,
-        url: child.val().url,
-      });
+        var idUser = child.val().uid
+        let usersfollowsList = getDatabase().ref('users/'+child.val().uid).orderByChild("name")
+        usersfollowsList.once('value', (snap) => {
+              f.push({
+                id: idUser,
+                nickname: snap.val().nickname,
+                name: snap.val().name,
+                lastName: snap.val().lastName,
+                url: snap.val().url,
+              });
+        })
     })
     callback(f)
   })
 }
 ////////////////////////////////////////////////////
-
 
 /////////////////// DairysByUserGuest ///////////////////
   static getDairysByUserGuest(userId, callback){
