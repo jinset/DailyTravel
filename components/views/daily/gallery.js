@@ -19,9 +19,6 @@ var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 
-import ZoomImage from 'react-native-zoom-image';
-
-
 export default class Gallery extends Component{
 
   constructor(props){
@@ -57,9 +54,7 @@ export default class Gallery extends Component{
         });
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(photos)
-        }, ()=>
-          console.log(this.state.dataSource)
-        );
+        });
         console.log(photos);
       })
     }

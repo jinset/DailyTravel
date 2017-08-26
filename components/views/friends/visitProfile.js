@@ -56,6 +56,7 @@ export default class EditProfile extends Component {
            diarys: diarys,
            followers: followers,
            follows: follows,
+           showPig: false,
            isMe: false,
            date: new Date().toLocaleDateString(),
          }
@@ -111,6 +112,15 @@ export default class EditProfile extends Component {
              this.setState({
                  diarys: d.reverse(),
               })
+              if(d.length === 0){
+                  this.setState({
+                    showPig: true,
+                   })
+              }else{
+                this.setState({
+                    showPig: false,
+                 })
+              }
             })
            Helper.getFollowers(this.state.uid, (f) => {
               this.setState({
@@ -347,6 +357,17 @@ showButton(){
               <Card>
                     {listTable}
                </Card>
+               <Card>
+                     <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
+                        <Text style={styles.message}>{strings.thisUserHasNoDiaries}</Text>
+                        <Text style={styles.message}>{strings.nothingToSeeHere}</Text>
+                        <TouchableOpacity>
+                          <Image
+                             style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
+                             source={require('../../common/pigs/EmptyVisitProfile.png')} />
+                       </TouchableOpacity>
+                     </HideableView>
+                </Card>
           </Content>
           <MessageBarAlert ref="alert"/>
           </Container>
@@ -414,5 +435,13 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontSize: 25,
     color: '#000000',
-  }
+  },
+  message: {
+    fontStyle: 'italic',
+    textAlign: 'justify',
+    fontSize: 18,
+    textDecorationStyle: 'solid',
+    color: '#000000',
+    paddingLeft: 20,
+  },
 });

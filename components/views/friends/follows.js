@@ -221,33 +221,46 @@ showButton(){
       return (
                     <ListItem>
                         <TouchableOpacity onPress={() => navigate(this.state.nav[i], {uid:u.id})} style={styles.row}>
-                          <Thumbnail
-                            style={{padding: 25}}
-                            small
-                            source={{uri: u.url}}
-                          />
-                        <View syle={{width: 80}}>
-                          <Text style={styles.nick} style={{padding: 15}}>{u.nickname}</Text>
-                        </View>
-                        </TouchableOpacity>
-                        <View style={{paddingLeft: 60}}/>
+                          <Left>
+                              <Thumbnail
+                                large
+                                source={{uri: u.url}}
+                              />
+                          </Left>
+                          <Body>
+                              <View style={{paddingTop: 20}}>
+                                  <Text style={styles.nick}>{u.nickname}</Text>
+                              </View>
+                          </Body>
                             <HideableView visible={that.follList[i]} removeWhenHidden={true} duration={100}>
-                                <Button light onPress={() => this.follow(i)}>
-                                  <Text>{strings.follow}</Text>
-                                  <Icon name='add-circle-outline' />
-                                </Button>
+                                <Right>
+                                  <View style={{paddingTop: 15}}>
+                                    <Button light onPress={() => this.follow(i)} style={{width: 120}}>
+                                      <Text>{strings.follow}</Text>
+                                      <Icon name='add-circle-outline' />
+                                    </Button>
+                                  </View>
+                                </Right>
                             </HideableView>
                             <HideableView visible={that.unfollList[i]} removeWhenHidden={true} duration={100}>
-                                <Button light onPress={() => this.unfollow(i)}>
-                                  <Text>{strings.unfollow}</Text>
-                                  <Icon name='remove-circle-outline' />
-                                </Button>
+                                <Right>
+                                  <View style={{paddingTop: 15}}>
+                                    <Button light onPress={() => this.unfollow(i)} style={{width: 120}}>
+                                      <Text>{strings.unfollow}</Text>
+                                      <Icon name='remove-circle-outline' />
+                                    </Button>
+                                  </View>
+                                </Right>
                             </HideableView>
-
-                        <HideableView visible={that.isMe[i]} removeWhenHidden={true} duration={100}>
-                              <Text>{strings.you}</Text>
-                              <Icon name='face' />
-                        </HideableView>
+                            <HideableView visible={that.isMe[i]} removeWhenHidden={true} duration={100}>
+                                <Right>
+                                  <View style={{paddingTop: 15, paddingRight: 50}}>
+                                    <Text>{strings.you}</Text>
+                                    <Icon name='face' />
+                                  </View>
+                                </Right>
+                            </HideableView>
+                        </TouchableOpacity>
                     </ListItem>
             )
       });

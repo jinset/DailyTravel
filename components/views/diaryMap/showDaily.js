@@ -20,7 +20,7 @@ import AutogrowInput from 'react-native-autogrow-input';
 import DialogBox from 'react-native-dialogbox';
 import ZoomImage from 'react-native-zoom-image';
 
-export default class Daily extends Component{
+export default class ShowDaily extends Component{
 
   constructor(props){
     super(props);
@@ -139,21 +139,6 @@ export default class Daily extends Component{
               <Left>
                 <Label>{this.state.date}</Label>
               </Left>
-
-              <Body>
-              </Body>
-
-              <Right style={{flexDirection: 'row'}}>
-                <Button transparent small style={{paddingLeft: 10, paddingRight: 10}}
-                  onPress={() => this.deleteDailyOption(this.state.idDaily, this.state.idDiary)}>
-                  <Icon active name='delete' />
-                </Button>
-
-                <Button transparent small style={{paddingLeft: 10, paddingRight: 10}}
-                  onPress={()=> navigate('editDaily', {idDaily:this.state.idDaily, idDiary:this.state.idDiary})}>
-                  <Icon active name='mode-edit' />
-                </Button>
-              </Right>
             </CardItem>
 
             <CardItem>
@@ -165,7 +150,7 @@ export default class Daily extends Component{
             <CardItem>
               <ScrollView horizontal={true}>
                 <Button transparent small style={{paddingLeft: 10, paddingRight: 20, marginTop:10}}
-                  onPress={() => navigate('gallery', {idDaily:this.state.idDaily, idDiary:this.state.idDiary})}>
+                  onPress={() => navigate('showGallery', {idDaily:this.state.idDaily, idDiary:this.state.idDiary})}>
                   <Icon active name='visibility' />
                 </Button>
                 <ListView
@@ -206,6 +191,6 @@ export default class Daily extends Component{
 }
 
 
-AppRegistry.registerComponent('Daily', () => Daily);
+AppRegistry.registerComponent('ShowDaily', () => ShowDaily);
 
-module.export='Daily';
+module.export='ShowDaily';

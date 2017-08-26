@@ -44,6 +44,8 @@ import {getAuth} from '../common/database';
 import DiaryMap from './diaryMap/diaryMap.js';
 import DailyMap from './diaryMap/dailyMap.js';
 import AddDailyMap from './diaryMap/addDailyMap.js';
+import ShowDaily from './diaryMap/showDaily';
+import ShowGallery from './diaryMap/showGallery';
 
 //Import Icons
 import { Icon } from 'react-native-elements';
@@ -70,6 +72,9 @@ export const DTDiaryMap = StackNavigator({
     //DailyMap
     dailyMap: {screen: DailyMap, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
     addDailyMap: {screen: AddDailyMap, navigationOptions:{tabBarVisible: false,headerStyle:{ backgroundColor: '#41BEB6',height: 50 },headerTitleStyle : {color:'#FFF',fontSize:17}}},
+    //ShowDailies
+      showDaily: { screen: ShowDaily },
+      showGallery: { screen: ShowGallery },
 });
 export const DTProfile = StackNavigator({
   //Profile
@@ -136,7 +141,7 @@ export const DailyTravelTabs = TabNavigator({
       navigationOptions:{
         tabBarIcon: ({ tintColor }) => (
           <Image style={{width: 30, height: 30}}
-            source={require('../common/Icons/home.png')}
+            source={require('../common/icons/home.png')}
           />
         ),
       }},
@@ -145,7 +150,7 @@ export const DailyTravelTabs = TabNavigator({
 
             tabBarIcon: ({ tintColor }) => (
               <Image  style={{width:30, height: 30}}
-                source={require('../common/Icons/friends.png')}
+                source={require('../common/icons/friends.png')}
               />
             ),
         }},
@@ -153,7 +158,7 @@ export const DailyTravelTabs = TabNavigator({
       navigationOptions:{
         tabBarIcon: ({ tintColor }) => (
           <Image style={{width:30, height: 30}}
-            source={require('../common/Icons/map.png')}
+            source={require('../common/icons/map.png')}
           />
         ),
     }},
@@ -162,7 +167,7 @@ export const DailyTravelTabs = TabNavigator({
 
               tabBarIcon: ({ tintColor }) => (
                 <Image  style={{width:30, height: 30}}
-                  source={require('../common/Icons/notification.png')}
+                  source={require('../common/icons/notification.png')}
                 />
               ),
         }},
@@ -171,7 +176,7 @@ export const DailyTravelTabs = TabNavigator({
 
           tabBarIcon: ({ tintColor }) => (
             <Image style={{width:30, height: 30}}
-              source={require('../common/Icons/profile.png')}
+              source={require('../common/icons/profile.png')}
             />
           ),
       }},
