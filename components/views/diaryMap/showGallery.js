@@ -96,7 +96,7 @@ export default class ShowGallery extends Component{
                    <Text style={styles.message}>{strings.iAppearWhen}</Text>
                      <Image
                         style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
-                        source={require('../../common/pigs/InCaseWeFoundOtherThingIsEmpty2.png')} />
+                        source={require('../../common/pigs/EmptyVisitProfile.png')} />
                 </HideableView>
             </CardItem>
           </Card>
