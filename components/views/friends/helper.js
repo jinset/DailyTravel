@@ -167,7 +167,7 @@ static setUserBirthDay(userId, birthday){
 /////////////////// Followers ////////////////////////
 static getFollowers(userId, callback){
   let followersList = getDatabase().ref('users/'+userId+'/followers/').orderByChild("uid")
-  followersList.once('value', (snap) => {
+  followersList.on('value', (snap) => {
     var f = [];
     snap.forEach((child) => {
       f.push({
@@ -177,6 +177,7 @@ static getFollowers(userId, callback){
         lastName: child.val().lastName,
         url: child.val().url,
       });
+      alert(child.val().nickname)
     })
     callback(f)
   })

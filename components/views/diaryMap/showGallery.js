@@ -93,10 +93,10 @@ export default class ShowGallery extends Component{
                   renderRow={this._renderItem.bind(this)}
                 />
                 <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
-                   <Text style={styles.message}>{strings.iAppearWhen}</Text>
+                   <Text style={styles.message}>{strings.nothingToSeeHere}</Text>
                      <Image
                         style={{width: (Dimensions.get('window').width)/1.2, height: 360}}
-                        source={require('../../common/pigs/InCaseWeFoundOtherThingIsEmpty.png')} />
+                        source={require('../../common/pigs/EmptyVisitProfile.png')} />
                 </HideableView>
             </CardItem>
           </Card>
