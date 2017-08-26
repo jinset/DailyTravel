@@ -291,9 +291,6 @@ showButton(){
                                     <Text style={styles.diary}>{"    " +d.name} </Text>
                                 </View>
                               </TouchableHighlight>
-                              <Right>
-                                  <Icon active name='more-vert' />
-                              </Right>
                           </View>
                           <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('fDairyView', {diaryKey:d.id})}>
                             <Left>

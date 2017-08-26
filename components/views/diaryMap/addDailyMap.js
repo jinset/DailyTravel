@@ -28,6 +28,8 @@ import MapView from 'react-native-maps';
 import Modal from 'react-native-modalbox';
 import HideableView from 'react-native-hideable-view';
 
+var durl = 'https://www.shareicon.net/data/512x512/2015/09/13/100284_satellite_512x512.png'
+
 export default class AddDailyMap extends Component {
 
 ////////////////////////////////////// Navigation Options /////////////////////////////////////////////////////
@@ -94,6 +96,11 @@ export default class AddDailyMap extends Component {
                if(place == undefined){
                  place = string.notPlace
                }*/}
+               if(child.val().url != undefined){
+                   durl = child.val().url
+               }else{
+                  durl = 'https://www.shareicon.net/data/512x512/2015/09/13/100284_satellite_512x512.png'
+               }
                if(child.val().status == true){
                  dailys.push({
                    diaryKey: d.id,
@@ -102,6 +109,7 @@ export default class AddDailyMap extends Component {
                    dailyName: child.val().name,
                    dailyPlace: child.val().place,
                    dailyDate: child.val().date,
+                   dailyUrl: durl,
                    added: false,
                  })
                }//if
@@ -174,14 +182,16 @@ export default class AddDailyMap extends Component {
               <ListItem
                 onPress={() => this.added(d, i)}>
                   <Left>
-                      <Text>{d.dailyName}</Text>
+                      <Thumbnail
+                        small
+                        source={{uri: d.dailyUrl}}
+                      />
+                    <View style={styles.column}>
+                      <Text style={styles.description}>{`${strings.daily}: ${d.dailyName}`}</Text>
+                      <Text style={styles.description}>{`${strings.diary}: ${d.diaryName}`}</Text>
+                      <Text style={styles.description}>{`${strings.place}: ${d.dailyPlace}`}</Text>
+                    </View>
                   </Left>
-                  <Left>
-                      <Text>{d.dailyPlace}</Text>
-                  </Left>
-                  <Body>
-                      <Text>{d.dailyDate}</Text>
-                  </Body>
               </ListItem>
             )
       });
@@ -190,37 +200,46 @@ export default class AddDailyMap extends Component {
         return(
                 <ListItem
                   onPress={() => this.added(d)}>
-                    <Left>
-                        <Text>{d.dailyName}</Text>
-                    </Left>
-                    <Body>
-                        <Text>{d.dailyDate}</Text>
-                    </Body>
-                    <Right>
+                  <Left>
+                      <Thumbnail
+                        small
+                        source={{uri: d.dailyUrl}}
+                      />
+                    <View style={styles.column}>
+                      <Text style={styles.description}>{`Vivencia: ${d.dailyName}`}</Text>
+                      <Text style={styles.description}>{`Diario: ${d.diaryName}`}</Text>
+                      <Text style={styles.description}>{`Lugar: ${d.dailyPlace}`}</Text>
+                    </View>
+                  </Left>
+                  <Right>
                       <Button rounded light onPress={() => this.addPlaceToDaily(d, params.sltPlace)}>
                         <Text>Add</Text>
                       </Button>
-                    </Right>
+                  </Right>
                 </ListItem>
         )
       })
 
     return (
           <Container>
-          <Content>
-              <Card style={{flexDirection: 'column', height: Dimensions.get('window').height}}>
+          <Content style={{flexDirection: 'column'}}>
                     <Button full style={{top:20, zIndex: 2, backgroundColor: 'black'}}
                              onPress={()=> navigate('diaryMap')}>
                       <Text style={styles.sltPlace}>{params.sltPlace}</Text>
                     </Button>
                     <List>
                        <ScrollView style={{marginTop: 50}}>
-                            {dailyAdded}
+                            <Card>
+                              {dailyAdded}
+                            </Card>
                         </ScrollView>
                     </List>
                     <List>
                        <ScrollView style={{marginTop: 50}}>
+                           <Text style={styles.message2}>Add a place a to diary</Text>
+                          <Card>
                             {listForAdding}
+                          </Card>
                         </ScrollView>
                     </List>
                     <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
@@ -232,7 +251,6 @@ export default class AddDailyMap extends Component {
                             source={require('../../common/pigs/EmptyDailyInAddPlace.png')} />
                       </TouchableOpacity>
                     </HideableView>
-              </Card>
               </Content>
           </Container>
     );
@@ -256,6 +274,26 @@ const styles = StyleSheet.create({
     textDecorationStyle: 'solid',
     color: '#000000',
     paddingLeft: 20,
+  },
+  message2: {
+    fontStyle: 'italic',
+    textAlign: 'justify',
+    fontSize: 18,
+    textDecorationStyle: 'solid',
+    color: '#000000',
+    paddingLeft: 20,
+    fontWeight: 'bold',
+  },
+  description: {
+    fontStyle: 'italic',
+    textAlign: 'justify',
+    fontSize: 14,
+    textDecorationStyle: 'solid',
+    color: '#000000',
+    paddingLeft: 20,
+  },
+  column: {
+    flexDirection: 'column',
   },
 });
 
