@@ -187,9 +187,10 @@ export default class Profile extends Component {
                })
              })
              Helper.getDairysByUserGuest(this.state.uid, (d) => {
+               var diarys=d.reverse();
                this.setState({
                    diarys: d.reverse(),
-                   dataSource: this.state.dataSource.cloneWithRows(d)
+                   dataSource: this.state.dataSource.cloneWithRows(diarys)
                 })
                  if(d.length === 0){
                      this.setState({

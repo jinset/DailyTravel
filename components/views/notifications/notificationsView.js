@@ -182,7 +182,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
           dataSource: this.state.dataSource.cloneWithRows(notificationsArray)
         });
         if (notificationsArray.length) {
-        
+
       }
       } catch (error) {
         console.log(error.message);
@@ -222,7 +222,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
         <View>
         {(() => {
           switch (item.type) {
-            case "follow": return <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.userIdGet})}> 
+            case "follow": return <TouchableHighlight onPress={() => navigate('visitProfile', {uid:item.userIdGet})}>
             <Text>{strings.theUser} {item.userNick} {strings.hasFollowed}</Text>
             </TouchableHighlight>
             case "invitation":
@@ -231,7 +231,7 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
                   <Text>{strings.theUser} {item.userNick} {strings.sendInvitation} {item.diaryName}, {strings.touchAccept} </Text>
               </TouchableHighlight>;
 
-              case true: return <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item.diaryId})}> 
+              case true: return <TouchableHighlight onPress={() => navigate('DairyView', {diaryKey:item.diaryId})}>
               <Text>{strings.acceptAlreadyInvitation} {item.diaryName}</Text>
               </TouchableHighlight>;
             }

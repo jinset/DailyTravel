@@ -107,7 +107,7 @@ export default class EditProfile extends Component {
                 birthday: birthday,
               })
             })
-            Helper.getDairysByUser(this.state.uid, (d) => {
+            Helper.getDairysByUserGuest(this.state.uid, (d) => {
              this.setState({
                  diarys: d.reverse(),
               })
