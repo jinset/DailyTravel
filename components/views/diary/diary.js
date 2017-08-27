@@ -1,6 +1,6 @@
 import { Alert,Image, Dimensions,AsyncStorage, Easing } from 'react-native';
 import React, {Component} from 'react';
-import { Container, Content,  Toast, Button,Text,Body, Right,View,List,ListItem,
+import { Container, Content,  Toast, Button,Text,Body,Spinner, Right,View,List,ListItem,
  Card, CardItem, Thumbnail, Left, Tab, Tabs } from 'native-base';
 import { Icon } from 'react-native-elements';
 import strings from '../../common/local_strings.js';
@@ -35,12 +35,14 @@ static navigationOptions = ({ navigation }) => ({
       description: '',
       diaryUsers: [],
       isMe: '',
+      showSpinnerTop:true,
         };
   }
   ////////////////////////////////////////////////OBTIENE DATOS DEL DIARIO////////////////////////////////////////////////////////////////
      async componentWillMount(){
 
            try{
+             this.setState({showSpinnerTop: true});
              const { params } = this.props.navigation.state;
                let ref = "/diary/"+ params.diaryKey
                key=params.diaryKey;
@@ -60,6 +62,8 @@ static navigationOptions = ({ navigation }) => ({
                       })
                    }
                });
+
+                 this.setState({showSpinnerTop: false});
              }catch(error){
                 {/* Toast.show({
                      text: strings.error,
@@ -71,7 +75,6 @@ static navigationOptions = ({ navigation }) => ({
 
      }
      async componentDidMount(){
-
        const { params } = this.props.navigation.state;
        //usuarios en diario
           var diarys = [];
@@ -82,7 +85,7 @@ static navigationOptions = ({ navigation }) => ({
        userList.on('value', (snap) => {
            var users = [];
            AsyncStorage.getItem("user").then((value) => {
-
+                 that.setState({showSpinnerTop: true});
                   var diaryUsers = [];
                     snap.forEach((child) => {
                         let checkRepeat = getDatabase().ref('userDiary/').orderByChild("userDiary").equalTo(child.key+'-'+key);
@@ -115,6 +118,7 @@ static navigationOptions = ({ navigation }) => ({
                             })//setState
                         })//checkRepeat.once
                     });//snap.forEach
+                    this.setState({showSpinnerTop: false});
   })//AsyncStorage
   this.setState({
       isMe: me,
@@ -144,7 +148,7 @@ static navigationOptions = ({ navigation }) => ({
      deleteDiary(diaryId){
        HelperDiary.deleteDiary(diaryId)
        const { navigate } = this.props.navigation;
-      navigate('profile')
+      this.props.navigation.goBack()
      }
   render() {
         const { navigate } = this.props.navigation;
@@ -161,6 +165,9 @@ static navigationOptions = ({ navigation }) => ({
     return (
       <Container>
         <Content style={{zIndex: -1, backgroundColor:'white'}}>
+        <HideableView visible={this.state.showSpinnerTop} removeWhenHidden={true} >
+          <Spinner style={{zIndex:4}} />
+        </HideableView>
           <ZoomImage
             source={{uri: this.state.url}}
             imgStyle={{height: 100, width: Dimensions.get('window').width}}

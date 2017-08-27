@@ -186,15 +186,13 @@ export default class Profile extends Component {
                })
              })
              Helper.getDairysByUserGuest(this.state.uid, (d) => {
-               diaries = d.reverse().slice(0);
                this.setState({
                    diarys: d.reverse(),
-                   dataSource: this.state.dataSource.cloneWithRows(d.reverse())
                 })
                  if(d.length === 0){
-                  this.setState({
-                        showPig: true,
-                   })
+                     this.setState({
+                         showPig: true,
+                      })
                  }else{
                    this.setState({
                        showPig: false,
@@ -294,8 +292,46 @@ logout() {
 
   render() {
 
-    const { navigate } = this.props.navigation;
+        const { navigate } = this.props.navigation;
 
+        let listTable = this.state.diarys.map((d,i) => {
+            return (
+                    <ScrollView>
+                        <CardItem key={i}>
+                          <Body>
+
+                              <View style={styles.row}>
+
+                                  <Thumbnail
+                                    small
+                                    source={{uri: this.state.imagePath}}
+                                  />
+                                  <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                                      <View style={styles.center}>
+                                          <Text style={styles.diary}>{"    " +d.name} </Text>
+                                      </View>
+                                  </TouchableHighlight>
+                                  <Right>
+                                      <Icon active name='more-vert' />
+                                  </Right>
+                              </View>
+                              <TouchableHighlight style={{alignSelf: 'stretch', flex: 1}} onPress={() => navigate('DairyView', {diaryKey:d.id})}>
+                                <Left>
+                                    <Image
+                                      source={{uri: d.url}}
+                                      style={{height: 300, width: Dimensions.get('window').width}}
+                                    />
+                                    <Text style={styles.description}> {d.description} </Text>
+                               </Left>
+
+                             </TouchableHighlight>
+
+                            </Body>
+                        </CardItem>
+                        <Separator></Separator>
+                    </ScrollView>
+                  )
+          });
     return (
           <Container>
             <Content  refreshControl={
@@ -347,14 +383,9 @@ logout() {
 
                 </CardItem>
               </Card>
-                  <Card>
-                      <ListView
-                        dataSource={this.state.dataSource}
-                        renderRow={this._renderItem.bind(this)}
-                        enableEmptySections={true}
-                        >
-                      </ListView>
-                  </Card>
+              <Card>
+                    {listTable}
+              </Card>
               <Card>
                     <HideableView visible={this.state.showPig} removeWhenHidden={true} duration={100} style={styles.center}>
                        <Text style={styles.message}>{strings.iAppearWhen}</Text>
