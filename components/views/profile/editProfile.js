@@ -229,12 +229,12 @@ export default class EditProfile extends Component {
                                       keyboardType = {'email-address'}
                                       onChangeText={(text) => this.setState({inputEmail: text})}/>
                                 </Item>
-                                <Item >
+                                {/*<Item >
                                     <Input placeholder={strings.changePassword}
                                            secureTextEntry={true}
                                            maxLength={20} />
                                     <Icon active name='keyboard-arrow-down' />
-                                </Item>
+                                </Item>*/}
                         </Card>
 
                             <Button full dark style= {{backgroundColor: '#41BEB6'}}
